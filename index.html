@@ -751,6 +751,15 @@
 
         const { useState, useEffect } = React;
 
+        // 時間帯に応じたデフォルトメッセージ
+        function getBaseMessageByTime() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 11) return 'おはよう！今日も頑張ろう！🐯';
+            if (hour >= 11 && hour < 17) return 'こんにちは！いいペースでいこう！🐯';
+            if (hour >= 17 && hour < 21) return 'こんばんは！あと少し、いける！🐯';
+            return '夜更かし注意！無理せずね🐯';
+        }
+
         // Audio Manager (Web Audio)
         const audioManager = (() => {
             let ctx = null;
@@ -899,7 +908,7 @@
 
             const [ownedItems, setOwnedItems] = useState([]);
 
-            const [tigerMessage, setTigerMessage] = useState('おはよう！今日も頑張ろう！🐯');
+            const [tigerMessage, setTigerMessage] = useState(getBaseMessageByTime());
 
             const [celebrating, setCelebrating] = useState(false);
 
@@ -1073,7 +1082,7 @@
 
                     setTigerMessage('🎉 レベルアップ！強くなったよ！');
 
-                    setTimeout(() => setTigerMessage('その調子！もっと頑張ろう！'), 3000);
+                    setTimeout(() => setTigerMessage(getBaseMessageByTime()), 3000);
 
                 }
 
@@ -1107,7 +1116,7 @@
 
                 setTigerMessage(messages[Math.floor(Math.random() * messages.length)]);
 
-                setTimeout(() => setTigerMessage('今日も一緒に頑張ろう！'), 3000);
+                setTimeout(() => setTigerMessage(getBaseMessageByTime()), 3000);
 
                 // バッジチェック
 
@@ -1199,7 +1208,7 @@
 
                 }
 
-                setTimeout(() => setTigerMessage('今日も一緒に頑張ろう！'), 3000);
+                setTimeout(() => setTigerMessage(getBaseMessageByTime()), 3000);
 
             };
 
