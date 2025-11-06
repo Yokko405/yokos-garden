@@ -709,6 +709,36 @@
 
         }
 
+        /* 追加フォームレイアウト（レスポンシブ） */
+        .add-grid {
+            display: grid;
+            grid-template-columns: minmax(0,1.6fr) 60px 84px 96px 44px;
+            gap: 8px;
+            align-items: center;
+            grid-template-areas:
+                "name emoji points freq add";
+        }
+        .add-grid > * { min-width: 0; }
+        .add-grid input, .add-grid select { width: 100%; }
+        .add-grid .field-name { grid-area: name; }
+        .add-grid .field-emoji { grid-area: emoji; }
+        .add-grid .field-points { grid-area: points; }
+        .add-grid .field-freq { grid-area: freq; }
+        .add-grid .field-add { grid-area: add; }
+
+        @media (max-width: 480px) {
+            .add-grid {
+                /* 2行構成: 1行目=名前(全幅), 2行目=絵文字/ポイント/頻度(広め)/追加 */
+                grid-template-columns: minmax(0,1fr) 64px 84px minmax(0,1fr) 44px;
+                grid-template-areas:
+                    "name name name name name"
+                    "emoji points freq freq add";
+            }
+            .add-grid .field-add {
+                justify-self: end;
+            }
+        }
+
     </style>
 
 </head>
@@ -1301,17 +1331,13 @@
                                 padding: 16,
                                 marginBottom: 16
                             }}>
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'minmax(0,1.6fr) 60px 84px 96px 44px',
-                                    gap: 8,
-                                    alignItems: 'center'
-                                }}>
+                                <div className="add-grid">
                                     <input
                                         type="text"
                                         placeholder="習慣名（例：朝ヨガ）"
                                         value={newName}
                                         onChange={e => setNewName(e.target.value)}
+                                        className="field-name"
                                         style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1' }}
                                     />
                                     <input
@@ -1320,6 +1346,7 @@
                                         value={newIcon}
                                         maxLength={2}
                                         onChange={e => setNewIcon(e.target.value)}
+                                        className="field-emoji"
                                         style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1', textAlign: 'center' }}
                                     />
                                     <input
@@ -1328,11 +1355,13 @@
                                         max={100}
                                         value={newPoints}
                                         onChange={e => setNewPoints(e.target.value)}
+                                        className="field-points"
                                         style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1' }}
                                     />
                                     <select
                                         value={newFreq}
                                         onChange={e => setNewFreq(e.target.value)}
+                                        className="field-freq"
                                         style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1', background: 'white' }}
                                     >
                                         <option>毎日</option>
@@ -1344,6 +1373,7 @@
                                         type="submit"
                                         aria-label="習慣を追加"
                                         title="追加"
+                                        className="field-add"
                                         style={{
                                             width: 40,
                                             height: 40,
