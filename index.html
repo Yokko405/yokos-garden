@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>YOKO's Garden 🐯</title>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+        body {
+
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 50%, #ffd4c8 100%);
+
+            min-height: 100vh;
+
+            padding: 0;
+
+            overflow-x: hidden;
+
+            -webkit-tap-highlight-color: transparent;
+
+        }
+
+        #root {
+
+            max-width: 480px;
+
+            margin: 0 auto;
+
+            min-height: 100vh;
+
+            background: white;
+
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.1);
+
+        }
+
+        /* ヘッダー */
+
+        .header {
+
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+
+            color: white;
+
+            padding: 20px;
+
+            text-align: center;
+
+            border-radius: 0 0 30px 30px;
+
+            box-shadow: 0 4px 20px rgba(255, 140, 0, 0.3);
+
+            position: relative;
+
+        }
+
+        .header h1 {
+
+            font-size: 24px;
+
+            margin-bottom: 10px;
+
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+
+        }
+
+        .stats-container {
+
+            display: flex;
+
+            justify-content: space-around;
+
+            margin-top: 15px;
+
+            gap: 10px;
+
+        }
+
+        .stat-box {
+
+            background: rgba(255, 255, 255, 0.3);
+
+            padding: 10px 15px;
+
+            border-radius: 15px;
+
+            backdrop-filter: blur(10px);
+
+            flex: 1;
+
+        }
+
+        .stat-label {
+
+            font-size: 11px;
+
+            opacity: 0.9;
+
+            margin-bottom: 3px;
+
+        }
+
+        .stat-value {
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+        }
+
+        /* ミュージックトグル */
+        .music-toggle {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            background: rgba(255,255,255,0.25);
+            border: 0;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .music-toggle:active { transform: translateY(1px); }
+
+        /* 虎キャラクター */
+
+        .tiger-container {
+
+            padding: 30px 20px;
+
+            text-align: center;
+
+            position: relative;
+
+        }
+
+        .tiger {
+
+            font-size: 120px;
+
+            animation: float 3s ease-in-out infinite;
+
+            filter: drop-shadow(0 10px 20px rgba(255, 140, 0, 0.3));
+
+            cursor: pointer;
+
+            transition: transform 0.3s ease;
+
+        }
+
+        .tiger:active {
+
+            transform: scale(0.95);
+
+        }
+
+        .tiger.celebrating {
+
+            animation: celebrate 0.5s ease;
+
+        }
+
+        @keyframes float {
+
+            0%, 100% { transform: translateY(0px); }
+
+            50% { transform: translateY(-10px); }
+
+        }
+
+        @keyframes celebrate {
+
+            0%, 100% { transform: scale(1) rotate(0deg); }
+
+            25% { transform: scale(1.2) rotate(-10deg); }
+
+            75% { transform: scale(1.2) rotate(10deg); }
+
+        }
+
+        .tiger-message {
+
+            font-size: 16px;
+
+            color: #ff6b6b;
+
+            margin-top: 10px;
+
+            min-height: 24px;
+
+            font-weight: 500;
+
+        }
+
+        .level-badge {
+
+            display: inline-block;
+
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+
+            color: #ff6b6b;
+
+            padding: 8px 20px;
+
+            border-radius: 20px;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            margin-top: 10px;
+
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+
+        }
+
+        /* 経験値バー */
+
+        .exp-bar-container {
+
+            margin: 20px;
+
+            background: #ffe4e1;
+
+            border-radius: 20px;
+
+            height: 30px;
+
+            overflow: hidden;
+
+            position: relative;
+
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+
+        }
+
+        .exp-bar {
+
+            height: 100%;
+
+            background: linear-gradient(90deg, #ff9a56 0%, #ff6b6b 100%);
+
+            transition: width 0.5s ease;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: white;
+
+            font-weight: bold;
+
+            font-size: 12px;
+
+        }
+
+        /* タブ */
+
+        .tabs {
+
+            display: flex;
+
+            background: #fff5f5;
+
+            border-bottom: 2px solid #ffe4e1;
+
+        }
+
+        .tab {
+
+            flex: 1;
+
+            padding: 15px;
+
+            text-align: center;
+
+            border: none;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            color: #999;
+
+            transition: all 0.3s ease;
+
+        }
+
+        .tab.active {
+
+            color: #ff6b6b;
+
+            background: white;
+
+            border-bottom: 3px solid #ff6b6b;
+
+        }
+
+        /* 習慣リスト */
+
+        .habits-list {
+
+            padding: 20px;
+
+        }
+
+        .habit-card {
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 20px;
+
+            margin-bottom: 15px;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+
+            border: 2px solid #ffe4e1;
+
+            transition: all 0.3s ease;
+
+        }
+
+        .habit-card.completed {
+
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+
+            border-color: #ff9a56;
+
+        }
+
+        .habit-header {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 10px;
+
+        }
+
+        .habit-icon {
+
+            font-size: 32px;
+
+            flex-shrink: 0;
+
+        }
+
+        .habit-info {
+
+            flex: 1;
+
+        }
+
+        .habit-name {
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            color: #333;
+
+            margin-bottom: 5px;
+
+        }
+
+        .habit-frequency {
+
+            font-size: 12px;
+
+            color: #999;
+
+        }
+
+        .habit-footer {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-top: 10px;
+
+        }
+
+        .habit-points {
+
+            font-size: 14px;
+
+            color: #ff9a56;
+
+            font-weight: bold;
+
+        }
+
+        .check-button {
+
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 25px;
+
+            border-radius: 20px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            font-size: 14px;
+
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+
+        }
+
+        .check-button:active {
+
+            transform: scale(0.95);
+
+        }
+
+        .check-button.completed {
+
+            background: #ddd;
+
+            color: #999;
+
+            box-shadow: none;
+
+        }
+
+        /* バッジ */
+
+        .badges-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 15px;
+
+            padding: 20px;
+
+        }
+
+        .badge-card {
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 20px;
+
+            text-align: center;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+
+            border: 2px solid #ffe4e1;
+
+        }
+
+        .badge-card.unlocked {
+
+            border-color: #ffd700;
+
+            background: linear-gradient(135deg, #fffef0 0%, #fff9e6 100%);
+
+        }
+
+        .badge-icon {
+
+            font-size: 48px;
+
+            margin-bottom: 10px;
+
+            filter: grayscale(100%);
+
+            opacity: 0.3;
+
+        }
+
+        .badge-card.unlocked .badge-icon {
+
+            filter: grayscale(0%);
+
+            opacity: 1;
+
+            animation: shine 2s ease infinite;
+
+        }
+
+        @keyframes shine {
+
+            0%, 100% { transform: scale(1); }
+
+            50% { transform: scale(1.1); }
+
+        }
+
+        .badge-name {
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: #333;
+
+            margin-bottom: 5px;
+
+        }
+
+        .badge-description {
+
+            font-size: 11px;
+
+            color: #999;
+
+        }
+
+        /* ショップ */
+
+        .shop-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 15px;
+
+            padding: 20px;
+
+        }
+
+        .shop-item {
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 20px;
+
+            text-align: center;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+
+            border: 2px solid #ffe4e1;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+        }
+
+        .shop-item:active {
+
+            transform: scale(0.95);
+
+        }
+
+        .shop-item.owned {
+
+            border-color: #ff9a56;
+
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+
+        }
+
+        .shop-icon {
+
+            font-size: 48px;
+
+            margin-bottom: 10px;
+
+        }
+
+        .shop-name {
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            color: #333;
+
+            margin-bottom: 5px;
+
+        }
+
+        .shop-price {
+
+            font-size: 16px;
+
+            color: #ff9a56;
+
+            font-weight: bold;
+
+        }
+
+        /* エフェクト */
+
+        .sparkle {
+
+            position: fixed;
+
+            pointer-events: none;
+
+            font-size: 24px;
+
+            animation: sparkleFloat 1s ease-out forwards;
+
+            z-index: 1000;
+
+        }
+
+        @keyframes sparkleFloat {
+
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+
+        }
+
+        /* フッター */
+
+        .footer {
+
+            text-align: center;
+
+            padding: 20px;
+
+            color: #999;
+
+            font-size: 12px;
+
+        }
+
+        /* 今日の進捗 */
+
+        .daily-progress {
+
+            margin: 20px;
+
+            padding: 20px;
+
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+
+            border-radius: 20px;
+
+            text-align: center;
+
+        }
+
+        .daily-progress h3 {
+
+            color: #ff6b6b;
+
+            margin-bottom: 10px;
+
+            font-size: 16px;
+
+        }
+
+        .progress-text {
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            color: #ff9a56;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        // Audio Manager (Web Audio)
+        const audioManager = (() => {
+            let ctx = null;
+            let musicGain = null;
+            let sfxGain = null;
+            let musicTimer = null;
+            let started = false;
+            let musicOn = false;
+
+            const ensure = () => {
+                if (!ctx) {
+                    ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    musicGain = ctx.createGain();
+                    sfxGain = ctx.createGain();
+                    musicGain.gain.value = 0.15;
+                    sfxGain.gain.value = 0.5;
+                    musicGain.connect(ctx.destination);
+                    sfxGain.connect(ctx.destination);
+                }
+            };
+
+            const env = (node, startTime, attack=0.01, decay=0.2) => {
+                const g = ctx.createGain();
+                node.connect(g);
+                g.connect(sfxGain);
+                g.gain.setValueAtTime(0, startTime);
+                g.gain.linearRampToValueAtTime(1, startTime + attack);
+                g.gain.exponentialRampToValueAtTime(0.001, startTime + attack + decay);
+                return g;
+            };
+
+            const note = (freq, when, dur=0.2, type='sine', toMusic=false) => {
+                const osc = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, when);
+                const target = toMusic ? musicGain : sfxGain;
+                osc.connect(gainNode);
+                gainNode.connect(target);
+                gainNode.gain.setValueAtTime(0, when);
+                gainNode.gain.linearRampToValueAtTime(toMusic ? 0.3 : 1, when + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, when + dur);
+                osc.start(when);
+                osc.stop(when + dur + 0.05);
+            };
+
+            const playChime = () => {
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                // Simple major arpeggio C-E-G-C
+                [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => note(f, now + i*0.08, 0.18, 'triangle', false));
+            };
+
+            const startMusic = () => {
+                if (!ctx) return;
+                if (musicOn) return;
+                musicOn = true;
+                const pattern = [
+                  392.00, 392.00, 440.00, 392.00, 523.25, 493.88, // cute line
+                  392.00, 392.00, 440.00, 392.00, 587.33, 523.25  // variation
+                ];
+                const beat = 0.28;
+                const loop = () => {
+                    if (!musicOn) return;
+                    let t = ctx.currentTime;
+                    pattern.forEach((f, i) => note(f, t + i*beat, 0.22, 'sine', true));
+                    musicTimer = setTimeout(loop, (pattern.length * beat) * 1000);
+                };
+                loop();
+            };
+
+            const stopMusic = () => {
+                musicOn = false;
+                if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
+            };
+
+            return {
+                init: async () => {
+                    if (started) return;
+                    ensure();
+                    try { await ctx.resume(); } catch (e) {}
+                    started = true;
+                },
+                playChime,
+                startMusic,
+                stopMusic,
+                isMusicOn: () => musicOn
+            };
+        })();
+
+        // 初期データ
+
+        const initialHabits = [
+
+            { id: 1, name: '朝ヨガ', icon: '🧘‍♀️', points: 10, frequency: '毎日', completed: false },
+
+            { id: 2, name: '筋トレ', icon: '💪', points: 15, frequency: '週3回', completed: false },
+
+            { id: 3, name: '英語30分', icon: '📚', points: 20, frequency: '毎日', completed: false },
+
+            { id: 4, name: 'サプリ飲む', icon: '💊', points: 5, frequency: '毎日', completed: false }
+
+        ];
+
+        const badges = [
+
+            { id: 1, name: '3日連続', icon: '🔥', description: '3日連続達成', requirement: 3 },
+
+            { id: 2, name: '1週間', icon: '⭐', description: '7日連続達成', requirement: 7 },
+
+            { id: 3, name: '1ヶ月', icon: '💎', description: '30日連続達成', requirement: 30 },
+
+            { id: 4, name: '100回達成', icon: '👑', description: '累計100回達成', requirement: 100 }
+
+        ];
+
+        const shopItems = [
+
+            { id: 1, name: '王冠', icon: '👑', price: 50 },
+
+            { id: 2, name: 'サングラス', icon: '🕶️', price: 30 },
+
+            { id: 3, name: 'リボン', icon: '🎀', price: 40 },
+
+            { id: 4, name: '花冠', icon: '🌸', price: 60 }
+
+        ];
+
+        function App() {
+
+            const [activeTab, setActiveTab] = useState('habits');
+
+            const [habits, setHabits] = useState([]);
+
+            const [level, setLevel] = useState(1);
+
+            const [exp, setExp] = useState(0);
+
+            const [coins, setCoins] = useState(0);
+
+            const [streak, setStreak] = useState(0);
+
+            const [totalCompleted, setTotalCompleted] = useState(0);
+
+            const [unlockedBadges, setUnlockedBadges] = useState([]);
+
+            const [ownedItems, setOwnedItems] = useState([]);
+
+            const [tigerMessage, setTigerMessage] = useState('おはよう！今日も頑張ろう！🐯');
+
+            const [celebrating, setCelebrating] = useState(false);
+
+            const [musicEnabled, setMusicEnabled] = useState(false);
+            // 新規習慣フォーム
+            const [newName, setNewName] = useState('');
+            const [newIcon, setNewIcon] = useState('🐯');
+            const [newPoints, setNewPoints] = useState(10);
+            const [newFreq, setNewFreq] = useState('毎日');
+
+            // ローカルストレージから読み込み
+
+            useEffect(() => {
+
+                const saved = localStorage.getItem('yokosGarden');
+
+                if (saved) {
+
+                    const data = JSON.parse(saved);
+
+                    setHabits(data.habits || initialHabits);
+
+                    setLevel(data.level || 1);
+
+                    setExp(data.exp || 0);
+
+                    setCoins(data.coins || 0);
+
+                    setStreak(data.streak || 0);
+
+                    setTotalCompleted(data.totalCompleted || 0);
+
+                    setUnlockedBadges(data.unlockedBadges || []);
+
+                    setOwnedItems(data.ownedItems || []);
+
+                } else {
+
+                    setHabits(initialHabits);
+
+                }
+
+                const pref = localStorage.getItem('yg_music');
+                if (pref === 'on') setMusicEnabled(true);
+
+            }, []);
+
+            // ローカルストレージに保存
+
+            useEffect(() => {
+
+                const data = {
+
+                    habits,
+
+                    level,
+
+                    exp,
+
+                    coins,
+
+                    streak,
+
+                    totalCompleted,
+
+                    unlockedBadges,
+
+                    ownedItems
+
+                };
+
+                localStorage.setItem('yokosGarden', JSON.stringify(data));
+
+            }, [habits, level, exp, coins, streak, totalCompleted, unlockedBadges, ownedItems]);
+
+            // Music preference side-effect
+            useEffect(() => {
+                localStorage.setItem('yg_music', musicEnabled ? 'on' : 'off');
+            }, [musicEnabled]);
+
+            const expForNextLevel = level * 50;
+
+            const expPercentage = (exp / expForNextLevel) * 100;
+
+            const completedToday = habits.filter(h => h.completed).length;
+
+            const totalHabits = habits.length;
+
+            // ミュージックのトグル（初回はユーザー操作で初期化）
+            const toggleMusic = async () => {
+                await audioManager.init();
+                if (audioManager.isMusicOn()) {
+                    audioManager.stopMusic();
+                    setMusicEnabled(false);
+                } else {
+                    audioManager.startMusic();
+                    setMusicEnabled(true);
+                }
+            };
+
+            // 習慣追加
+            const addHabit = (e) => {
+                e.preventDefault();
+                const name = newName.trim();
+                if (!name) return;
+                const nextId = (habits.reduce((m, h) => Math.max(m, Number(h.id) || 0), 0) + 1) || 1;
+                const created = {
+                    id: nextId,
+                    name,
+                    icon: newIcon || '🐯',
+                    points: Math.max(1, Number(newPoints) || 1),
+                    frequency: newFreq || '毎日',
+                    completed: false
+                };
+                setHabits([ ...habits, created ]);
+                setNewName('');
+                setNewIcon('🐯');
+                setNewPoints(10);
+                setNewFreq('毎日');
+            };
+
+            // 習慣削除
+            const deleteHabit = (habitId) => {
+                const target = habits.find(h => h.id === habitId);
+                if (!target) return;
+                if (!confirm(`「${target.name}」を削除しますか？`)) return;
+                setHabits(habits.filter(h => h.id !== habitId));
+            };
+
+            // 習慣完了
+
+            const completeHabit = async (habitId) => {
+
+                const habit = habits.find(h => h.id === habitId);
+
+                if (habit.completed) return;
+
+                // キラキラエフェクト
+
+                createSparkles();
+
+                // サウンド
+                await audioManager.init();
+                audioManager.playChime();
+
+                // 習慣を完了状態に
+
+                const newHabits = habits.map(h =>
+
+                    h.id === habitId ? { ...h, completed: true } : h
+
+                );
+
+                setHabits(newHabits);
+
+                // 経験値とコイン追加
+
+                let newExp = exp + habit.points;
+
+                let newCoins = coins + Math.floor(habit.points / 2);
+
+                let newLevel = level;
+
+                // レベルアップチェック
+
+                while (newExp >= newLevel * 50) {
+
+                    newExp -= newLevel * 50;
+
+                    newLevel++;
+
+                    setTigerMessage('🎉 レベルアップ！強くなったよ！');
+
+                    setTimeout(() => setTigerMessage('その調子！もっと頑張ろう！'), 3000);
+
+                }
+
+                setExp(newExp);
+
+                setCoins(newCoins);
+
+                setLevel(newLevel);
+
+                setTotalCompleted(totalCompleted + 1);
+
+                // 虎のリアクション
+
+                setCelebrating(true);
+
+                setTimeout(() => setCelebrating(false), 500);
+
+                const messages = [
+
+                    'やったー！嬉しい！🐯',
+
+                    'すごい！その調子！✨',
+
+                    '完璧！一緒に頑張ろう！💪',
+
+                    'さすがYOKOさん！🔥',
+
+                    '限界突破だ！🌟'
+
+                ];
+
+                setTigerMessage(messages[Math.floor(Math.random() * messages.length)]);
+
+                setTimeout(() => setTigerMessage('今日も一緒に頑張ろう！'), 3000);
+
+                // バッジチェック
+
+                checkBadges(streak + 1, totalCompleted + 1);
+
+            };
+
+            // キラキラエフェクト
+
+            const createSparkles = () => {
+
+                for (let i = 0; i < 10; i++) {
+
+                    setTimeout(() => {
+
+                        const sparkle = document.createElement('div');
+
+                        sparkle.className = 'sparkle';
+
+                        sparkle.textContent = ['✨', '⭐', '💫', '🌟'][Math.floor(Math.random() * 4)];
+
+                        sparkle.style.left = `${Math.random() * window.innerWidth}px`;
+
+                        sparkle.style.top = `${Math.random() * window.innerHeight}px`;
+
+                        sparkle.style.setProperty('--tx', `${(Math.random() - 0.5) * 100}px`);
+
+                        sparkle.style.setProperty('--ty', `${-50 - Math.random() * 50}px`);
+
+                        document.body.appendChild(sparkle);
+
+                        setTimeout(() => sparkle.remove(), 1000);
+
+                    }, i * 100);
+
+                }
+
+            };
+
+            // バッジチェック
+
+            const checkBadges = (currentStreak, currentTotal) => {
+
+                badges.forEach(badge => {
+
+                    if (!unlockedBadges.includes(badge.id)) {
+
+                        if ((badge.id <= 3 && currentStreak >= badge.requirement) ||
+
+                            (badge.id === 4 && currentTotal >= badge.requirement)) {
+
+                            setUnlockedBadges([...unlockedBadges, badge.id]);
+
+                            setTigerMessage(`🎉 バッジ獲得！「${badge.name}」！`);
+
+                        }
+
+                    }
+
+                });
+
+            };
+
+            // アイテム購入
+
+            const buyItem = (item) => {
+
+                if (ownedItems.includes(item.id)) {
+
+                    setTigerMessage('もう持ってるよ！');
+
+                    return;
+
+                }
+
+                if (coins >= item.price) {
+
+                    setCoins(coins - item.price);
+
+                    setOwnedItems([...ownedItems, item.id]);
+
+                    setTigerMessage(`✨ ${item.name}を手に入れた！`);
+
+                    createSparkles();
+
+                } else {
+
+                    setTigerMessage('コインが足りないよ...頑張ろう！');
+
+                }
+
+                setTimeout(() => setTigerMessage('今日も一緒に頑張ろう！'), 3000);
+
+            };
+
+            return (
+
+                <div>
+
+                    {/* ヘッダー */}
+
+                    <div className="header">
+
+                        <h1>🐯 YOKO's Garden</h1>
+
+                        <button className="music-toggle" onClick={toggleMusic}>
+                            {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
+                        </button>
+
+                        <div className="stats-container">
+
+                            <div className="stat-box">
+
+                                <div className="stat-label">レベル</div>
+
+                                <div className="stat-value">{level}</div>
+
+                            </div>
+
+                            <div className="stat-box">
+
+                                <div className="stat-label">コイン</div>
+
+                                <div className="stat-value">{coins}</div>
+
+                            </div>
+
+                            <div className="stat-box">
+
+                                <div className="stat-label">連続</div>
+
+                                <div className="stat-value">{streak}日</div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {/* 虎キャラクター */}
+
+                    <div className="tiger-container">
+
+                        <div className={`tiger ${celebrating ? 'celebrating' : ''}`}>
+
+                            🐯
+
+                            {ownedItems.includes(1) && <span style={{position: 'absolute', marginLeft: '-60px', marginTop: '-20px'}}>👑</span>}
+
+                            {ownedItems.includes(2) && <span style={{position: 'absolute', marginLeft: '-40px', marginTop: '10px'}}>🕶️</span>}
+
+                        </div>
+
+                        <div className="tiger-message">{tigerMessage}</div>
+
+                        <div className="level-badge">Lv.{level} タイガー戦士</div>
+
+                    </div>
+
+                    {/* 経験値バー */}
+
+                    <div className="exp-bar-container">
+
+                        <div className="exp-bar" style={{ width: `${expPercentage}%` }}>
+
+                            {exp} / {expForNextLevel} EXP
+
+                        </div>
+
+                    </div>
+
+                    {/* 今日の進捗 */}
+
+                    {activeTab === 'habits' && (
+
+                        <div className="daily-progress">
+
+                            <h3>今日の進捗</h3>
+
+                            <div className="progress-text">{completedToday} / {totalHabits}</div>
+
+                        </div>
+
+                    )}
+
+                    {/* タブ */}
+
+                    <div className="tabs">
+
+                        <button className={`tab ${activeTab === 'habits' ? 'active' : ''}`} onClick={() => setActiveTab('habits')}>
+
+                            習慣
+
+                        </button>
+
+                        <button className={`tab ${activeTab === 'badges' ? 'active' : ''}`} onClick={() => setActiveTab('badges')}>
+
+                            バッジ
+
+                        </button>
+
+                        <button className={`tab ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
+
+                            ショップ
+
+                        </button>
+
+                    </div>
+
+                    {/* 習慣タブ */}
+
+                    {activeTab === 'habits' && (
+
+                        <div className="habits-list">
+
+                            {/* 追加フォーム */}
+                            <form onSubmit={addHabit} style={{
+                                background: '#fff5f5',
+                                border: '2px solid #ffe4e1',
+                                borderRadius: 16,
+                                padding: 16,
+                                marginBottom: 16
+                            }}>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'minmax(0,1.6fr) 60px 84px 96px 44px',
+                                    gap: 8,
+                                    alignItems: 'center'
+                                }}>
+                                    <input
+                                        type="text"
+                                        placeholder="習慣名（例：朝ヨガ）"
+                                        value={newName}
+                                        onChange={e => setNewName(e.target.value)}
+                                        style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1' }}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="絵文字"
+                                        value={newIcon}
+                                        maxLength={2}
+                                        onChange={e => setNewIcon(e.target.value)}
+                                        style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1', textAlign: 'center' }}
+                                    />
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        max={100}
+                                        value={newPoints}
+                                        onChange={e => setNewPoints(e.target.value)}
+                                        style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1' }}
+                                    />
+                                    <select
+                                        value={newFreq}
+                                        onChange={e => setNewFreq(e.target.value)}
+                                        style={{ height: 40, padding: '0 12px', borderRadius: 12, border: '2px solid #ffe4e1', background: 'white' }}
+                                    >
+                                        <option>毎日</option>
+                                        <option>週3回</option>
+                                        <option>週5回</option>
+                                        <option>平日</option>
+                                    </select>
+                                    <button
+                                        type="submit"
+                                        aria-label="習慣を追加"
+                                        title="追加"
+                                        style={{
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: 20,
+                                            border: 'none',
+                                            background: 'linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%)',
+                                            color: '#fff',
+                                            fontWeight: 700,
+                                            boxShadow: '0 4px 10px rgba(255, 107, 107, 0.3)',
+                                            cursor: 'pointer',
+                                            display: 'grid',
+                                            placeItems: 'center'
+                                        }}
+                                    >
+                                        ＋
+                                    </button>
+                                </div>
+                            </form>
+
+                            {habits.map(habit => (
+
+                                <div key={habit.id} className={`habit-card ${habit.completed ? 'completed' : ''}`}>
+
+                                    <div className="habit-header">
+
+                                        <div className="habit-icon">{habit.icon}</div>
+
+                                        <div className="habit-info">
+
+                                            <div className="habit-name">{habit.name}</div>
+
+                                            <div className="habit-frequency">{habit.frequency}</div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div className="habit-footer">
+
+                                        <div className="habit-points">+{habit.points} EXP</div>
+
+                                        <button
+
+                                            className={`check-button ${habit.completed ? 'completed' : ''}`}
+
+                                            onClick={() => completeHabit(habit.id)}
+
+                                            disabled={habit.completed}
+
+                                        >
+
+                                            {habit.completed ? '✓ 完了' : '達成！'}
+
+                                        </button>
+
+                                        <button
+                                            onClick={() => deleteHabit(habit.id)}
+                                            className="check-button"
+                                            style={{ background: '#ddd', color: '#666' }}
+                                        >
+                                            🗑️ 削除
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+
+                    )}
+
+                    {/* バッジタブ */}
+
+                    {activeTab === 'badges' && (
+
+                        <div className="badges-grid">
+
+                            {badges.map(badge => (
+
+                                <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
+
+                                    <div className="badge-icon">{badge.icon}</div>
+
+                                    <div className="badge-name">{badge.name}</div>
+
+                                    <div className="badge-description">{badge.description}</div>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+
+                    )}
+
+                    {/* ショップタブ */}
+
+                    {activeTab === 'shop' && (
+
+                        <div className="shop-grid">
+
+                            {shopItems.map(item => (
+
+                                <div
+
+                                    key={item.id}
+
+                                    className={`shop-item ${ownedItems.includes(item.id) ? 'owned' : ''}`}
+
+                                    onClick={() => buyItem(item)}
+
+                                >
+
+                                    <div className="shop-icon">{item.icon}</div>
+
+                                    <div className="shop-name">{item.name}</div>
+
+                                    <div className="shop-price">
+
+                                        {ownedItems.includes(item.id) ? '所持中' : `${item.price} コイン`}
+
+                                    </div>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+
+                    )}
+
+                    {/* フッター */}
+
+                    <div className="footer">
+
+                        Push Your Limits! 🐯✨<br/>
+
+                        限界を越える、仲間と共にその先へ
+
+                    </div>
+
+                </div>
+
+            );
+
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+
+    </script>
+
+</body>
+
+</html>
+
+
