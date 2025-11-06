@@ -173,6 +173,55 @@
 
         }
 
+        /* CSS-drawn Tiger */
+        .tiger-box {
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(180deg, #ffcc66 0%, #ffa726 100%);
+            border-radius: 20px;
+            position: relative;
+            display: inline-block;
+            box-shadow: 0 12px 24px rgba(255, 140, 0, .25);
+            animation: float 5s ease-in-out infinite;
+        }
+        .tiger-box::before,
+        .tiger-box::after{
+            content: "";
+            position: absolute;
+            top: -12px;
+            width: 26px; height: 26px;
+            background: linear-gradient(180deg, #ffcc66 0%, #ffa726 100%);
+            border-radius: 8px;
+            box-shadow: inset 0 -4px 0 rgba(255,255,255,.35);
+        }
+        .tiger-box::before{ left: 10px; transform: rotate(-15deg); }
+        .tiger-box::after{ right: 10px; transform: rotate(15deg); }
+        .tiger-box .stripes{
+            position: absolute; inset: 0;
+            background:
+                linear-gradient(90deg, transparent 38%, #2d2a26 40%, transparent 42%) 0 24px/100% 8px no-repeat,
+                linear-gradient(90deg, transparent 58%, #2d2a26 60%, transparent 62%) 0 38px/100% 8px no-repeat;
+            opacity: .25;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+        }
+        .tiger-box .face{ position:absolute; inset:0; display:grid; place-items:center; }
+        .tiger-box .eyes{ display:flex; gap:18px; margin-top:6px; }
+        .tiger-box .eye{ width:10px; height:10px; background:#2d2a26; border-radius:50%; box-shadow:0 0 0 2px #fff6, 0 8px 0 -3px #2d2a26; transition: transform .2s ease; }
+        .tiger-box .nose{ width:14px; height:10px; background:#2d2a26; border-radius:50% 50% 60% 60%/50% 50% 80% 80%; margin:6px auto 0; }
+        .tiger-box .whiskers{ width:56px; height:12px; position:relative; margin:4px auto 0; }
+        .tiger-box .whiskers::before,.tiger-box .whiskers::after{ content:""; position:absolute; inset:0; border-top:2px solid #2d2a26; transform:translateY(4px);} 
+        .tiger-box .whiskers::after{ transform:translateY(8px); opacity:.7; }
+        .tiger-box .mouth{ width:26px; height:12px; border-bottom:4px solid #2d2a26; border-radius:0 0 26px 26px; margin:2px auto 0; opacity:0; transition:opacity .2s ease; }
+        .tiger-box .cheek{ position:absolute; top:56px; width:12px; height:12px; background:#ffb3c1; border-radius:50%; opacity:0; }
+        .tiger-box .cheek.left{ left:18px; }
+        .tiger-box .cheek.right{ right:18px; }
+        /* moods */
+        .tiger-box.mood-sleepy .eye{ transform: scaleY(0.25); box-shadow: none; }
+        .tiger-box.mood-happy .mouth{ opacity:1; }
+        .tiger-box.mood-love .cheek{ opacity:1; }
+        .tiger-box.mood-star{ box-shadow: 0 0 0 3px #ffd280 inset, 0 12px 24px rgba(255, 140, 0, .35); }
+
         .tiger:active {
 
             transform: scale(0.95);
@@ -760,12 +809,10 @@
             return '夜更かし注意！無理せずね🐯';
         }
 
-        function getBaseFaceByTime() {
-            const hour = new Date().getHours();
-            if (hour >= 21 || hour < 5) return '😴';
-            if (hour >= 5 && hour < 11) return '🐯';
-            if (hour >= 11 && hour < 17) return '😺';
-            return '😼';
+        function getBaseMoodByTime() {
+            const h = new Date().getHours();
+            if (h >= 21 || h < 5) return 'mood-sleepy';
+            return 'mood-happy';
         }
 
         // Audio Manager (Web Audio)
@@ -919,7 +966,7 @@
             const [tigerMessage, setTigerMessage] = useState(getBaseMessageByTime());
 
             const [celebrating, setCelebrating] = useState(false);
-            const [tigerFace, setTigerFace] = useState(getBaseFaceByTime());
+            const [tigerMood, setTigerMood] = useState(getBaseMoodByTime());
 
             const [musicEnabled, setMusicEnabled] = useState(false);
             // 新規習慣フォーム
@@ -1090,9 +1137,9 @@
                     newLevel++;
 
                     setTigerMessage('🎉 レベルアップ！強くなったよ！');
-                    setTigerFace('🤩');
+                    setTigerMood('mood-star');
 
-                    setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
+                    setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerMood(getBaseMoodByTime()); }, 3000);
 
                 }
 
@@ -1125,9 +1172,9 @@
                 ];
 
                 setTigerMessage(messages[Math.floor(Math.random() * messages.length)]);
-                setTigerFace('😸');
+                setTigerMood('mood-happy');
 
-                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
+                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerMood(getBaseMoodByTime()); }, 3000);
 
                 // バッジチェック
 
@@ -1210,7 +1257,7 @@
                     setOwnedItems([...ownedItems, item.id]);
 
                     setTigerMessage(`✨ ${item.name}を手に入れた！`);
-                    setTigerFace('😍');
+                    setTigerMood('mood-love');
 
                     createSparkles();
 
@@ -1220,7 +1267,7 @@
 
                 }
 
-                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
+                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerMood(getBaseMoodByTime()); }, 3000);
 
             };
 
@@ -1272,13 +1319,19 @@
 
                     <div className="tiger-container">
 
-                        <div className={`tiger ${celebrating ? 'celebrating' : ''}`}>
+                        <div className={`tiger-box ${celebrating ? 'celebrating' : ''} ${tigerMood}`}>
+                            <div className="stripes"></div>
+                            <div className="face">
+                                <div className="eyes"><div className="eye"></div><div className="eye"></div></div>
+                                <div className="nose"></div>
+                                <div className="whiskers"></div>
+                                <div className="mouth"></div>
+                                <div className="cheek left"></div>
+                                <div className="cheek right"></div>
+                            </div>
 
-                            {tigerFace}
-
-                            {ownedItems.includes(1) && <span style={{position: 'absolute', marginLeft: '-60px', marginTop: '-20px'}}>👑</span>}
-
-                            {ownedItems.includes(2) && <span style={{position: 'absolute', marginLeft: '-40px', marginTop: '10px'}}>🕶️</span>}
+                            {ownedItems.includes(1) && <span style={{position: 'absolute', left: 6, top: -18, fontSize: 24}}>👑</span>}
+                            {ownedItems.includes(2) && <span style={{position: 'absolute', right: 6, top: 26, fontSize: 18}}>🕶️</span>}
 
                         </div>
 
