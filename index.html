@@ -760,6 +760,14 @@
             return '夜更かし注意！無理せずね🐯';
         }
 
+        function getBaseFaceByTime() {
+            const hour = new Date().getHours();
+            if (hour >= 21 || hour < 5) return '😴';
+            if (hour >= 5 && hour < 11) return '🐯';
+            if (hour >= 11 && hour < 17) return '😺';
+            return '😼';
+        }
+
         // Audio Manager (Web Audio)
         const audioManager = (() => {
             let ctx = null;
@@ -911,6 +919,7 @@
             const [tigerMessage, setTigerMessage] = useState(getBaseMessageByTime());
 
             const [celebrating, setCelebrating] = useState(false);
+            const [tigerFace, setTigerFace] = useState(getBaseFaceByTime());
 
             const [musicEnabled, setMusicEnabled] = useState(false);
             // 新規習慣フォーム
@@ -1081,8 +1090,9 @@
                     newLevel++;
 
                     setTigerMessage('🎉 レベルアップ！強くなったよ！');
+                    setTigerFace('🤩');
 
-                    setTimeout(() => setTigerMessage(getBaseMessageByTime()), 3000);
+                    setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
 
                 }
 
@@ -1115,8 +1125,9 @@
                 ];
 
                 setTigerMessage(messages[Math.floor(Math.random() * messages.length)]);
+                setTigerFace('😸');
 
-                setTimeout(() => setTigerMessage(getBaseMessageByTime()), 3000);
+                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
 
                 // バッジチェック
 
@@ -1199,6 +1210,7 @@
                     setOwnedItems([...ownedItems, item.id]);
 
                     setTigerMessage(`✨ ${item.name}を手に入れた！`);
+                    setTigerFace('😍');
 
                     createSparkles();
 
@@ -1208,7 +1220,7 @@
 
                 }
 
-                setTimeout(() => setTigerMessage(getBaseMessageByTime()), 3000);
+                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
 
             };
 
@@ -1262,7 +1274,7 @@
 
                         <div className={`tiger ${celebrating ? 'celebrating' : ''}`}>
 
-                            🐯
+                            {tigerFace}
 
                             {ownedItems.includes(1) && <span style={{position: 'absolute', marginLeft: '-60px', marginTop: '-20px'}}>👑</span>}
 
