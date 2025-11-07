@@ -809,10 +809,12 @@
             return '夜更かし注意！無理せずね🐯';
         }
 
-        function getBaseMoodByTime() {
-            const h = new Date().getHours();
-            if (h >= 21 || h < 5) return 'mood-sleepy';
-            return 'mood-happy';
+        function getBaseFaceByTime() {
+            const hour = new Date().getHours();
+            if (hour >= 21 || hour < 5) return '😴';
+            if (hour >= 5 && hour < 11) return '🐯';
+            if (hour >= 11 && hour < 17) return '😺';
+            return '😼';
         }
 
         // Audio Manager (Web Audio)
@@ -966,7 +968,7 @@
             const [tigerMessage, setTigerMessage] = useState(getBaseMessageByTime());
 
             const [celebrating, setCelebrating] = useState(false);
-            const [tigerMood, setTigerMood] = useState(getBaseMoodByTime());
+            const [tigerFace, setTigerFace] = useState(getBaseFaceByTime());
 
             const [musicEnabled, setMusicEnabled] = useState(false);
             // 新規習慣フォーム
@@ -1137,9 +1139,9 @@
                     newLevel++;
 
                     setTigerMessage('🎉 レベルアップ！強くなったよ！');
-                    setTigerMood('mood-star');
+                    setTigerFace('🤩');
 
-                    setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerMood(getBaseMoodByTime()); }, 3000);
+                    setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
 
                 }
 
@@ -1172,9 +1174,9 @@
                 ];
 
                 setTigerMessage(messages[Math.floor(Math.random() * messages.length)]);
-                setTigerMood('mood-happy');
+                setTigerFace('😸');
 
-                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerMood(getBaseMoodByTime()); }, 3000);
+                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
 
                 // バッジチェック
 
@@ -1257,7 +1259,7 @@
                     setOwnedItems([...ownedItems, item.id]);
 
                     setTigerMessage(`✨ ${item.name}を手に入れた！`);
-                    setTigerMood('mood-love');
+                    setTigerFace('😍');
 
                     createSparkles();
 
@@ -1267,7 +1269,7 @@
 
                 }
 
-                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerMood(getBaseMoodByTime()); }, 3000);
+                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
 
             };
 
@@ -1319,19 +1321,13 @@
 
                     <div className="tiger-container">
 
-                        <div className={`tiger-box ${celebrating ? 'celebrating' : ''} ${tigerMood}`}>
-                            <div className="stripes"></div>
-                            <div className="face">
-                                <div className="eyes"><div className="eye"></div><div className="eye"></div></div>
-                                <div className="nose"></div>
-                                <div className="whiskers"></div>
-                                <div className="mouth"></div>
-                                <div className="cheek left"></div>
-                                <div className="cheek right"></div>
-                            </div>
+                        <div className={`tiger ${celebrating ? 'celebrating' : ''}`}>
 
-                            {ownedItems.includes(1) && <span style={{position: 'absolute', left: 6, top: -18, fontSize: 24}}>👑</span>}
-                            {ownedItems.includes(2) && <span style={{position: 'absolute', right: 6, top: 26, fontSize: 18}}>🕶️</span>}
+                            {tigerFace}
+
+                            {ownedItems.includes(1) && <span style={{position: 'absolute', marginLeft: '-60px', marginTop: '-20px'}}>👑</span>}
+
+                            {ownedItems.includes(2) && <span style={{position: 'absolute', marginLeft: '-40px', marginTop: '10px'}}>🕶️</span>}
 
                         </div>
 
