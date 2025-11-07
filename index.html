@@ -1298,6 +1298,27 @@
 
             };
 
+            // 手動リセット（習慣の完了状態をリセット）
+            const resetDailyHabits = () => {
+                if (!confirm('今日の習慣をリセットしますか？\n（完了状態のみリセットされ、レベルやコインは保持されます）')) {
+                    return;
+                }
+                
+                const resetHabits = habits.map(h => ({
+                    ...h,
+                    completed: false
+                }));
+                setHabits(resetHabits);
+                
+                // 今日の日付を更新（自動リセットを防ぐため）
+                const today = new Date().toDateString();
+                localStorage.setItem('yg_lastResetDate', today);
+                
+                setTigerMessage('リセット完了！今日も頑張ろう！🐯');
+                setTigerFace('😺');
+                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
+            };
+
             return (
 
                 <div>
@@ -1308,9 +1329,18 @@
 
                         <h1>🐯 YOKO's Garden</h1>
 
-                        <button className="music-toggle" onClick={toggleMusic}>
-                            {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
-                        </button>
+                        <div style={{ position: 'absolute', right: '12px', top: '12px', display: 'flex', gap: '8px' }}>
+                            <button className="music-toggle" onClick={toggleMusic}>
+                                {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
+                            </button>
+                            <button 
+                                className="music-toggle" 
+                                onClick={resetDailyHabits}
+                                style={{ fontSize: '12px', padding: '8px 10px' }}
+                            >
+                                🔄 リセット
+                            </button>
+                        </div>
 
                         <div className="stats-container">
 
