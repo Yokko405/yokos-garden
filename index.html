@@ -982,20 +982,44 @@
             useEffect(() => {
 
                 const saved = localStorage.getItem('yokosGarden');
+                const today = new Date().toDateString(); // 日付文字列（例: "Mon Nov 07 2024"）
+                const lastResetDate = localStorage.getItem('yg_lastResetDate');
 
                 if (saved) {
 
                     const data = JSON.parse(saved);
 
-                    setHabits(data.habits || initialHabits);
+                    // 日付が変わっていたら習慣の完了状態をリセット
+                    if (lastResetDate !== today) {
+                        // リセット前に昨日の完了状態をチェック（連続日数の更新用）
+                        const yesterdayCompleted = data.habits && data.habits.some(h => h.completed);
+                        
+                        // 習慣のcompletedをfalseにリセット
+                        const resetHabits = (data.habits || initialHabits).map(h => ({
+                            ...h,
+                            completed: false
+                        }));
+                        setHabits(resetHabits);
+                        
+                        // 連続日数の更新（昨日習慣を完了していたら連続、そうでなければ0に）
+                        if (yesterdayCompleted) {
+                            setStreak((data.streak || 0) + 1);
+                        } else {
+                            setStreak(0);
+                        }
+                        
+                        // 今日の日付を保存
+                        localStorage.setItem('yg_lastResetDate', today);
+                    } else {
+                        setHabits(data.habits || initialHabits);
+                        setStreak(data.streak || 0);
+                    }
 
                     setLevel(data.level || 1);
 
                     setExp(data.exp || 0);
 
                     setCoins(data.coins || 0);
-
-                    setStreak(data.streak || 0);
 
                     setTotalCompleted(data.totalCompleted || 0);
 
@@ -1006,6 +1030,7 @@
                 } else {
 
                     setHabits(initialHabits);
+                    localStorage.setItem('yg_lastResetDate', today);
 
                 }
 
