@@ -175,56 +175,106 @@
 
         }
 
-        /* CSS-drawn Tiger - 改良版 */
+        /* 🐯 コンパ版 CSS虎 - 可愛くて虎らしい！ */
         .tiger-box {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #ffd4a3 0%, #ffe8c8 50%, #fff5e6 100%);
-            border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+            width: 110px;
+            height: 110px;
+            background: linear-gradient(135deg, #ffb366 0%, #ffc989 50%, #ffe0b3 100%);
+            border-radius: 50%;
             position: relative;
             display: inline-block;
-            box-shadow: 0 8px 24px rgba(255, 180, 120, 0.3), inset 0 -4px 8px rgba(255, 200, 150, 0.3);
-            animation: float 5s ease-in-out infinite;
+            box-shadow: 
+                0 12px 30px rgba(255, 140, 0, 0.25),
+                inset 0 -8px 16px rgba(255, 180, 100, 0.2),
+                inset 0 4px 12px rgba(255, 255, 255, 0.4);
+            animation: float 4s ease-in-out infinite;
             cursor: pointer;
             transition: transform 0.2s ease;
-            overflow: visible;
         }
         
-        /* 丸い耳 */
+        /* 虎の耳（三角で虎らしく！） */
         .tiger-box::before,
         .tiger-box::after {
             content: "";
             position: absolute;
-            top: -18px;
-            width: 32px;
+            top: -16px;
+            width: 30px;
             height: 32px;
-            background: linear-gradient(135deg, #ffd4a3 0%, #ffe8c8 100%);
-            border-radius: 50% 50% 50% 0;
-            box-shadow: inset 0 -3px 6px rgba(255, 200, 150, 0.4), 0 2px 4px rgba(255, 180, 120, 0.2);
-            z-index: 1;
+            background: linear-gradient(135deg, #ffb366 0%, #ffc989 100%);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            box-shadow: 
+                inset 0 -6px 8px rgba(255, 180, 100, 0.3),
+                0 2px 8px rgba(255, 140, 0, 0.2);
         }
         .tiger-box::before {
-            left: 12px;
-            transform: rotate(-25deg);
+            left: 8px;
+            transform: rotate(-15deg);
         }
         .tiger-box::after {
-            right: 12px;
+            right: 8px;
+            transform: rotate(15deg);
+        }
+        
+        /* 額のW字縞模様（虎の証！） */
+        .tiger-box .forehead-stripes {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            z-index: 2;
+        }
+        
+        .tiger-box .forehead-stripes::before,
+        .tiger-box .forehead-stripes::after {
+            content: "";
+            position: absolute;
+            width: 22px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #cc7a3a 20%, #cc7a3a 80%, transparent);
+            border-radius: 2px;
+            opacity: 0.6;
+        }
+        
+        .tiger-box .forehead-stripes::before {
+            left: 0;
+            top: 0;
+            transform: rotate(-25deg);
+        }
+        
+        .tiger-box .forehead-stripes::after {
+            right: 0;
+            top: 0;
             transform: rotate(25deg);
         }
         
-        /* 淡い縞模様 */
-        .tiger-box .stripes {
+        /* 中央のW字（真ん中の線） */
+        .tiger-box .center-stripe {
             position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(90deg, transparent 35%, rgba(255, 180, 120, 0.15) 40%, rgba(255, 180, 120, 0.15) 45%, transparent 50%) 0 28px/100% 6px no-repeat,
-                linear-gradient(90deg, transparent 50%, rgba(255, 180, 120, 0.15) 52%, rgba(255, 180, 120, 0.15) 58%, transparent 60%) 0 42px/100% 6px no-repeat,
-                linear-gradient(90deg, transparent 40%, rgba(255, 180, 120, 0.12) 45%, rgba(255, 180, 120, 0.12) 55%, transparent 60%) 0 56px/100% 5px no-repeat;
-            pointer-events: none;
-            border-radius: inherit;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 12px;
+            background: linear-gradient(180deg, #cc7a3a, transparent);
+            border-radius: 2px;
+            opacity: 0.6;
         }
         
-        /* 顔のパーツ */
+        /* 体の縞模様（薄く） */
+        .tiger-box .body-stripes {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background:
+                radial-gradient(ellipse 40% 8% at 25% 50%, rgba(204, 122, 58, 0.15), transparent),
+                radial-gradient(ellipse 40% 8% at 75% 50%, rgba(204, 122, 58, 0.15), transparent),
+                radial-gradient(ellipse 50% 10% at 50% 70%, rgba(204, 122, 58, 0.12), transparent);
+            pointer-events: none;
+        }
+        
+        /* 顔パーツコンテナ */
         .tiger-box .face {
             position: absolute;
             inset: 0;
@@ -232,176 +282,204 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding-top: 8px;
+            padding-top: 12px;
         }
         
-        /* 目 */
+        /* 目（大きくてキラキラ！） */
         .tiger-box .eyes {
             display: flex;
-            gap: 20px;
-            margin-bottom: 4px;
+            gap: 24px;
+            margin-bottom: 6px;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
         
         .tiger-box .eye {
-            width: 18px;
-            height: 18px;
-            background: #2d2a26;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at 35% 35%, #1a1a1a, #000);
             border-radius: 50%;
             position: relative;
             box-shadow: 
-                0 0 0 3px rgba(255, 255, 255, 0.6),
-                0 0 0 6px rgba(255, 240, 200, 0.4),
-                0 2px 4px rgba(0, 0, 0, 0.2),
-                inset -2px -2px 4px rgba(255, 255, 255, 0.3);
+                0 0 0 4px rgba(255, 255, 255, 0.8),
+                0 0 0 7px rgba(255, 230, 200, 0.4),
+                0 3px 6px rgba(0, 0, 0, 0.25);
             transition: all 0.3s ease;
         }
         
-        /* キラキラ効果（目のハイライト） */
+        /* キラキラハイライト */
         .tiger-box .eye::before {
             content: "";
             position: absolute;
             top: 4px;
-            left: 5px;
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.9);
+            left: 6px;
+            width: 7px;
+            height: 7px;
+            background: radial-gradient(circle, #fff, rgba(255, 255, 255, 0.5));
             border-radius: 50%;
-            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
-            animation: sparkleEye 2s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+            animation: sparkle 2.5s ease-in-out infinite;
         }
         
-        @keyframes sparkleEye {
+        .tiger-box .eye::after {
+            content: "";
+            position: absolute;
+            bottom: 3px;
+            right: 4px;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+        }
+        
+        @keyframes sparkle {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(0.8); }
+            50% { opacity: 0.6; transform: scale(0.85); }
         }
         
         /* 鼻 */
         .tiger-box .nose {
-            width: 16px;
-            height: 12px;
-            background: #2d2a26;
-            border-radius: 50% 50% 60% 60% / 50% 50% 80% 80%;
-            margin: 2px auto 0;
+            width: 14px;
+            height: 11px;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border-radius: 50% 50% 70% 70% / 50% 50% 85% 85%;
+            margin: 0 auto 3px;
             position: relative;
-            z-index: 2;
+            z-index: 3;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 -1px 2px rgba(255, 255, 255, 0.2);
         }
         
         /* 口 */
         .tiger-box .mouth {
-            width: 32px;
-            height: 16px;
+            width: 30px;
+            height: 14px;
             border-bottom: 3px solid #2d2a26;
-            border-radius: 0 0 32px 32px;
-            margin: 4px auto 0;
-            opacity: 0.8;
+            border-radius: 0 0 30px 30px;
+            margin: 3px auto 0;
+            opacity: 0.85;
             transition: all 0.3s ease;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
         
         /* ひげ */
         .tiger-box .whiskers {
-            width: 70px;
-            height: 16px;
+            width: 80px;
+            height: 18px;
             position: relative;
-            margin: 6px auto 0;
-            z-index: 2;
+            margin: 8px auto 0;
+            z-index: 3;
         }
         
-        .tiger-box .whiskers::before,
-        .tiger-box .whiskers::after {
-            content: "";
+        .tiger-box .whisker {
             position: absolute;
-            top: 0;
-            width: 100%;
+            width: 26px;
             height: 2px;
-            border-top: 1.5px solid rgba(45, 42, 38, 0.4);
+            background: linear-gradient(90deg, rgba(45, 42, 38, 0.5), rgba(45, 42, 38, 0.3), transparent);
+            border-radius: 1px;
         }
         
-        .tiger-box .whiskers::before {
-            transform: translateY(4px);
-        }
+        .tiger-box .whisker:nth-child(1) { left: 0; top: 3px; transform: rotate(-12deg); }
+        .tiger-box .whisker:nth-child(2) { left: 0; top: 10px; transform: rotate(-8deg); }
+        .tiger-box .whisker:nth-child(3) { right: 0; top: 3px; transform: rotate(12deg) scaleX(-1); }
+        .tiger-box .whisker:nth-child(4) { right: 0; top: 10px; transform: rotate(8deg) scaleX(-1); }
         
-        .tiger-box .whiskers::after {
-            transform: translateY(10px);
-            opacity: 0.6;
-        }
-        
-        /* ピンクのチーク（常時表示） */
+        /* ピンクのほっぺ（常時表示で可愛く！） */
         .tiger-box .cheek {
             position: absolute;
-            top: 64px;
-            width: 16px;
-            height: 16px;
-            background: radial-gradient(circle, #ffb3c1 0%, #ff9bb0 100%);
+            top: 58px;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 40% 40%, #ffb3c1, #ff9bb0);
             border-radius: 50%;
-            opacity: 0.6;
-            box-shadow: 0 2px 4px rgba(255, 179, 193, 0.4);
+            opacity: 0.7;
+            box-shadow: 0 2px 6px rgba(255, 155, 176, 0.3);
+            transition: opacity 0.3s ease;
         }
         
-        .tiger-box .cheek.left {
-            left: 20px;
-        }
+        .tiger-box .cheek.left { left: 16px; }
+        .tiger-box .cheek.right { right: 16px; }
         
-        .tiger-box .cheek.right {
-            right: 20px;
-        }
+        /* 🎭 表情パターン */
         
-        /* 表情パターン */
-        /* デフォルト（mood-normal）：通常のニコニコ顔 */
+        /* normal - 通常のニコニコ */
         .tiger-box.mood-normal .mouth {
-            opacity: 0.8;
-            width: 32px;
+            opacity: 0.85;
         }
         
-        /* 達成時（mood-happy）：口を開けて笑顔、目がキラキラ */
+        /* happy - 習慣達成！大きな笑顔 */
         .tiger-box.mood-happy .mouth {
-            opacity: 1;
             width: 36px;
-            height: 20px;
-            border-bottom: 4px solid #2d2a26;
-            border-radius: 0 0 36px 36px;
+            height: 18px;
+            border-bottom-width: 4px;
+            opacity: 1;
         }
         
         .tiger-box.mood-happy .eye::before {
-            animation: sparkleEye 0.8s ease-in-out infinite;
+            animation: sparkle 0.8s ease-in-out infinite;
         }
         
-        /* レベルアップ（mood-star）：周りに星のオーラ、目がハート */
+        .tiger-box.mood-happy .cheek {
+            opacity: 0.85;
+        }
+        
+        /* love - ハート目でショップ購入 */
+        .tiger-box.mood-love .eye {
+            background: linear-gradient(135deg, #ff6b9d, #ff4d82);
+            box-shadow: 
+                0 0 0 4px rgba(255, 255, 255, 0.8),
+                0 0 12px rgba(255, 107, 157, 0.6);
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+        
+        .tiger-box.mood-love .eye::before {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+        }
+        
+        .tiger-box.mood-love .cheek {
+            opacity: 1;
+            animation: blush 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        
+        @keyframes blush {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; }
+        }
+        
+        /* star - レベルアップ！キラキラ */
         .tiger-box.mood-star {
             box-shadow: 
-                0 0 0 4px rgba(255, 220, 150, 0.5),
-                0 0 20px rgba(255, 200, 100, 0.6),
-                0 8px 24px rgba(255, 180, 120, 0.3);
-            animation: float 5s ease-in-out infinite, starGlow 2s ease-in-out infinite;
-        }
-        
-        .tiger-box.mood-star .eye {
-            background: #ff6b9d;
-            box-shadow: 
-                0 0 0 3px rgba(255, 255, 255, 0.6),
-                0 0 0 6px rgba(255, 200, 220, 0.4),
-                0 0 12px rgba(255, 107, 157, 0.6),
-                0 2px 4px rgba(0, 0, 0, 0.2);
+                0 0 0 5px rgba(255, 215, 0, 0.4),
+                0 0 25px rgba(255, 200, 100, 0.6),
+                0 12px 30px rgba(255, 140, 0, 0.3);
+            animation: float 4s ease-in-out infinite, starPulse 1.5s ease-in-out infinite;
         }
         
         .tiger-box.mood-star .eye::before {
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 0 8px rgba(255, 255, 255, 1);
+            animation: sparkle 0.5s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 1);
         }
         
-        @keyframes starGlow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
+        @keyframes starPulse {
+            0%, 100% { filter: brightness(1) saturate(1); }
+            50% { filter: brightness(1.15) saturate(1.2); }
         }
         
-        /* 夜遅い（mood-sleepy）：眠そうな目、Zzz表示 */
+        /* sleepy - 眠たい */
         .tiger-box.mood-sleepy .eye {
-            transform: scaleY(0.3);
-            border-radius: 50% 50% 0 0;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6), 0 2px 4px rgba(0, 0, 0, 0.2);
+            height: 6px;
+            border-radius: 50% 50% 50% 50% / 20% 20% 80% 80%;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6);
         }
         
         .tiger-box.mood-sleepy .eye::before {
@@ -410,238 +488,172 @@
         
         .tiger-box.mood-sleepy .mouth {
             opacity: 0.5;
+            width: 24px;
         }
         
+        .tiger-box.mood-sleepy .cheek {
+            opacity: 0.5;
+        }
+        
+        /* Zzz（sleepy用） */
         .tiger-box .zzz {
             position: absolute;
-            top: -40px;
-            right: -10px;
-            font-size: 14px;
+            top: -45px;
+            right: -15px;
+            font-size: 16px;
             color: #999;
             font-weight: bold;
             opacity: 0;
-            pointer-events: none;
-            z-index: 20;
+            z-index: 10;
+            font-family: 'Comic Sans MS', cursive;
         }
         
         .tiger-box.mood-sleepy .zzz {
-            opacity: 0.7;
-            animation: zzzFloat 2s ease-in-out infinite;
+            opacity: 0.75;
+            animation: zzz 2.5s ease-in-out infinite;
         }
         
-        @keyframes zzzFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
-            50% { transform: translateY(-8px) rotate(5deg); opacity: 1; }
+        @keyframes zzz {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            30% { transform: translateY(-10px) scale(1); opacity: 0.75; }
+            60% { transform: translateY(-20px) scale(1.1); opacity: 0.5; }
+            100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
         }
         
-        /* 全達成（mood-party）：紙吹雪エフェクト、キラキラ最大 */
+        /* party - 全達成！最高潮 */
         .tiger-box.mood-party {
-            animation: float 5s ease-in-out infinite, partyGlow 1.5s ease-in-out infinite;
+            animation: float 4s ease-in-out infinite, party 1.2s ease-in-out infinite;
             box-shadow: 
-                0 0 0 6px rgba(255, 220, 150, 0.6),
-                0 0 30px rgba(255, 200, 100, 0.8),
-                0 8px 24px rgba(255, 180, 120, 0.3);
+                0 0 0 8px rgba(255, 215, 0, 0.5),
+                0 0 40px rgba(255, 200, 100, 0.8),
+                0 12px 35px rgba(255, 140, 0, 0.4);
         }
         
         .tiger-box.mood-party .eye::before {
-            animation: sparkleEye 0.5s ease-in-out infinite;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 1);
+            animation: sparkle 0.4s ease-in-out infinite;
+            box-shadow: 0 0 18px rgba(255, 255, 255, 1);
         }
         
-        @keyframes partyGlow {
+        .tiger-box.mood-party .cheek {
+            opacity: 1;
+            animation: partyBlush 0.8s ease-in-out infinite;
+        }
+        
+        @keyframes party {
             0%, 100% { filter: brightness(1) hue-rotate(0deg); }
-            25% { filter: brightness(1.3) hue-rotate(10deg); }
-            50% { filter: brightness(1.2) hue-rotate(-10deg); }
-            75% { filter: brightness(1.3) hue-rotate(5deg); }
+            25% { filter: brightness(1.25) hue-rotate(15deg); }
+            50% { filter: brightness(1.15) hue-rotate(-10deg); }
+            75% { filter: brightness(1.3) hue-rotate(10deg); }
         }
         
-        /* アニメーション */
-        /* 習慣達成時：ぴょんぴょん跳ねる */
+        @keyframes partyBlush {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        
+        /* 🎬 アニメーション */
+        
+        /* 習慣達成：ぴょんぴょん跳ねる */
         .tiger-box.animate-bounce {
-            animation: bounce 0.6s ease;
+            animation: tigerbounce 0.7s ease;
         }
         
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            25% { transform: translateY(-20px) scale(1.05); }
-            50% { transform: translateY(-10px) scale(1.02); }
-            75% { transform: translateY(-15px) scale(1.03); }
+        @keyframes tigerbounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            20% { transform: translateY(-25px) rotate(-5deg) scale(1.05); }
+            40% { transform: translateY(-12px) rotate(2deg) scale(1.02); }
+            60% { transform: translateY(-18px) rotate(-2deg) scale(1.03); }
+            80% { transform: translateY(-8px) rotate(0deg) scale(1.01); }
         }
         
-        /* レベルアップ時：360度回転してキラキラ */
+        /* レベルアップ：くるっと回転 */
         .tiger-box.animate-spin {
-            animation: spinCelebrate 1s ease;
+            animation: tigerspin 1.2s ease;
         }
         
-        @keyframes spinCelebrate {
+        @keyframes tigerspin {
             0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.15); }
+            30% { transform: rotate(120deg) scale(1.15); }
+            60% { transform: rotate(240deg) scale(1.2); }
             100% { transform: rotate(360deg) scale(1); }
         }
         
-        /* タップ時：ちょっと縮んでまた戻る */
+        /* タップ時：気持ちいい反応 */
         .tiger-box:active {
-            transform: scale(0.92);
+            transform: scale(0.94);
         }
         
-        /* 装飾アイテム */
-        /* 王冠：頭の上にCSSで描画（大きく、金色） */
+        /* 🎩 装飾アイテム（絵文字ベースでシンプルに） */
+        
+        /* 王冠 */
         .tiger-box .crown {
             position: absolute;
-            top: -28px;
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 50px;
-            height: 30px;
-            z-index: 10;
+            width: 48px;
+            height: 32px;
+            z-index: 15;
         }
         
         .tiger-box .crown::before {
-            content: "";
+            content: "👑";
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 20px;
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-            clip-path: polygon(20% 100%, 30% 0%, 50% 40%, 70% 0%, 80% 100%);
-            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+            font-size: 32px;
+            filter: drop-shadow(0 3px 8px rgba(255, 215, 0, 0.5));
         }
         
-        .tiger-box .crown::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            border-radius: 0 0 4px 4px;
-        }
-        
-        /* サングラス：目の位置に重ねて表示 */
+        /* サングラス */
         .tiger-box .sunglasses {
             position: absolute;
-            top: 28px;
+            top: 32px;
             left: 50%;
             transform: translateX(-50%);
-            width: 70px;
-            height: 24px;
-            z-index: 5;
-        }
-        
-        .tiger-box .sunglasses::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 28px;
-            height: 24px;
-            background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
-            border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-            box-shadow: 
-                inset 0 2px 4px rgba(0, 0, 0, 0.5),
-                0 0 0 2px #333,
-                0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .tiger-box .sunglasses::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 28px;
-            height: 24px;
-            background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
-            border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-            box-shadow: 
-                inset 0 2px 4px rgba(0, 0, 0, 0.5),
-                0 0 0 2px #333,
-                0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .tiger-box .sunglasses-bridge {
-            position: absolute;
-            top: 38px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 2px;
-            background: #333;
-            border-radius: 1px;
-            z-index: 6;
-        }
-        
-        /* リボン：右耳の横 */
-        .tiger-box .ribbon {
-            position: absolute;
-            top: -12px;
-            right: 8px;
-            width: 20px;
-            height: 24px;
+            width: 68px;
+            height: 20px;
             z-index: 8;
         }
         
+        .tiger-box .sunglasses::before {
+            content: "🕶️";
+            position: absolute;
+            font-size: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        
+        /* リボン */
+        .tiger-box .ribbon {
+            position: absolute;
+            top: -14px;
+            right: 6px;
+            z-index: 12;
+        }
+        
         .tiger-box .ribbon::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 16px;
-            height: 20px;
-            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
-            clip-path: polygon(50% 0%, 100% 30%, 100% 100%, 0% 100%, 0% 30%);
-            box-shadow: 0 2px 6px rgba(255, 107, 157, 0.4);
+            content: "🎀";
+            font-size: 24px;
+            filter: drop-shadow(0 2px 6px rgba(255, 107, 157, 0.4));
         }
         
-        .tiger-box .ribbon::after {
-            content: "";
-            position: absolute;
-            top: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 8px;
-            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
-            border-radius: 0 0 6px 6px;
-        }
-        
-        /* 花冠：頭の周りにぐるっと */
+        /* 花冠 */
         .tiger-box .flower-crown {
             position: absolute;
-            top: -24px;
+            top: -22px;
             left: 50%;
             transform: translateX(-50%);
-            width: 140px;
-            height: 40px;
-            z-index: 7;
-        }
-        
-        .tiger-box .flower-crown::before,
-        .tiger-box .flower-crown::after {
-            content: "";
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: radial-gradient(circle, #ffb3d9 0%, #ff8fab 100%);
-            border-radius: 50% 50% 50% 0;
-            box-shadow: 0 2px 4px rgba(255, 179, 217, 0.4);
+            width: 130px;
+            z-index: 11;
         }
         
         .tiger-box .flower-crown::before {
-            top: 12px;
-            left: 20px;
-            transform: rotate(-20deg);
+            content: "🌸🌸🌸";
+            position: absolute;
+            font-size: 18px;
+            letter-spacing: 8px;
+            filter: drop-shadow(0 2px 6px rgba(255, 179, 217, 0.4));
         }
-        
-        .tiger-box .flower-crown::after {
-            top: 12px;
-            right: 20px;
-            transform: rotate(20deg);
-        }
-        
-        /* 紙吹雪エフェクト（mood-party用）はJavaScriptで動的に追加 */
         
         /* 星のオーラ（mood-star用） */
         .tiger-box.mood-star .star-aura {
@@ -649,20 +661,19 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 160px;
-            height: 160px;
-            pointer-events: none;
+            width: 180px;
+            height: 180px;
             z-index: -1;
+            animation: rotate 4s linear infinite;
         }
         
         .tiger-box.mood-star .star-aura::before,
         .tiger-box.mood-star .star-aura::after {
-            content: "★";
+            content: "⭐";
             position: absolute;
-            font-size: 20px;
-            color: #ffd700;
-            opacity: 0.6;
-            animation: starRotate 3s linear infinite;
+            font-size: 22px;
+            opacity: 0.7;
+            animation: startwinkle 2s ease-in-out infinite;
         }
         
         .tiger-box.mood-star .star-aura::before {
@@ -675,11 +686,17 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
+            animation-delay: 1s;
         }
         
-        @keyframes starRotate {
-            0% { transform: translateX(-50%) rotate(0deg); }
-            100% { transform: translateX(-50%) rotate(360deg); }
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes startwinkle {
+            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
         }
         
         /* レスポンシブ対応 */
@@ -690,14 +707,8 @@
             }
             
             .tiger-box .eye {
-                width: 16px;
-                height: 16px;
-            }
-            
-            .tiger-box .crown {
-                width: 42px;
-                height: 26px;
-                top: -24px;
+                width: 18px;
+                height: 18px;
             }
         }
 
@@ -1827,6 +1838,13 @@
 
                     setTigerMessage(`✨ ${item.name}を手に入れた！`);
                     setTigerFace('😍');
+                    
+                    // 購入時のmood-love設定
+                    setTigerMood('love');
+                    setTigerAnimation('animate-bounce');
+                    setTimeout(() => {
+                        setTigerAnimation('');
+                    }, 600);
 
                     createSparkles();
 
@@ -1836,7 +1854,11 @@
 
                 }
 
-                setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
+                setTimeout(() => { 
+                    setTigerMessage(getBaseMessageByTime()); 
+                    setTigerFace(getBaseFaceByTime());
+                    setTigerMood(getBaseMoodByTime());
+                }, 3000);
 
             };
 
@@ -1926,7 +1948,10 @@
 
                         <div className={`tiger-box mood-${tigerMood} ${tigerAnimation}`}>
 
-                            <div className="stripes"></div>
+                            {/* 虎の特徴 */}
+                            <div className="forehead-stripes"></div>
+                            <div className="center-stripe"></div>
+                            <div className="body-stripes"></div>
                             
                             <div className="face">
                                 <div className="eyes">
@@ -1935,7 +1960,12 @@
                                 </div>
                                 <div className="nose"></div>
                                 <div className="mouth"></div>
-                                <div className="whiskers"></div>
+                                <div className="whiskers">
+                                    <div className="whisker"></div>
+                                    <div className="whisker"></div>
+                                    <div className="whisker"></div>
+                                    <div className="whisker"></div>
+                                </div>
                             </div>
                             
                             <div className="cheek left"></div>
@@ -1946,12 +1976,7 @@
                             
                             {/* 装飾アイテム */}
                             {ownedItems.includes(1) && <div className="crown"></div>}
-                            {ownedItems.includes(2) && (
-                                <>
-                                    <div className="sunglasses"></div>
-                                    <div className="sunglasses-bridge"></div>
-                                </>
-                            )}
+                            {ownedItems.includes(2) && <div className="sunglasses"></div>}
                             {ownedItems.includes(3) && <div className="ribbon"></div>}
                             {ownedItems.includes(4) && <div className="flower-crown"></div>}
                             
@@ -2229,5 +2254,3 @@
 </body>
 
 </html>
-
-
