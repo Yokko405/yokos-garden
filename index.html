@@ -993,7 +993,7 @@
 
                     // 日付が変わっていたら習慣の完了状態をリセット
                     if (lastResetDate !== today) {
-                        // リセット前に昨日の完了状態をチェック（連続日数の更新用）
+                        // リセット前に昨日の完了状態をチェック
                         const yesterdayCompleted = data.habits && data.habits.some(h => h.completed);
                         
                         // 習慣のcompletedをfalseにリセット
@@ -1003,15 +1003,20 @@
                         }));
                         setHabits(resetHabits);
                         
-                        // 連続日数の更新（昨日習慣を完了していたら連続、そうでなければ0に）
-                        if (yesterdayCompleted) {
-                            setStreak((data.streak || 0) + 1);
-                        } else {
+                        // 連続日数の更新（昨日習慣を完了していなかった場合は0にリセット）
+                        // 昨日完了していた場合は、今日習慣を完了した時点で連続日数が+1される
+                        if (!yesterdayCompleted) {
                             setStreak(0);
+                        } else {
+                            // 昨日完了していた場合は、既存の連続日数を保持
+                            // 今日習慣を完了した時点で+1される
+                            setStreak(data.streak || 0);
                         }
                         
                         // 今日の日付を保存
                         localStorage.setItem('yg_lastResetDate', today);
+                        // 連続日数更新日もリセット
+                        localStorage.removeItem('yg_lastStreakUpdateDate');
                     } else {
                         setHabits(data.habits || initialHabits);
                         setStreak(data.streak || 0);
@@ -1180,6 +1185,18 @@
 
                 setTotalCompleted(totalCompleted + 1);
 
+                // 連続日数の更新（今日初めて習慣を完了したとき）
+                const today = new Date().toDateString();
+                const lastStreakUpdateDate = localStorage.getItem('yg_lastStreakUpdateDate');
+                
+                let newStreak = streak;
+                // 今日初めて習慣を完了した場合、連続日数を+1
+                if (lastStreakUpdateDate !== today) {
+                    newStreak = streak + 1;
+                    setStreak(newStreak);
+                    localStorage.setItem('yg_lastStreakUpdateDate', today);
+                }
+
                 // 虎のリアクション
 
                 setCelebrating(true);
@@ -1205,9 +1222,8 @@
 
                 setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
 
-                // バッジチェック
-
-                checkBadges(streak + 1, totalCompleted + 1);
+                // バッジチェック（更新後の連続日数を使用）
+                checkBadges(newStreak, totalCompleted + 1);
 
             };
 
