@@ -1306,14 +1306,19 @@
                     return;
                 }
                 
+                // 現在の連続日数を保存（手動リセットでは連続日数を保持）
+                const currentStreak = streak;
+                
                 const resetHabits = habits.map(h => ({
                     ...h,
                     completed: false
                 }));
                 setHabits(resetHabits);
                 
+                // 連続日数を明示的に保持（変更しない）
+                setStreak(currentStreak);
+                
                 // 今日の日付を更新（自動リセットを防ぐため）
-                // 連続日数は変更しない（手動リセットでは連続日数を保持）
                 const today = new Date().toDateString();
                 localStorage.setItem('yg_lastResetDate', today);
                 
