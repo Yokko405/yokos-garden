@@ -1302,7 +1302,7 @@
 
             // 手動リセット（習慣の完了状態をリセット）
             const resetDailyHabits = () => {
-                if (!confirm('今日の習慣をリセットしますか？\n（完了状態のみリセットされ、レベルやコインは保持されます）')) {
+                if (!confirm('今日の習慣をリセットしますか？\n（完了状態のみリセットされ、レベルやコイン、連続日数は保持されます）')) {
                     return;
                 }
                 
@@ -1313,6 +1313,7 @@
                 setHabits(resetHabits);
                 
                 // 今日の日付を更新（自動リセットを防ぐため）
+                // 連続日数は変更しない（手動リセットでは連続日数を保持）
                 const today = new Date().toDateString();
                 localStorage.setItem('yg_lastResetDate', today);
                 
