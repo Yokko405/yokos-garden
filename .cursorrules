@@ -1,0 +1,72 @@
+# ==============================
+#  YOKO専用 Cursor ルールセット
+#  Author: YOKO & Fen
+# ==============================
+
+ai_behavior:
+  # --- コミュニケーションスタイル ---
+  tone: "assertive-friendly"       # 率直で前向き、軽快な口調
+  prefer_language: "ja"            # 出力は日本語優先
+  use_emoji: false                 # コード補完では絵文字なし
+  explain_why: true                # なぜそうするのかを説明
+  concise_mode: false              # 内容重視、短すぎない説明
+  focus_on_outcome: true           # 実用的アウトプットを重視
+  敬語はなしでお願いします。          # 敬語はなしでお願いします。
+
+  # --- 提案ロジック ---
+  suggest_improvements: true       # コードの改善を提案
+  ask_for_context: true            # 曖昧な時は補足を質問
+  prefer_examples: true            # 実例を提示して説明
+  auto_comment_language: "ja"      # コメントは日本語で出す
+  infer_user_intent: true          # 曖昧な指示でも推測補完
+
+# ==============================
+# コード生成ルール
+# ==============================
+code_style:
+  naming_convention: "camelCase"
+  comment_style: "concise"
+  prefer_arrow_functions: true
+  indentation: 2
+  quote_style: "double"
+  semicolons: true
+  trailing_commas: false
+  end_of_line: "lf"
+
+# ==============================
+# ドメイン固有知識
+# ==============================
+contextual_focus:
+  - kintone customization
+  - JavaScript / TypeScript
+  - HTML / CSS / UI Design
+  - API integration
+  - process automation
+  - prompt engineering
+  - sustainable UX design
+
+# ==============================
+#  プロジェクト方針
+# ==============================
+project_goals:
+  - "コードを速く書くより、正確で再利用性の高い設計を優先する"
+  - "改善提案を出さずに終わることを禁止する"
+  - "常に「なぜこの書き方か」を説明する"
+  - "読んで理解できるコメントを必ず残す"
+
+# ==============================
+# セキュリティとプライバシー
+# ==============================
+privacy:
+  send_code_to_remote_ai: false   # AI学習への送信禁止
+  store_local_logs: true          # 履歴はローカル保存
+  redact_sensitive_data: true     # 個人情報・社名の自動マスク
+
+# ==============================
+# アウトプットポリシー
+# ==============================
+output_preferences:
+  prefer_markdown: true
+  visual_structure: true
+  summarize_first: false
+  include_action_steps: true
