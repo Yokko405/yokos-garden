@@ -1327,20 +1327,19 @@
 
                     <div className="header">
 
-                        <div style={{ position: 'relative' }}>
-                            <h1>🐯 YOKO's Garden</h1>
-                            <div style={{ position: 'absolute', right: '0', top: '0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                <button className="music-toggle" onClick={toggleMusic} style={{ position: 'static' }}>
-                                    {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
-                                </button>
-                                <button 
-                                    className="music-toggle" 
-                                    onClick={resetDailyHabits}
-                                    style={{ position: 'static', fontSize: '11px', padding: '6px 10px' }}
-                                >
-                                    🔄 リセット
-                                </button>
-                            </div>
+                        <h1 style={{ marginRight: '140px' }}>🐯 YOKO's Garden</h1>
+
+                        <div style={{ position: 'absolute', right: '12px', top: '20px', display: 'flex', flexDirection: 'column', gap: '6px', zIndex: 10 }}>
+                            <button className="music-toggle" onClick={toggleMusic} style={{ position: 'static' }}>
+                                {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
+                            </button>
+                            <button 
+                                className="music-toggle" 
+                                onClick={resetDailyHabits}
+                                style={{ position: 'static', fontSize: '11px', padding: '6px 10px' }}
+                            >
+                                🔄 リセット
+                            </button>
                         </div>
 
                         <div className="stats-container">
