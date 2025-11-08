@@ -1329,14 +1329,14 @@
 
                         <h1>🐯 YOKO's Garden</h1>
 
-                        <div style={{ position: 'absolute', right: '12px', top: '12px', display: 'flex', gap: '8px' }}>
-                            <button className="music-toggle" onClick={toggleMusic}>
+                        <div style={{ position: 'absolute', right: '12px', top: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <button className="music-toggle" onClick={toggleMusic} style={{ position: 'static' }}>
                                 {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
                             </button>
                             <button 
                                 className="music-toggle" 
                                 onClick={resetDailyHabits}
-                                style={{ fontSize: '12px', padding: '8px 10px' }}
+                                style={{ position: 'static', fontSize: '11px', padding: '6px 10px' }}
                             >
                                 🔄 リセット
                             </button>
