@@ -2,50 +2,57 @@
   <defs>
     <linearGradient id="tigerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#ff9a56;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#ff6b6b;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ff9a56;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff8c42;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:1" />
     </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
   
-  <!-- 背景の円 -->
-  <circle cx="50" cy="50" r="48" fill="#fff5f5" stroke="#ff9a56" stroke-width="2"/>
+  <!-- 白い背景の円（細いオレンジの縁取り付き） -->
+  <circle cx="50" cy="50" r="48" fill="#ffffff" stroke="#ff9a56" stroke-width="1.5"/>
   
-  <!-- 虎の顔の輪郭 -->
-  <circle cx="50" cy="50" r="35" fill="url(#tigerGradient)" filter="url(#glow)"/>
+  <!-- トラの顔の輪郭（オレンジ色） -->
+  <circle cx="50" cy="50" r="38" fill="url(#tigerGradient)"/>
   
   <!-- 左耳 -->
-  <path d="M30 25 L25 15 L35 20 Z" fill="#ff6b6b"/>
-  <path d="M28 22 L25 15 L32 18 Z" fill="#fff5f5"/>
+  <circle cx="28" cy="28" r="8" fill="url(#tigerGradient)"/>
+  <circle cx="28" cy="28" r="5" fill="#f5e6d3"/>
+  <!-- 左耳の縞 -->
+  <path d="M25 25 Q28 22 31 25" stroke="#1e1e2e" stroke-width="1" fill="none"/>
   
   <!-- 右耳 -->
-  <path d="M70 25 L75 15 L65 20 Z" fill="#ff6b6b"/>
-  <path d="M72 22 L75 15 L68 18 Z" fill="#fff5f5"/>
+  <circle cx="72" cy="28" r="8" fill="url(#tigerGradient)"/>
+  <circle cx="72" cy="28" r="5" fill="#f5e6d3"/>
+  <!-- 右耳の縞 -->
+  <path d="M75 25 Q72 22 69 25" stroke="#1e1e2e" stroke-width="1" fill="none"/>
+  
+  <!-- 額の縞模様（3本） -->
+  <line x1="42" y1="35" x2="42" y2="40" stroke="#1e1e2e" stroke-width="2" stroke-linecap="round"/>
+  <line x1="50" y1="33" x2="50" y2="38" stroke="#1e1e2e" stroke-width="2" stroke-linecap="round"/>
+  <line x1="58" y1="35" x2="58" y2="40" stroke="#1e1e2e" stroke-width="2" stroke-linecap="round"/>
   
   <!-- 左目 -->
-  <ellipse cx="42" cy="45" rx="4" ry="6" fill="#1e1e2e"/>
-  <ellipse cx="43" cy="44" rx="1.5" ry="2" fill="#fff5f5"/>
+  <ellipse cx="42" cy="48" rx="5" ry="7" fill="#1e1e2e"/>
+  <ellipse cx="43" cy="46" rx="2" ry="3" fill="#ffffff"/>
   
   <!-- 右目 -->
-  <ellipse cx="58" cy="45" rx="4" ry="6" fill="#1e1e2e"/>
-  <ellipse cx="57" cy="44" rx="1.5" ry="2" fill="#fff5f5"/>
+  <ellipse cx="58" cy="48" rx="5" ry="7" fill="#1e1e2e"/>
+  <ellipse cx="57" cy="46" rx="2" ry="3" fill="#ffffff"/>
   
-  <!-- 鼻 -->
-  <ellipse cx="50" cy="55" rx="3" ry="2" fill="#ff6b6b"/>
+  <!-- 口元の明るい部分（ベージュ/クリーム色） -->
+  <ellipse cx="50" cy="62" rx="12" ry="8" fill="#f5e6d3"/>
   
-  <!-- 口 -->
-  <path d="M50 57 Q45 62 40 60" stroke="#1e1e2e" stroke-width="1.5" fill="none"/>
-  <path d="M50 57 Q55 62 60 60" stroke="#1e1e2e" stroke-width="1.5" fill="none"/>
+  <!-- 鼻（小さな黒い逆三角形） -->
+  <path d="M50 58 L47 62 L53 62 Z" fill="#1e1e2e"/>
   
-  <!-- 虎の縞模様 -->
-  <path d="M35 50 L30 60 L40 65 Z" fill="#ff6b6b" opacity="0.6"/>
-  <path d="M65 50 L70 60 L60 65 Z" fill="#ff6b6b" opacity="0.6"/>
-  <path d="M45 65 L50 70 L55 65 Z" fill="#ff6b6b" opacity="0.6"/>
+  <!-- 口（穏やかな笑顔） -->
+  <path d="M50 62 Q45 66 40 64" stroke="#1e1e2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M50 62 Q55 66 60 64" stroke="#1e1e2e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- 左頬の縞（2本） -->
+  <line x1="30" y1="55" x2="35" y2="55" stroke="#1e1e2e" stroke-width="2" stroke-linecap="round"/>
+  <line x1="28" y1="60" x2="33" y2="60" stroke="#1e1e2e" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- 右頬の縞（2本） -->
+  <line x1="65" y1="55" x2="70" y2="55" stroke="#1e1e2e" stroke-width="2" stroke-linecap="round"/>
+  <line x1="67" y1="60" x2="72" y2="60" stroke="#1e1e2e" stroke-width="2" stroke-linecap="round"/>
 </svg>
-
