@@ -1,0 +1,31 @@
+{
+  "name": "YOKO's Garden 🐯",
+  "short_name": "YOKO's Garden",
+  "description": "Tiger-themed habit tracker that runs 100% in the browser",
+  "start_url": "/yokos-garden/",
+  "display": "standalone",
+  "background_color": "#fff5f5",
+  "theme_color": "#ff9a56",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

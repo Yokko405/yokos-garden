@@ -1,0 +1,23 @@
+{
+  "name": "yokos-garden",
+  "version": "1.0.0",
+  "description": "Tiger-themed habit tracker that runs 100% in the browser. Cute, fast, and private.",
+  "main": "generate-icons.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yokko405/yokos-garden.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yokko405/yokos-garden/issues"
+  },
+  "homepage": "https://github.com/Yokko405/yokos-garden#readme",
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}

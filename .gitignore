@@ -19,3 +19,4 @@ build/
 .next/
 .vite/
 .cache/
+node_modules/
