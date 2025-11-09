@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="tigerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9a56;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff8c42;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff5f5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffe4e1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffd4c8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景グラデーション -->
+  <rect width="1280" height="640" fill="url(#bgGradient)"/>
+  
+  <!-- トラのアイコン（中央に配置、大きく表示） -->
+  <g transform="translate(640, 320)">
+    <!-- 白い背景の円（細いオレンジの縁取り付き） -->
+    <circle cx="0" cy="0" r="200" fill="#ffffff" stroke="#ff9a56" stroke-width="4"/>
+    
+    <!-- トラの顔の輪郭（オレンジ色） -->
+    <circle cx="0" cy="0" r="160" fill="url(#tigerGradient)"/>
+    
+    <!-- 左耳 -->
+    <circle cx="-120" cy="-120" r="35" fill="url(#tigerGradient)"/>
+    <circle cx="-120" cy="-120" r="22" fill="#f5e6d3"/>
+    <!-- 左耳の縞 -->
+    <path d="M-135 -135 Q-120 -145 -105 -135" stroke="#1e1e2e" stroke-width="4" fill="none"/>
+    
+    <!-- 右耳 -->
+    <circle cx="120" cy="-120" r="35" fill="url(#tigerGradient)"/>
+    <circle cx="120" cy="-120" r="22" fill="#f5e6d3"/>
+    <!-- 右耳の縞 -->
+    <path d="M135 -135 Q120 -145 105 -135" stroke="#1e1e2e" stroke-width="4" fill="none"/>
+    
+    <!-- 額の縞模様（3本） -->
+    <line x1="-50" y1="-80" x2="-50" y2="-50" stroke="#1e1e2e" stroke-width="8" stroke-linecap="round"/>
+    <line x1="0" y1="-90" x2="0" y2="-60" stroke="#1e1e2e" stroke-width="8" stroke-linecap="round"/>
+    <line x1="50" y1="-80" x2="50" y2="-50" stroke="#1e1e2e" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- 左目 -->
+    <ellipse cx="-50" cy="-10" rx="22" ry="30" fill="#1e1e2e"/>
+    <ellipse cx="-42" cy="-20" rx="9" ry="13" fill="#ffffff"/>
+    
+    <!-- 右目 -->
+    <ellipse cx="50" cy="-10" rx="22" ry="30" fill="#1e1e2e"/>
+    <ellipse cx="42" cy="-20" rx="9" ry="13" fill="#ffffff"/>
+    
+    <!-- 口元の明るい部分（ベージュ/クリーム色） -->
+    <ellipse cx="0" cy="50" rx="50" ry="35" fill="#f5e6d3"/>
+    
+    <!-- 鼻（小さな黒い逆三角形） -->
+    <path d="M0 30 L-12 50 L12 50 Z" fill="#1e1e2e"/>
+    
+    <!-- 口（穏やかな笑顔） -->
+    <path d="M0 50 Q-25 70 -50 60" stroke="#1e1e2e" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M0 50 Q25 70 50 60" stroke="#1e1e2e" stroke-width="6" fill="none" stroke-linecap="round"/>
+    
+    <!-- 左頬の縞（2本） -->
+    <line x1="-130" y1="20" x2="-100" y2="20" stroke="#1e1e2e" stroke-width="8" stroke-linecap="round"/>
+    <line x1="-140" y1="50" x2="-110" y2="50" stroke="#1e1e2e" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- 右頬の縞（2本） -->
+    <line x1="100" y1="20" x2="130" y2="20" stroke="#1e1e2e" stroke-width="8" stroke-linecap="round"/>
+    <line x1="110" y1="50" x2="140" y2="50" stroke="#1e1e2e" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>
+
