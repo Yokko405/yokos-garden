@@ -3,6 +3,7 @@
   "short_name": "YOKO's Garden",
   "description": "Tiger-themed habit tracker that runs 100% in the browser",
   "start_url": "/yokos-garden/",
+  "scope": "/yokos-garden/",
   "display": "standalone",
   "background_color": "#fff5f5",
   "theme_color": "#ff9a56",
