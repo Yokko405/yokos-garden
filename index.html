@@ -1492,16 +1492,13 @@
             const [newPoints, setNewPoints] = useState(10);
             const [newFreq, setNewFreq] = useState('毎日');
 
-            // ローカルストレージから読み込み
-
-            useEffect(() => {
-
+            // 日付チェックとリセット処理を関数として抽出（PWA対応）
+            const checkAndResetDailyHabits = () => {
                 const saved = localStorage.getItem('yokosGarden');
                 const today = new Date().toDateString(); // 日付文字列（例: "Mon Nov 07 2024"）
                 const lastResetDate = localStorage.getItem('yg_lastResetDate');
 
                 if (saved) {
-
                     const data = JSON.parse(saved);
 
                     // 日付が変わっていたら習慣の完了状態をリセット
@@ -1530,36 +1527,65 @@
                         localStorage.setItem('yg_lastResetDate', today);
                         // 連続日数更新日もリセット
                         localStorage.removeItem('yg_lastStreakUpdateDate');
+                        
+                        // データを保存
+                        localStorage.setItem('yokosGarden', JSON.stringify({
+                            ...data,
+                            habits: resetHabits,
+                            streak: yesterdayCompleted ? (data.streak || 0) : 0
+                        }));
                     } else {
                         setHabits(data.habits || initialHabits);
                         setStreak(data.streak || 0);
                     }
 
                     setLevel(data.level || 1);
-
                     setExp(data.exp || 0);
-
                     setCoins(data.coins || 0);
-
                     setTotalCompleted(data.totalCompleted || 0);
-
                     setUnlockedBadges(data.unlockedBadges || []);
-
                     setOwnedItems(data.ownedItems || []);
-
                 } else {
-
                     setHabits(initialHabits);
                     localStorage.setItem('yg_lastResetDate', today);
-
                 }
+            };
+
+            // ローカルストレージから読み込み（初回ロード時）
+            useEffect(() => {
+                checkAndResetDailyHabits();
 
                 const pref = localStorage.getItem('yg_music');
                 if (pref === 'on') setMusicEnabled(true);
                 
                 // 初期mood設定
                 setTigerMood(getBaseMoodByTime());
+            }, []);
 
+            // ページが表示されたとき（PWA対応：visibilitychange）
+            useEffect(() => {
+                const handleVisibilityChange = () => {
+                    if (document.visibilityState === 'visible') {
+                        checkAndResetDailyHabits();
+                    }
+                };
+
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+                window.addEventListener('focus', checkAndResetDailyHabits);
+
+                return () => {
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                    window.removeEventListener('focus', checkAndResetDailyHabits);
+                };
+            }, []);
+
+            // 定期的にチェック（1分ごと、オプション）
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    checkAndResetDailyHabits();
+                }, 60000); // 1分ごと
+
+                return () => clearInterval(interval);
             }, []);
 
             // ローカルストレージに保存
