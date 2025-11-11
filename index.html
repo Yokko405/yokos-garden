@@ -1427,7 +1427,7 @@
 
         const initialHabits = [
 
-            { id: 1, name: '朝ヨガ', icon: '🧘‍♀️', points: 10, frequency: '毎日', completed: false },
+            { id: 1, name: 'ヨガ', icon: '🧘‍♀️', points: 10, frequency: '毎日', completed: false },
 
             { id: 2, name: '筋トレ', icon: '💪', points: 15, frequency: '週3回', completed: false },
 
@@ -1668,11 +1668,23 @@
             };
 
             // 習慣削除
-            const deleteHabit = (habitId) => {
+            const deleteHabit = (habitId, e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
                 const target = habits.find(h => h.id === habitId);
                 if (!target) return;
                 if (!confirm(`「${target.name}」を削除しますか？`)) return;
-                setHabits(habits.filter(h => h.id !== habitId));
+                const updatedHabits = habits.filter(h => h.id !== habitId);
+                setHabits(updatedHabits);
+                // 即座にlocalStorageに保存
+                const saved = localStorage.getItem('yokosGarden');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    data.habits = updatedHabits;
+                    localStorage.setItem('yokosGarden', JSON.stringify(data));
+                }
             };
 
             // 習慣完了
@@ -2199,7 +2211,7 @@
                                         </button>
 
                                         <button
-                                            onClick={() => deleteHabit(habit.id)}
+                                            onClick={(e) => deleteHabit(habit.id, e)}
                                             className="check-button"
                                             style={{ background: '#ddd', color: '#666' }}
                                         >
