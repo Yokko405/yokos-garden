@@ -1497,30 +1497,59 @@
             const [newPoints, setNewPoints] = useState(10);
             const [newFreq, setNewFreq] = useState('毎日');
 
+            // 午前1時基準で日付を計算する関数
+            const getDateKey = (date) => {
+                const dateKey = new Date(date);
+                if (dateKey.getHours() < 1) {
+                    // 午前1時より前なら前日扱い
+                    dateKey.setDate(dateKey.getDate() - 1);
+                }
+                return dateKey.toDateString();
+            };
+
             // 日付チェックとリセット処理を関数として抽出（PWA対応）
             const checkAndResetDailyHabits = () => {
                 const saved = localStorage.getItem('yokosGarden');
-                const today = new Date().toDateString(); // 日付文字列（例: "Mon Nov 07 2024"）
+                const now = new Date();
+                const today = getDateKey(now); // 午前1時基準の日付文字列
                 const lastResetDate = localStorage.getItem('yg_lastResetDate');
 
                 if (saved) {
                     const data = JSON.parse(saved);
 
+                    // 48時間チェック：最後の習慣完了から48時間以上経過していたら連続日数をリセット
+                    const lastHabitTimestamp = localStorage.getItem('yg_lastHabitTimestamp');
+                    let shouldResetStreak = false;
+
+                    if (lastHabitTimestamp && (data.streak || 0) > 0) {
+                        const lastHabit = new Date(lastHabitTimestamp);
+                        const timeDiff = now.getTime() - lastHabit.getTime();
+                        const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+                        if (hoursDiff > 48) {
+                            // 48時間以上経過 → 連続日数リセット
+                            shouldResetStreak = true;
+                        }
+                    }
+
                     // 日付が変わっていたら習慣の完了状態をリセット
                     if (lastResetDate !== today) {
                         // リセット前に昨日の完了状態をチェック
                         const yesterdayCompleted = data.habits && data.habits.some(h => h.completed);
-                        
+
                         // 習慣のcompletedをfalseにリセット
                         const resetHabits = (data.habits || initialHabits).map(h => ({
                             ...h,
                             completed: false
                         }));
                         setHabits(resetHabits);
-                        
-                        // 連続日数の更新（昨日習慣を完了していなかった場合は0にリセット）
-                        // 昨日完了していた場合は、今日習慣を完了した時点で連続日数が+1される
-                        if (!yesterdayCompleted) {
+
+                        // 連続日数の更新
+                        if (shouldResetStreak) {
+                            // 48時間以上経過していたら0にリセット
+                            setStreak(0);
+                        } else if (!yesterdayCompleted) {
+                            // 昨日習慣を完了していなかった場合は0にリセット
                             setStreak(0);
                         } else {
                             // 昨日完了していた場合は、既存の連続日数を保持
@@ -1532,16 +1561,26 @@
                         localStorage.setItem('yg_lastResetDate', today);
                         // 連続日数更新日もリセット
                         localStorage.removeItem('yg_lastStreakUpdateDate');
-                        
+
                         // データを保存
+                        const newStreakValue = shouldResetStreak ? 0 : (yesterdayCompleted ? (data.streak || 0) : 0);
                         localStorage.setItem('yokosGarden', JSON.stringify({
                             ...data,
                             habits: resetHabits,
-                            streak: yesterdayCompleted ? (data.streak || 0) : 0
+                            streak: newStreakValue
                         }));
                     } else {
                         setHabits(data.habits || initialHabits);
-                        setStreak(data.streak || 0);
+                        // 日付が変わっていなくても48時間チェックでリセットする場合がある
+                        if (shouldResetStreak) {
+                            setStreak(0);
+                            localStorage.setItem('yokosGarden', JSON.stringify({
+                                ...data,
+                                streak: 0
+                            }));
+                        } else {
+                            setStreak(data.streak || 0);
+                        }
                     }
 
                     setLevel(data.level || 1);
@@ -1625,6 +1664,24 @@
             useEffect(() => {
                 localStorage.setItem('yg_music', musicEnabled ? 'on' : 'off');
             }, [musicEnabled]);
+
+            // バッジの自動チェック（連続日数と累計完了数が変更されたとき）
+            useEffect(() => {
+                if (streak > 0 || totalCompleted > 0) {
+                    const newBadges = [];
+                    badges.forEach(badge => {
+                        if (!unlockedBadges.includes(badge.id)) {
+                            if ((badge.id <= 3 && streak >= badge.requirement) ||
+                                (badge.id === 4 && totalCompleted >= badge.requirement)) {
+                                newBadges.push(badge.id);
+                            }
+                        }
+                    });
+                    if (newBadges.length > 0) {
+                        setUnlockedBadges(prev => [...prev, ...newBadges]);
+                    }
+                }
+            }, [streak, totalCompleted, unlockedBadges]);
 
             const expForNextLevel = level * 50;
 
@@ -1757,15 +1814,18 @@
                 setTotalCompleted(totalCompleted + 1);
 
                 // 連続日数の更新（今日初めて習慣を完了したとき）
-                const today = new Date().toDateString();
+                const now = new Date();
+                const today = getDateKey(now); // 午前1時基準
                 const lastStreakUpdateDate = localStorage.getItem('yg_lastStreakUpdateDate');
-                
+
                 let newStreak = streak;
                 // 今日初めて習慣を完了した場合、連続日数を+1
                 if (lastStreakUpdateDate !== today) {
                     newStreak = streak + 1;
                     setStreak(newStreak);
                     localStorage.setItem('yg_lastStreakUpdateDate', today);
+                    // 習慣完了タイムスタンプを保存（48時間チェック用）
+                    localStorage.setItem('yg_lastHabitTimestamp', now.toISOString());
                 }
 
                 // 虎のリアクション
@@ -1855,6 +1915,8 @@
 
             const checkBadges = (currentStreak, currentTotal) => {
 
+                const newBadges = [];
+
                 badges.forEach(badge => {
 
                     if (!unlockedBadges.includes(badge.id)) {
@@ -1863,7 +1925,7 @@
 
                             (badge.id === 4 && currentTotal >= badge.requirement)) {
 
-                            setUnlockedBadges([...unlockedBadges, badge.id]);
+                            newBadges.push(badge.id);
 
                             setTigerMessage(`🎉 バッジ獲得！「${badge.name}」！`);
 
@@ -1872,6 +1934,12 @@
                     }
 
                 });
+
+                if (newBadges.length > 0) {
+
+                    setUnlockedBadges(prev => [...prev, ...newBadges]);
+
+                }
 
             };
 
@@ -1936,11 +2004,11 @@
                 
                 // 連続日数を明示的に保持（変更しない）
                 setStreak(currentStreak);
-                
+
                 // 今日の日付を更新（自動リセットを防ぐため）
-                const today = new Date().toDateString();
+                const today = getDateKey(new Date()); // 午前1時基準
                 localStorage.setItem('yg_lastResetDate', today);
-                
+
                 setTigerMessage('リセット完了！今日も頑張ろう！🐯');
                 setTigerFace('😺');
                 setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
