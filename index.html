@@ -1626,6 +1626,24 @@
                 localStorage.setItem('yg_music', musicEnabled ? 'on' : 'off');
             }, [musicEnabled]);
 
+            // バッジの自動チェック（連続日数と累計完了数が変更されたとき）
+            useEffect(() => {
+                if (streak > 0 || totalCompleted > 0) {
+                    const newBadges = [];
+                    badges.forEach(badge => {
+                        if (!unlockedBadges.includes(badge.id)) {
+                            if ((badge.id <= 3 && streak >= badge.requirement) ||
+                                (badge.id === 4 && totalCompleted >= badge.requirement)) {
+                                newBadges.push(badge.id);
+                            }
+                        }
+                    });
+                    if (newBadges.length > 0) {
+                        setUnlockedBadges(prev => [...prev, ...newBadges]);
+                    }
+                }
+            }, [streak, totalCompleted, unlockedBadges]);
+
             const expForNextLevel = level * 50;
 
             const expPercentage = (exp / expForNextLevel) * 100;
@@ -1855,6 +1873,8 @@
 
             const checkBadges = (currentStreak, currentTotal) => {
 
+                const newBadges = [];
+
                 badges.forEach(badge => {
 
                     if (!unlockedBadges.includes(badge.id)) {
@@ -1863,7 +1883,7 @@
 
                             (badge.id === 4 && currentTotal >= badge.requirement)) {
 
-                            setUnlockedBadges([...unlockedBadges, badge.id]);
+                            newBadges.push(badge.id);
 
                             setTigerMessage(`🎉 バッジ獲得！「${badge.name}」！`);
 
@@ -1872,6 +1892,12 @@
                     }
 
                 });
+
+                if (newBadges.length > 0) {
+
+                    setUnlockedBadges(prev => [...prev, ...newBadges]);
+
+                }
 
             };
 
