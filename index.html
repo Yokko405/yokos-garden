@@ -1497,10 +1497,20 @@
             const [newPoints, setNewPoints] = useState(10);
             const [newFreq, setNewFreq] = useState('毎日');
 
+            // 午前1時基準で日付を計算する関数
+            const getDateKey = (date) => {
+                const dateKey = new Date(date);
+                if (dateKey.getHours() < 1) {
+                    // 午前1時より前なら前日扱い
+                    dateKey.setDate(dateKey.getDate() - 1);
+                }
+                return dateKey.toDateString();
+            };
+
             // 日付チェックとリセット処理を関数として抽出（PWA対応）
             const checkAndResetDailyHabits = () => {
                 const saved = localStorage.getItem('yokosGarden');
-                const today = new Date().toDateString(); // 日付文字列（例: "Mon Nov 07 2024"）
+                const today = getDateKey(new Date()); // 午前1時基準の日付文字列
                 const lastResetDate = localStorage.getItem('yg_lastResetDate');
 
                 if (saved) {
@@ -1775,9 +1785,9 @@
                 setTotalCompleted(totalCompleted + 1);
 
                 // 連続日数の更新（今日初めて習慣を完了したとき）
-                const today = new Date().toDateString();
+                const today = getDateKey(new Date()); // 午前1時基準
                 const lastStreakUpdateDate = localStorage.getItem('yg_lastStreakUpdateDate');
-                
+
                 let newStreak = streak;
                 // 今日初めて習慣を完了した場合、連続日数を+1
                 if (lastStreakUpdateDate !== today) {
@@ -1962,11 +1972,11 @@
                 
                 // 連続日数を明示的に保持（変更しない）
                 setStreak(currentStreak);
-                
+
                 // 今日の日付を更新（自動リセットを防ぐため）
-                const today = new Date().toDateString();
+                const today = getDateKey(new Date()); // 午前1時基準
                 localStorage.setItem('yg_lastResetDate', today);
-                
+
                 setTigerMessage('リセット完了！今日も頑張ろう！🐯');
                 setTigerFace('😺');
                 setTimeout(() => { setTigerMessage(getBaseMessageByTime()); setTigerFace(getBaseFaceByTime()); }, 3000);
