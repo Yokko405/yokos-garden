@@ -1,6 +1,6 @@
 {
-  "name": "YOKO's Garden 🐯",
-  "short_name": "YOKO's Garden",
+  "name": "HabiTora 🐯",
+  "short_name": "HabiTora",
   "description": "Tiger-themed habit tracker that runs 100% in the browser",
   "start_url": "/yokos-garden/",
   "scope": "/yokos-garden/",

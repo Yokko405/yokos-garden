@@ -1,8 +1,8 @@
-# YOKO's Garden 🐯
+# HabiTora 🐯
 
 Tiger-themed habit tracker that runs 100% in the browser. Cute, fast, and private.
 
-![YOKO's Garden](social-preview.png)
+![HabiTora](social-preview.png)
 
 Live (GitHub Pages)
 - https://yokko405.github.io/yokos-garden/

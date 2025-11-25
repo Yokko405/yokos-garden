@@ -13,9 +13,9 @@
     <!-- iOS PWA設定 -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="YOKO's Garden" />
+    <meta name="apple-mobile-web-app-title" content="HabiTora" />
 
-    <title>YOKO's Garden 🐯</title>
+    <title>HabiTora 🐯</title>
     
     <!-- ファビコン（添付画像を使用） -->
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
@@ -1545,17 +1545,32 @@
                         setHabits(resetHabits);
 
                         // 連続日数の更新
+                        let newStreakValue = data.streak || 0;
                         if (shouldResetStreak) {
                             // 48時間以上経過していたら0にリセット
-                            setStreak(0);
+                            newStreakValue = 0;
                         } else if (!yesterdayCompleted) {
                             // 昨日習慣を完了していなかった場合は0にリセット
-                            setStreak(0);
-                        } else {
-                            // 昨日完了していた場合は、既存の連続日数を保持
-                            // 今日習慣を完了した時点で+1される
-                            setStreak(data.streak || 0);
+                            newStreakValue = 0;
                         }
+                        // 昨日完了していた場合は、既存の連続日数を保持（今日習慣を完了した時点で+1される）
+                        
+                        setStreak(newStreakValue);
+                        
+                        // 連続日数がリセットされる場合、連続日数関連のバッジも削除
+                        let updatedUnlockedBadges = data.unlockedBadges || [];
+                        if (shouldResetStreak || !yesterdayCompleted) {
+                            updatedUnlockedBadges = (data.unlockedBadges || []).filter(badgeId => {
+                                const badge = badges.find(b => b.id === badgeId);
+                                // 連続日数関連のバッジ（id 1, 2, 3）の場合、新しい連続日数で条件をチェック
+                                if (badgeId <= 3) {
+                                    return newStreakValue >= badge.requirement;
+                                }
+                                // 累計バッジ（id 4）は保持
+                                return true;
+                            });
+                        }
+                        setUnlockedBadges(updatedUnlockedBadges);
                         
                         // 今日の日付を保存
                         localStorage.setItem('yg_lastResetDate', today);
@@ -1563,23 +1578,28 @@
                         localStorage.removeItem('yg_lastStreakUpdateDate');
 
                         // データを保存
-                        const newStreakValue = shouldResetStreak ? 0 : (yesterdayCompleted ? (data.streak || 0) : 0);
                         localStorage.setItem('yokosGarden', JSON.stringify({
                             ...data,
                             habits: resetHabits,
-                            streak: newStreakValue
+                            streak: newStreakValue,
+                            unlockedBadges: updatedUnlockedBadges
                         }));
                     } else {
                         setHabits(data.habits || initialHabits);
                         // 日付が変わっていなくても48時間チェックでリセットする場合がある
                         if (shouldResetStreak) {
                             setStreak(0);
+                            // 連続日数関連のバッジも削除
+                            const updatedUnlockedBadges = (data.unlockedBadges || []).filter(badgeId => badgeId > 3);
+                            setUnlockedBadges(updatedUnlockedBadges);
                             localStorage.setItem('yokosGarden', JSON.stringify({
                                 ...data,
-                                streak: 0
+                                streak: 0,
+                                unlockedBadges: updatedUnlockedBadges
                             }));
                         } else {
                             setStreak(data.streak || 0);
+                            setUnlockedBadges(data.unlockedBadges || []);
                         }
                     }
 
@@ -1587,7 +1607,6 @@
                     setExp(data.exp || 0);
                     setCoins(data.coins || 0);
                     setTotalCompleted(data.totalCompleted || 0);
-                    setUnlockedBadges(data.unlockedBadges || []);
                     setOwnedItems(data.ownedItems || []);
                 } else {
                     setHabits(initialHabits);
@@ -1744,13 +1763,77 @@
                 }
             };
 
-            // 習慣完了
+            // 習慣完了（トグル：もう一度押すと取り消し）
 
             const completeHabit = async (habitId) => {
 
                 const habit = habits.find(h => h.id === habitId);
 
-                if (habit.completed) return;
+                // 既に完了している場合は取り消し処理
+                if (habit.completed) {
+                    // 習慣を未完了状態に戻す
+                    const newHabits = habits.map(h =>
+                        h.id === habitId ? { ...h, completed: false } : h
+                    );
+                    setHabits(newHabits);
+
+                    // 経験値とコインを減算（レベルダウンも考慮）
+                    const pointsToRemove = habit.points;
+                    const coinsToRemove = Math.floor(habit.points / 2);
+                    
+                    let newExp = exp - pointsToRemove;
+                    let newLevel = level;
+                    
+                    while (newExp < 0 && newLevel > 1) {
+                        newLevel--;
+                        newExp += newLevel * 50;
+                    }
+                    newExp = Math.max(0, newExp);
+                    
+                    setExp(newExp);
+                    setCoins(Math.max(0, coins - coinsToRemove));
+                    setLevel(newLevel);
+                    setTotalCompleted(Math.max(0, totalCompleted - 1));
+
+                    // 今日の完了した習慣が0になる場合、連続日数を-1して記録もリセット
+                    const remainingCompletedToday = habits.filter(h => h.completed && h.id !== habitId).length;
+                    const now = new Date();
+                    const today = getDateKey(now);
+                    const lastStreakUpdateDate = localStorage.getItem('yg_lastStreakUpdateDate');
+                    
+                    let newStreak = streak;
+                    if (remainingCompletedToday === 0 && lastStreakUpdateDate === today) {
+                        newStreak = Math.max(0, streak - 1);
+                        setStreak(newStreak);
+                        localStorage.removeItem('yg_lastStreakUpdateDate');
+                        
+                        // 連続日数が減った場合、連続日数関連のバッジをチェック
+                        const updatedBadges = unlockedBadges.filter(badgeId => {
+                            const badge = badges.find(b => b.id === badgeId);
+                            if (badgeId <= 3) {
+                                return newStreak >= badge.requirement;
+                            }
+                            if (badgeId === 4) {
+                                return (totalCompleted - 1) >= badge.requirement;
+                            }
+                            return true;
+                        });
+                        setUnlockedBadges(updatedBadges);
+                    }
+
+                    // 虎のリアクション（取り消し時）
+                    setTigerMessage('取り消したよ！間違いは誰にでもあるね🐯');
+                    setTigerFace('😊');
+                    setTigerMood('normal');
+                    
+                    setTimeout(() => { 
+                        setTigerMessage(getBaseMessageByTime()); 
+                        setTigerFace(getBaseFaceByTime());
+                        setTigerMood(getBaseMoodByTime());
+                    }, 2000);
+                    
+                    return;
+                }
 
                 // キラキラエフェクト
 
@@ -2022,7 +2105,7 @@
 
                     <div className="header">
 
-                        <h1>🐯 YOKO's Garden</h1>
+                        <h1>🐯 HabiTora</h1>
 
                         <div style={{ position: 'absolute', right: '12px', top: '12px', display: 'flex', flexDirection: 'column', gap: '6px', zIndex: 10 }}>
                             <button className="music-toggle" onClick={toggleMusic} style={{ position: 'static' }}>
@@ -2270,11 +2353,9 @@
 
                                             onClick={() => completeHabit(habit.id)}
 
-                                            disabled={habit.completed}
-
                                         >
 
-                                            {habit.completed ? '✓ 完了' : '達成！'}
+                                            {habit.completed ? '✓ 取消' : '達成！'}
 
                                         </button>
 
