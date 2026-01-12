@@ -11,6 +11,8 @@ Live (GitHub Pages)
 - Cute tiger mascot with animations and messages
 - Habit list with: add, complete, delete
 - Gamified progression: EXP, level, coins, badges, shop items
+- **Zoo Mode (New!)**: Transform your Tiger into a Penguin, Elephant, or Giraffe! 🦁🐧🐘🦒
+- **Long-term Streaks**: New badges for 50, 100, 200, 365 days!
 - Daily progress and streak indicator
 - Background music toggle and completion chime (Web Audio)
 - Data saved locally via localStorage (no server)

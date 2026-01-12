@@ -9,22 +9,22 @@
 
     <meta name="theme-color" content="#ff9a56" />
     <meta name="description" content="Tiger-themed habit tracker that runs 100% in the browser" />
-    
+
     <!-- iOS PWA設定 -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="HabiTora" />
 
     <title>HabiTora 🐯</title>
-    
+
     <!-- ファビコン（添付画像を使用） -->
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    
+
     <!-- Apple Touch Icon (iOS用) -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-    
+
     <!-- Web App Manifest (Android/PWA用) -->
     <link rel="manifest" href="manifest.json" />
 
@@ -35,7 +35,6 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-
         * {
 
             margin: 0;
@@ -102,7 +101,7 @@
 
             margin-bottom: 10px;
 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
         }
 
@@ -157,16 +156,19 @@
             position: absolute;
             right: 12px;
             top: 12px;
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             border: 0;
             color: #fff;
             padding: 8px 12px;
             border-radius: 16px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         }
-        .music-toggle:active { transform: translateY(1px); }
+
+        .music-toggle:active {
+            transform: translateY(1px);
+        }
 
         /* 虎キャラクター */
 
@@ -202,7 +204,7 @@
             border-radius: 50%;
             position: relative;
             display: inline-block;
-            box-shadow: 
+            box-shadow:
                 0 12px 30px rgba(255, 140, 0, 0.25),
                 inset 0 -8px 16px rgba(255, 180, 100, 0.2),
                 inset 0 4px 12px rgba(255, 255, 255, 0.4);
@@ -210,7 +212,7 @@
             cursor: pointer;
             transition: transform 0.2s ease;
         }
-        
+
         /* 虎の耳（三角で虎らしく！） */
         .tiger-box::before,
         .tiger-box::after {
@@ -221,19 +223,21 @@
             height: 32px;
             background: linear-gradient(135deg, #ffb366 0%, #ffc989 100%);
             clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            box-shadow: 
+            box-shadow:
                 inset 0 -6px 8px rgba(255, 180, 100, 0.3),
                 0 2px 8px rgba(255, 140, 0, 0.2);
         }
+
         .tiger-box::before {
             left: 8px;
             transform: rotate(-15deg);
         }
+
         .tiger-box::after {
             right: 8px;
             transform: rotate(15deg);
         }
-        
+
         /* 額のW字縞模様（虎の証！） */
         .tiger-box .forehead-stripes {
             position: absolute;
@@ -244,7 +248,7 @@
             height: 20px;
             z-index: 2;
         }
-        
+
         .tiger-box .forehead-stripes::before,
         .tiger-box .forehead-stripes::after {
             content: "";
@@ -255,19 +259,19 @@
             border-radius: 2px;
             opacity: 0.6;
         }
-        
+
         .tiger-box .forehead-stripes::before {
             left: 0;
             top: 0;
             transform: rotate(-25deg);
         }
-        
+
         .tiger-box .forehead-stripes::after {
             right: 0;
             top: 0;
             transform: rotate(25deg);
         }
-        
+
         /* 中央のW字（真ん中の線） */
         .tiger-box .center-stripe {
             position: absolute;
@@ -280,7 +284,7 @@
             border-radius: 2px;
             opacity: 0.6;
         }
-        
+
         /* 体の縞模様（薄く） */
         .tiger-box .body-stripes {
             position: absolute;
@@ -292,7 +296,7 @@
                 radial-gradient(ellipse 50% 10% at 50% 70%, rgba(204, 122, 58, 0.12), transparent);
             pointer-events: none;
         }
-        
+
         /* 顔パーツコンテナ */
         .tiger-box .face {
             position: absolute;
@@ -303,7 +307,7 @@
             justify-content: center;
             padding-top: 12px;
         }
-        
+
         /* 目（大きくてキラキラ！） */
         .tiger-box .eyes {
             display: flex;
@@ -312,20 +316,20 @@
             position: relative;
             z-index: 3;
         }
-        
+
         .tiger-box .eye {
             width: 20px;
             height: 20px;
             background: radial-gradient(circle at 35% 35%, #1a1a1a, #000);
             border-radius: 50%;
             position: relative;
-            box-shadow: 
+            box-shadow:
                 0 0 0 4px rgba(255, 255, 255, 0.8),
                 0 0 0 7px rgba(255, 230, 200, 0.4),
                 0 3px 6px rgba(0, 0, 0, 0.25);
             transition: all 0.3s ease;
         }
-        
+
         /* キラキラハイライト */
         .tiger-box .eye::before {
             content: "";
@@ -339,7 +343,7 @@
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
             animation: sparkle 2.5s ease-in-out infinite;
         }
-        
+
         .tiger-box .eye::after {
             content: "";
             position: absolute;
@@ -350,12 +354,21 @@
             background: rgba(255, 255, 255, 0.6);
             border-radius: 50%;
         }
-        
+
         @keyframes sparkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.85); }
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(0.85);
+            }
         }
-        
+
         /* 鼻 */
         .tiger-box .nose {
             width: 14px;
@@ -365,11 +378,11 @@
             margin: 0 auto 3px;
             position: relative;
             z-index: 3;
-            box-shadow: 
+            box-shadow:
                 0 2px 4px rgba(0, 0, 0, 0.3),
                 inset 0 -1px 2px rgba(255, 255, 255, 0.2);
         }
-        
+
         /* 口 */
         .tiger-box .mouth {
             width: 30px;
@@ -382,7 +395,7 @@
             position: relative;
             z-index: 3;
         }
-        
+
         /* ひげ */
         .tiger-box .whiskers {
             width: 80px;
@@ -391,7 +404,7 @@
             margin: 8px auto 0;
             z-index: 3;
         }
-        
+
         .tiger-box .whisker {
             position: absolute;
             width: 26px;
@@ -399,12 +412,31 @@
             background: linear-gradient(90deg, rgba(45, 42, 38, 0.5), rgba(45, 42, 38, 0.3), transparent);
             border-radius: 1px;
         }
-        
-        .tiger-box .whisker:nth-child(1) { left: 0; top: 3px; transform: rotate(-12deg); }
-        .tiger-box .whisker:nth-child(2) { left: 0; top: 10px; transform: rotate(-8deg); }
-        .tiger-box .whisker:nth-child(3) { right: 0; top: 3px; transform: rotate(12deg) scaleX(-1); }
-        .tiger-box .whisker:nth-child(4) { right: 0; top: 10px; transform: rotate(8deg) scaleX(-1); }
-        
+
+        .tiger-box .whisker:nth-child(1) {
+            left: 0;
+            top: 3px;
+            transform: rotate(-12deg);
+        }
+
+        .tiger-box .whisker:nth-child(2) {
+            left: 0;
+            top: 10px;
+            transform: rotate(-8deg);
+        }
+
+        .tiger-box .whisker:nth-child(3) {
+            right: 0;
+            top: 3px;
+            transform: rotate(12deg) scaleX(-1);
+        }
+
+        .tiger-box .whisker:nth-child(4) {
+            right: 0;
+            top: 10px;
+            transform: rotate(8deg) scaleX(-1);
+        }
+
         /* ピンクのほっぺ（常時表示で可愛く！） */
         .tiger-box .cheek {
             position: absolute;
@@ -417,17 +449,22 @@
             box-shadow: 0 2px 6px rgba(255, 155, 176, 0.3);
             transition: opacity 0.3s ease;
         }
-        
-        .tiger-box .cheek.left { left: 16px; }
-        .tiger-box .cheek.right { right: 16px; }
-        
+
+        .tiger-box .cheek.left {
+            left: 16px;
+        }
+
+        .tiger-box .cheek.right {
+            right: 16px;
+        }
+
         /* 🎭 表情パターン */
-        
+
         /* normal - 通常のニコニコ */
         .tiger-box.mood-normal .mouth {
             opacity: 0.85;
         }
-        
+
         /* happy - 習慣達成！大きな笑顔 */
         .tiger-box.mood-happy .mouth {
             width: 36px;
@@ -435,85 +472,106 @@
             border-bottom-width: 4px;
             opacity: 1;
         }
-        
+
         .tiger-box.mood-happy .eye::before {
             animation: sparkle 0.8s ease-in-out infinite;
         }
-        
+
         .tiger-box.mood-happy .cheek {
             opacity: 0.85;
         }
-        
+
         /* love - ハート目でショップ購入 */
         .tiger-box.mood-love .eye {
             background: linear-gradient(135deg, #ff6b9d, #ff4d82);
-            box-shadow: 
+            box-shadow:
                 0 0 0 4px rgba(255, 255, 255, 0.8),
                 0 0 12px rgba(255, 107, 157, 0.6);
             animation: heartbeat 1s ease-in-out infinite;
         }
-        
+
         .tiger-box.mood-love .eye::before {
             width: 8px;
             height: 8px;
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 0 10px rgba(255, 255, 255, 1);
         }
-        
+
         .tiger-box.mood-love .cheek {
             opacity: 1;
             animation: blush 1.5s ease-in-out infinite;
         }
-        
+
         @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
         }
-        
+
         @keyframes blush {
-            0%, 100% { opacity: 0.85; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0.85;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
-        
+
         /* star - レベルアップ！キラキラ */
         .tiger-box.mood-star {
-            box-shadow: 
+            box-shadow:
                 0 0 0 5px rgba(255, 215, 0, 0.4),
                 0 0 25px rgba(255, 200, 100, 0.6),
                 0 12px 30px rgba(255, 140, 0, 0.3);
             animation: float 4s ease-in-out infinite, starPulse 1.5s ease-in-out infinite;
         }
-        
+
         .tiger-box.mood-star .eye::before {
             animation: sparkle 0.5s ease-in-out infinite;
             box-shadow: 0 0 15px rgba(255, 255, 255, 1);
         }
-        
+
         @keyframes starPulse {
-            0%, 100% { filter: brightness(1) saturate(1); }
-            50% { filter: brightness(1.15) saturate(1.2); }
+
+            0%,
+            100% {
+                filter: brightness(1) saturate(1);
+            }
+
+            50% {
+                filter: brightness(1.15) saturate(1.2);
+            }
         }
-        
+
         /* sleepy - 眠たい */
         .tiger-box.mood-sleepy .eye {
             height: 6px;
             border-radius: 50% 50% 50% 50% / 20% 20% 80% 80%;
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6);
         }
-        
+
         .tiger-box.mood-sleepy .eye::before {
             display: none;
         }
-        
+
         .tiger-box.mood-sleepy .mouth {
             opacity: 0.5;
             width: 24px;
         }
-        
+
         .tiger-box.mood-sleepy .cheek {
             opacity: 0.5;
         }
-        
+
         /* Zzz（sleepy用） */
         .tiger-box .zzz {
             position: absolute;
@@ -526,84 +584,146 @@
             z-index: 10;
             font-family: 'Comic Sans MS', cursive;
         }
-        
+
         .tiger-box.mood-sleepy .zzz {
             opacity: 0.75;
             animation: zzz 2.5s ease-in-out infinite;
         }
-        
+
         @keyframes zzz {
-            0% { transform: translateY(0) scale(0.8); opacity: 0; }
-            30% { transform: translateY(-10px) scale(1); opacity: 0.75; }
-            60% { transform: translateY(-20px) scale(1.1); opacity: 0.5; }
-            100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
+            0% {
+                transform: translateY(0) scale(0.8);
+                opacity: 0;
+            }
+
+            30% {
+                transform: translateY(-10px) scale(1);
+                opacity: 0.75;
+            }
+
+            60% {
+                transform: translateY(-20px) scale(1.1);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(-30px) scale(1.2);
+                opacity: 0;
+            }
         }
-        
+
         /* party - 全達成！最高潮 */
         .tiger-box.mood-party {
             animation: float 4s ease-in-out infinite, party 1.2s ease-in-out infinite;
-            box-shadow: 
+            box-shadow:
                 0 0 0 8px rgba(255, 215, 0, 0.5),
                 0 0 40px rgba(255, 200, 100, 0.8),
                 0 12px 35px rgba(255, 140, 0, 0.4);
         }
-        
+
         .tiger-box.mood-party .eye::before {
             animation: sparkle 0.4s ease-in-out infinite;
             box-shadow: 0 0 18px rgba(255, 255, 255, 1);
         }
-        
+
         .tiger-box.mood-party .cheek {
             opacity: 1;
             animation: partyBlush 0.8s ease-in-out infinite;
         }
-        
+
         @keyframes party {
-            0%, 100% { filter: brightness(1) hue-rotate(0deg); }
-            25% { filter: brightness(1.25) hue-rotate(15deg); }
-            50% { filter: brightness(1.15) hue-rotate(-10deg); }
-            75% { filter: brightness(1.3) hue-rotate(10deg); }
+
+            0%,
+            100% {
+                filter: brightness(1) hue-rotate(0deg);
+            }
+
+            25% {
+                filter: brightness(1.25) hue-rotate(15deg);
+            }
+
+            50% {
+                filter: brightness(1.15) hue-rotate(-10deg);
+            }
+
+            75% {
+                filter: brightness(1.3) hue-rotate(10deg);
+            }
         }
-        
+
         @keyframes partyBlush {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
         }
-        
+
         /* 🎬 アニメーション */
-        
+
         /* 習慣達成：ぴょんぴょん跳ねる */
         .tiger-box.animate-bounce {
             animation: tigerbounce 0.7s ease;
         }
-        
+
         @keyframes tigerbounce {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            20% { transform: translateY(-25px) rotate(-5deg) scale(1.05); }
-            40% { transform: translateY(-12px) rotate(2deg) scale(1.02); }
-            60% { transform: translateY(-18px) rotate(-2deg) scale(1.03); }
-            80% { transform: translateY(-8px) rotate(0deg) scale(1.01); }
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            20% {
+                transform: translateY(-25px) rotate(-5deg) scale(1.05);
+            }
+
+            40% {
+                transform: translateY(-12px) rotate(2deg) scale(1.02);
+            }
+
+            60% {
+                transform: translateY(-18px) rotate(-2deg) scale(1.03);
+            }
+
+            80% {
+                transform: translateY(-8px) rotate(0deg) scale(1.01);
+            }
         }
-        
+
         /* レベルアップ：くるっと回転 */
         .tiger-box.animate-spin {
             animation: tigerspin 1.2s ease;
         }
-        
+
         @keyframes tigerspin {
-            0% { transform: rotate(0deg) scale(1); }
-            30% { transform: rotate(120deg) scale(1.15); }
-            60% { transform: rotate(240deg) scale(1.2); }
-            100% { transform: rotate(360deg) scale(1); }
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            30% {
+                transform: rotate(120deg) scale(1.15);
+            }
+
+            60% {
+                transform: rotate(240deg) scale(1.2);
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
         }
-        
+
         /* タップ時：気持ちいい反応 */
         .tiger-box:active {
             transform: scale(0.94);
         }
-        
+
         /* 🎩 装飾アイテム（絵文字ベースでシンプルに） */
-        
+
         /* 王冠 */
         .tiger-box .crown {
             position: absolute;
@@ -614,14 +734,14 @@
             height: 32px;
             z-index: 15;
         }
-        
+
         .tiger-box .crown::before {
             content: "👑";
             position: absolute;
             font-size: 32px;
             filter: drop-shadow(0 3px 8px rgba(255, 215, 0, 0.5));
         }
-        
+
         /* サングラス */
         .tiger-box .sunglasses {
             position: absolute;
@@ -632,7 +752,7 @@
             height: 20px;
             z-index: 8;
         }
-        
+
         .tiger-box .sunglasses::before {
             content: "🕶️";
             position: absolute;
@@ -641,7 +761,7 @@
             transform: translateX(-50%);
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
-        
+
         /* リボン */
         .tiger-box .ribbon {
             position: absolute;
@@ -649,13 +769,13 @@
             right: 6px;
             z-index: 12;
         }
-        
+
         .tiger-box .ribbon::before {
             content: "🎀";
             font-size: 24px;
             filter: drop-shadow(0 2px 6px rgba(255, 107, 157, 0.4));
         }
-        
+
         /* 花冠 */
         .tiger-box .flower-crown {
             position: absolute;
@@ -665,7 +785,7 @@
             width: 130px;
             z-index: 11;
         }
-        
+
         .tiger-box .flower-crown::before {
             content: "🌸🌸🌸";
             position: absolute;
@@ -673,7 +793,7 @@
             letter-spacing: 8px;
             filter: drop-shadow(0 2px 6px rgba(255, 179, 217, 0.4));
         }
-        
+
         /* 星のオーラ（mood-star用） */
         .tiger-box.mood-star .star-aura {
             position: absolute;
@@ -685,7 +805,7 @@
             z-index: -1;
             animation: rotate 4s linear infinite;
         }
-        
+
         .tiger-box.mood-star .star-aura::before,
         .tiger-box.mood-star .star-aura::after {
             content: "⭐";
@@ -694,37 +814,326 @@
             opacity: 0.7;
             animation: startwinkle 2s ease-in-out infinite;
         }
-        
+
         .tiger-box.mood-star .star-aura::before {
             top: 0;
             left: 50%;
             transform: translateX(-50%);
         }
-        
+
         .tiger-box.mood-star .star-aura::after {
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             animation-delay: 1s;
         }
-        
+
         @keyframes rotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
-        
+
         @keyframes startwinkle {
-            0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+
+            0%,
+            100% {
+                opacity: 0.7;
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.2);
+            }
         }
-        
+
+        /* 🐅 Zoo Mode (動物変身) */
+
+        /* 🐧 Penguin (ペンギン) */
+        .tiger-box.skin-penguin {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            box-shadow:
+                0 12px 30px rgba(44, 62, 80, 0.4),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.3),
+                inset 0 4px 12px rgba(255, 255, 255, 0.2);
+            border-radius: 45% 45% 40% 40% / 50% 50% 40% 40%;
+        }
+
+        /* ペンギンの腹 */
+        .tiger-box.skin-penguin::before {
+            content: "";
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 65%;
+            background: white;
+            border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+            box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ペンギンの目（シンプルに） */
+        .tiger-box.skin-penguin .eye {
+            background: #2c3e50;
+            box-shadow: 0 0 0 3px white;
+            width: 14px;
+            height: 14px;
+        }
+
+        /* くちばし */
+        .tiger-box.skin-penguin .nose {
+            width: 0;
+            height: 0;
+            background: transparent;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #f1c40f;
+            border-radius: 4px;
+            box-shadow: none;
+            margin-top: 4px;
+        }
+
+        /* ペンギンは口と髭と耳なし */
+        .tiger-box.skin-penguin .mouth,
+        .tiger-box.skin-penguin .whiskers,
+        .tiger-box.skin-penguin .forehead-stripes,
+        .tiger-box.skin-penguin .center-stripe,
+        .tiger-box.skin-penguin .body-stripes {
+            display: none;
+        }
+
+        /* 🐘 Elephant (ゾウ) */
+        .tiger-box.skin-elephant {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            border-radius: 50%;
+            box-shadow:
+                0 12px 30px rgba(127, 140, 141, 0.4),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 耳 */
+        .tiger-box.skin-elephant::before,
+        .tiger-box.skin-elephant::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            width: 40px;
+            height: 50px;
+            background: #95a5a6;
+            border-radius: 50%;
+            z-index: -1;
+            transform-origin: center;
+        }
+
+        .tiger-box.skin-elephant::before {
+            left: -15px;
+            transform: rotate(-10deg);
+            border-right: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tiger-box.skin-elephant::after {
+            right: -15px;
+            transform: rotate(10deg);
+            border-left: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* 鼻 */
+        .tiger-box.skin-elephant .face {
+            align-items: center;
+        }
+
+        .tiger-box.skin-elephant .nose {
+            width: 20px;
+            height: 50px;
+            background: #95a5a6;
+            border-radius: 20px;
+            box-shadow: inset -2px -2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+            margin-top: -5px;
+            position: relative;
+        }
+
+        /* 鼻のしわ */
+        .tiger-box.skin-elephant .nose::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 2px;
+            right: 2px;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.1), 0 16px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* ゾウのパーツ消去 */
+        .tiger-box.skin-elephant .mouth,
+        .tiger-box.skin-elephant .whiskers,
+        .tiger-box.skin-elephant .forehead-stripes,
+        .tiger-box.skin-elephant .center-stripe,
+        .tiger-box.skin-elephant .body-stripes {
+            display: none;
+        }
+
+        /* 🦒 Giraffe (キリン) */
+        .tiger-box.skin-giraffe {
+            background: #f1c40f;
+            border-radius: 45% 45% 50% 50%;
+        }
+
+        /* キリンの模様 */
+        .tiger-box.skin-giraffe .body-stripes {
+            display: block;
+            background:
+                radial-gradient(circle at 20% 20%, #d35400 15%, transparent 16%),
+                radial-gradient(circle at 80% 30%, #d35400 18%, transparent 19%),
+                radial-gradient(circle at 50% 70%, #d35400 20%, transparent 21%),
+                radial-gradient(circle at 15% 75%, #d35400 12%, transparent 13%),
+                radial-gradient(circle at 85% 75%, #d35400 14%, transparent 15%);
+        }
+
+        /* ツノ（オシコーン） */
+        .tiger-box.skin-giraffe::before,
+        .tiger-box.skin-giraffe::after {
+            content: "";
+            position: absolute;
+            top: -20px;
+            width: 8px;
+            height: 25px;
+            background: #d35400;
+            border-radius: 4px;
+        }
+
+        .tiger-box.skin-giraffe::before {
+            left: 35px;
+            transform: rotate(-10deg);
+        }
+
+        .tiger-box.skin-giraffe::after {
+            right: 35px;
+            transform: rotate(10deg);
+        }
+
+        /* ツノの先 */
+        .tiger-box.skin-giraffe .forehead-stripes {
+            display: none;
+        }
+
+        .tiger-box.skin-giraffe .center-stripe {
+            display: none;
+        }
+
+        .tiger-box.skin-giraffe .nose {
+            background: #d35400;
+            opacity: 0.8;
+            width: 30px;
+            height: 20px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+
+        .tiger-box.skin-giraffe .whiskers {
+            display: none;
+        }
+
+        .tiger-box.skin-giraffe .mouth {
+            display: none;
+        }
+
+        /* 🐧 Penguin Accessories */
+        .tiger-box .ice-crown {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            z-index: 10;
+        }
+
+        .tiger-box .ice-crown::before {
+            content: "🧊";
+            filter: drop-shadow(0 2px 5px rgba(0, 255, 255, 0.5));
+        }
+
+        .tiger-box .goggles {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            z-index: 10;
+        }
+
+        .tiger-box .goggles::before {
+            content: "🥽";
+        }
+
+        /* 🐘 Elephant Accessories */
+        .tiger-box .circus-hat {
+            position: absolute;
+            top: -40px;
+            left: 15px;
+            transform: rotate(-20deg);
+            font-size: 35px;
+            z-index: 10;
+        }
+
+        .tiger-box .circus-hat::before {
+            content: "🎪";
+        }
+
+        .tiger-box .apple {
+            position: absolute;
+            bottom: 0;
+            right: 5px;
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        .tiger-box .apple::before {
+            content: "🍎";
+        }
+
+        /* 🦒 Giraffe Accessories */
+        .tiger-box .cloud-necklace {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            opacity: 0.9;
+            z-index: 10;
+        }
+
+        .tiger-box .cloud-necklace::before {
+            content: "☁️";
+        }
+
+        .tiger-box .scarf {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 35px;
+            z-index: 10;
+        }
+
+        .tiger-box .scarf::before {
+            content: "🧣";
+        }
+
         /* レスポンシブ対応 */
         @media (max-width: 480px) {
             .tiger-box {
                 width: 100px;
                 height: 100px;
             }
-            
+
             .tiger-box .eye {
                 width: 18px;
                 height: 18px;
@@ -745,19 +1154,31 @@
 
         @keyframes float {
 
-            0%, 100% { transform: translateY(0px); }
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
 
-            50% { transform: translateY(-10px); }
+            50% {
+                transform: translateY(-10px);
+            }
 
         }
 
         @keyframes celebrate {
 
-            0%, 100% { transform: scale(1) rotate(0deg); }
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
 
-            25% { transform: scale(1.2) rotate(-10deg); }
+            25% {
+                transform: scale(1.2) rotate(-10deg);
+            }
 
-            75% { transform: scale(1.2) rotate(10deg); }
+            75% {
+                transform: scale(1.2) rotate(10deg);
+            }
 
         }
 
@@ -813,7 +1234,7 @@
 
             position: relative;
 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
 
         }
 
@@ -903,7 +1324,7 @@
 
             margin-bottom: 15px;
 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
             border: 2px solid #ffe4e1;
 
@@ -1051,7 +1472,7 @@
 
             text-align: center;
 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
             border: 2px solid #ffe4e1;
 
@@ -1089,9 +1510,14 @@
 
         @keyframes shine {
 
-            0%, 100% { transform: scale(1); }
+            0%,
+            100% {
+                transform: scale(1);
+            }
 
-            50% { transform: scale(1.1); }
+            50% {
+                transform: scale(1.1);
+            }
 
         }
 
@@ -1139,7 +1565,7 @@
 
             text-align: center;
 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
             border: 2px solid #ffe4e1;
 
@@ -1211,9 +1637,15 @@
 
         @keyframes sparkleFloat {
 
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
 
-            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
 
         }
 
@@ -1270,33 +1702,55 @@
         /* 追加フォームレイアウト（レスポンシブ） */
         .add-grid {
             display: grid;
-            grid-template-columns: minmax(0,1.6fr) 60px 84px 96px 44px;
+            grid-template-columns: minmax(0, 1.6fr) 60px 84px 96px 44px;
             gap: 8px;
             align-items: center;
             grid-template-areas:
                 "name emoji points freq add";
         }
-        .add-grid > * { min-width: 0; }
-        .add-grid input, .add-grid select { width: 100%; }
-        .add-grid .field-name { grid-area: name; }
-        .add-grid .field-emoji { grid-area: emoji; }
-        .add-grid .field-points { grid-area: points; }
-        .add-grid .field-freq { grid-area: freq; }
-        .add-grid .field-add { grid-area: add; }
+
+        .add-grid>* {
+            min-width: 0;
+        }
+
+        .add-grid input,
+        .add-grid select {
+            width: 100%;
+        }
+
+        .add-grid .field-name {
+            grid-area: name;
+        }
+
+        .add-grid .field-emoji {
+            grid-area: emoji;
+        }
+
+        .add-grid .field-points {
+            grid-area: points;
+        }
+
+        .add-grid .field-freq {
+            grid-area: freq;
+        }
+
+        .add-grid .field-add {
+            grid-area: add;
+        }
 
         @media (max-width: 480px) {
             .add-grid {
                 /* 2行構成: 1行目=名前(全幅), 2行目=絵文字/ポイント/頻度(広め)/追加 */
-                grid-template-columns: minmax(0,1fr) 64px 84px minmax(0,1fr) 44px;
+                grid-template-columns: minmax(0, 1fr) 64px 84px minmax(0, 1fr) 44px;
                 grid-template-areas:
                     "name name name name name"
                     "emoji points freq freq add";
             }
+
             .add-grid .field-add {
                 justify-self: end;
             }
         }
-
     </style>
 
 </head>
@@ -1325,7 +1779,7 @@
             if (hour >= 11 && hour < 17) return '😺';
             return '😼';
         }
-        
+
         // 時間帯に応じたmoodの設定
         function getBaseMoodByTime() {
             const hour = new Date().getHours();
@@ -1354,7 +1808,7 @@
                 }
             };
 
-            const env = (node, startTime, attack=0.01, decay=0.2) => {
+            const env = (node, startTime, attack = 0.01, decay = 0.2) => {
                 const g = ctx.createGain();
                 node.connect(g);
                 g.connect(sfxGain);
@@ -1364,7 +1818,7 @@
                 return g;
             };
 
-            const note = (freq, when, dur=0.2, type='sine', toMusic=false) => {
+            const note = (freq, when, dur = 0.2, type = 'sine', toMusic = false) => {
                 const osc = ctx.createOscillator();
                 const gainNode = ctx.createGain();
                 osc.type = type;
@@ -1383,7 +1837,7 @@
                 if (!ctx) return;
                 const now = ctx.currentTime;
                 // Simple major arpeggio C-E-G-C
-                [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => note(f, now + i*0.08, 0.18, 'triangle', false));
+                [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => note(f, now + i * 0.08, 0.18, 'triangle', false));
             };
 
             const startMusic = () => {
@@ -1391,14 +1845,14 @@
                 if (musicOn) return;
                 musicOn = true;
                 const pattern = [
-                  392.00, 392.00, 440.00, 392.00, 523.25, 493.88, // cute line
-                  392.00, 392.00, 440.00, 392.00, 587.33, 523.25  // variation
+                    392.00, 392.00, 440.00, 392.00, 523.25, 493.88, // cute line
+                    392.00, 392.00, 440.00, 392.00, 587.33, 523.25  // variation
                 ];
                 const beat = 0.28;
                 const loop = () => {
                     if (!musicOn) return;
                     let t = ctx.currentTime;
-                    pattern.forEach((f, i) => note(f, t + i*beat, 0.22, 'sine', true));
+                    pattern.forEach((f, i) => note(f, t + i * beat, 0.22, 'sine', true));
                     musicTimer = setTimeout(loop, (pattern.length * beat) * 1000);
                 };
                 loop();
@@ -1413,7 +1867,7 @@
                 init: async () => {
                     if (started) return;
                     ensure();
-                    try { await ctx.resume(); } catch (e) {}
+                    try { await ctx.resume(); } catch (e) { }
                     started = true;
                 },
                 playChime,
@@ -1438,27 +1892,44 @@
         ];
 
         const badges = [
+            // Streak (継続)
+            { id: 1, name: '3日連続', icon: '🔥', description: '3日連続達成', requirement: 3, type: 'streak' },
+            { id: 2, name: '1週間', icon: '⭐', description: '7日連続達成', requirement: 7, type: 'streak' },
+            { id: 3, name: '1ヶ月', icon: '💎', description: '30日連続達成', requirement: 30, type: 'streak' },
+            { id: 5, name: '50日連続', icon: '🏆', description: '50日連続達成', requirement: 50, type: 'streak' },
+            { id: 6, name: '100日連続', icon: '🐲', description: '100日連続達成', requirement: 100, type: 'streak' },
+            { id: 7, name: '200日連続', icon: '👹', description: '200日連続達成', requirement: 200, type: 'streak' },
+            { id: 8, name: '365日連続', icon: '🗽', description: '365日連続達成', requirement: 365, type: 'streak' },
 
-            { id: 1, name: '3日連続', icon: '🔥', description: '3日連続達成', requirement: 3 },
-
-            { id: 2, name: '1週間', icon: '⭐', description: '7日連続達成', requirement: 7 },
-
-            { id: 3, name: '1ヶ月', icon: '💎', description: '30日連続達成', requirement: 30 },
-
-            { id: 4, name: '100回達成', icon: '👑', description: '累計100回達成', requirement: 100 }
-
+            // Total (累計)
+            { id: 4, name: '100回達成', icon: '👑', description: '累計100回達成', requirement: 100, type: 'total' },
+            { id: 9, name: '500回達成', icon: '🔮', description: '累計500回達成', requirement: 500, type: 'total' },
+            { id: 10, name: '1000回達成', icon: '🪐', description: '累計1000回達成', requirement: 1000, type: 'total' }
         ];
 
         const shopItems = [
+            // 🐯 Tiger Items
+            { id: 1, name: "王冠", icon: "👑", price: 50, type: "accessory", compat: ["normal"] },
+            { id: 2, name: "サングラス", icon: "🕶️", price: 30, type: "accessory", compat: ["normal"] },
+            { id: 3, name: "リボン", icon: "🎀", price: 40, type: "accessory", compat: ["normal"] },
+            { id: 4, name: "花冠", icon: "🌸", price: 60, type: "accessory", compat: ["normal"] },
 
-            { id: 1, name: '王冠', icon: '👑', price: 50 },
+            // 🐧 Penguin Items
+            { id: 101, name: "氷の王冠", icon: "🧊", price: 100, type: "accessory", compat: ["penguin"] },
+            { id: 102, name: "ゴーグル", icon: "🥽", price: 80, type: "accessory", compat: ["penguin"] },
 
-            { id: 2, name: 'サングラス', icon: '🕶️', price: 30 },
+            // 🐘 Elephant Items
+            { id: 201, name: "サーカス帽", icon: "🎪", price: 120, type: "accessory", compat: ["elephant"] },
+            { id: 202, name: "リンゴ", icon: "🍎", price: 60, type: "accessory", compat: ["elephant"] },
 
-            { id: 3, name: 'リボン', icon: '🎀', price: 40 },
+            // 🦒 Giraffe Items
+            { id: 301, name: "雲の王冠", icon: "☁️", price: 150, type: "accessory", compat: ["giraffe"] },
+            { id: 302, name: "マフラー", icon: "🧣", price: 90, type: "accessory", compat: ["giraffe"] },
 
-            { id: 4, name: '花冠', icon: '🌸', price: 60 }
-
+            // 🔄 Transformations (Skins)
+            { id: 5, name: "ペンギンスーツ", icon: "🐧", price: 500, type: "skin", skin: "penguin" },
+            { id: 6, name: "ゾウのきぐるみ", icon: "🐘", price: 800, type: "skin", skin: "elephant" },
+            { id: 7, name: "キリンパーカー", icon: "🦒", price: 1000, type: "skin", skin: "giraffe" }
         ];
 
         function App() {
@@ -1485,10 +1956,11 @@
 
             const [celebrating, setCelebrating] = useState(false);
             const [tigerFace, setTigerFace] = useState(getBaseFaceByTime());
-            
+
             // mood状態管理
             const [tigerMood, setTigerMood] = useState('normal');
             const [tigerAnimation, setTigerAnimation] = useState('');
+            const [tigerSkin, setTigerSkin] = useState('normal'); // 'normal', 'white', 'gold'
 
             const [musicEnabled, setMusicEnabled] = useState(false);
             // 新規習慣フォーム
@@ -1531,9 +2003,9 @@
 
                         // 連続日数の更新（昨日習慣を完了していなかった場合は0にリセット）
                         let newStreakValue = yesterdayCompleted ? (data.streak || 0) : 0;
-                        
+
                         setStreak(newStreakValue);
-                        
+
                         // 連続日数がリセットされる場合、連続日数関連のバッジも削除
                         let updatedUnlockedBadges = data.unlockedBadges || [];
                         if (!yesterdayCompleted) {
@@ -1548,7 +2020,7 @@
                             });
                         }
                         setUnlockedBadges(updatedUnlockedBadges);
-                        
+
                         // 今日の日付を保存
                         localStorage.setItem('yg_lastResetDate', today);
                         // 連続日数更新日もリセット
@@ -1573,6 +2045,7 @@
                     setCoins(data.coins || 0);
                     setTotalCompleted(data.totalCompleted || 0);
                     setOwnedItems(data.ownedItems || []);
+                    setTigerSkin(data.tigerSkin || 'normal');
                 } else {
                     setHabits(initialHabits);
                     localStorage.setItem('yg_lastResetDate', today);
@@ -1585,7 +2058,7 @@
 
                 const pref = localStorage.getItem('yg_music');
                 if (pref === 'on') setMusicEnabled(true);
-                
+
                 // 初期mood設定
                 setTigerMood(getBaseMoodByTime());
             }, []);
@@ -1636,13 +2109,17 @@
 
                     unlockedBadges,
 
-                    ownedItems
+                    unlockedBadges,
+
+                    ownedItems,
+
+                    tigerSkin
 
                 };
 
                 localStorage.setItem('yokosGarden', JSON.stringify(data));
 
-            }, [habits, level, exp, coins, streak, totalCompleted, unlockedBadges, ownedItems]);
+            }, [habits, level, exp, coins, streak, totalCompleted, unlockedBadges, ownedItems, tigerSkin]);
 
             // Music preference side-effect
             useEffect(() => {
@@ -1701,7 +2178,7 @@
                     frequency: newFreq || '毎日',
                     completed: false
                 };
-                setHabits([ ...habits, created ]);
+                setHabits([...habits, created]);
                 setNewName('');
                 setNewIcon('🐯');
                 setNewPoints(10);
@@ -1745,16 +2222,16 @@
                     // 経験値とコインを減算（レベルダウンも考慮）
                     const pointsToRemove = habit.points;
                     const coinsToRemove = Math.floor(habit.points / 2);
-                    
+
                     let newExp = exp - pointsToRemove;
                     let newLevel = level;
-                    
+
                     while (newExp < 0 && newLevel > 1) {
                         newLevel--;
                         newExp += newLevel * 50;
                     }
                     newExp = Math.max(0, newExp);
-                    
+
                     setExp(newExp);
                     setCoins(Math.max(0, coins - coinsToRemove));
                     setLevel(newLevel);
@@ -1765,20 +2242,20 @@
                     const now = new Date();
                     const today = getDateKey(now);
                     const lastStreakUpdateDate = localStorage.getItem('yg_lastStreakUpdateDate');
-                    
+
                     let newStreak = streak;
                     if (remainingCompletedToday === 0 && lastStreakUpdateDate === today) {
                         newStreak = Math.max(0, streak - 1);
                         setStreak(newStreak);
                         localStorage.removeItem('yg_lastStreakUpdateDate');
-                        
+
                         // 連続日数が減った場合、連続日数関連のバッジをチェック
                         const updatedBadges = unlockedBadges.filter(badgeId => {
                             const badge = badges.find(b => b.id === badgeId);
-                            if (badgeId <= 3) {
+                            if (badge.type === 'streak') {
                                 return newStreak >= badge.requirement;
                             }
-                            if (badgeId === 4) {
+                            if (badge.type === 'total') {
                                 return (totalCompleted - 1) >= badge.requirement;
                             }
                             return true;
@@ -1790,13 +2267,13 @@
                     setTigerMessage('取り消したよ！間違いは誰にでもあるね🐯');
                     setTigerFace('😊');
                     setTigerMood('normal');
-                    
-                    setTimeout(() => { 
-                        setTigerMessage(getBaseMessageByTime()); 
+
+                    setTimeout(() => {
+                        setTigerMessage(getBaseMessageByTime());
                         setTigerFace(getBaseFaceByTime());
                         setTigerMood(getBaseMoodByTime());
                     }, 2000);
-                    
+
                     return;
                 }
 
@@ -1837,7 +2314,7 @@
 
                     setTigerMessage('🎉 レベルアップ！強くなったよ！');
                     setTigerFace('🤩');
-                    
+
                     // レベルアップ時のmoodとアニメーション
                     setTigerMood('star');
                     setTigerAnimation('animate-spin');
@@ -1845,8 +2322,8 @@
                         setTigerAnimation('');
                     }, 1000);
 
-                    setTimeout(() => { 
-                        setTigerMessage(getBaseMessageByTime()); 
+                    setTimeout(() => {
+                        setTigerMessage(getBaseMessageByTime());
                         setTigerFace(getBaseFaceByTime());
                         setTigerMood(getBaseMoodByTime());
                     }, 3000);
@@ -1877,7 +2354,7 @@
                 // 虎のリアクション
                 const newCompletedToday = completedToday + 1;
                 const allCompleted = newCompletedToday === totalHabits;
-                
+
                 // 全達成時のmoodとアニメーション
                 if (allCompleted) {
                     setTigerMood('party');
@@ -1914,8 +2391,8 @@
                 }
                 setTigerFace('😸');
 
-                setTimeout(() => { 
-                    setTigerMessage(getBaseMessageByTime()); 
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
                     setTigerFace(getBaseFaceByTime());
                     setTigerMood(getBaseMoodByTime());
                 }, 3000);
@@ -1967,9 +2444,9 @@
 
                     if (!unlockedBadges.includes(badge.id)) {
 
-                        if ((badge.id <= 3 && currentStreak >= badge.requirement) ||
+                        if ((badge.type === 'streak' && currentStreak >= badge.requirement) ||
 
-                            (badge.id === 4 && currentTotal >= badge.requirement)) {
+                            (badge.type === 'total' && currentTotal >= badge.requirement)) {
 
                             newBadges.push(badge.id);
 
@@ -1989,16 +2466,26 @@
 
             };
 
-            // アイテム購入
-
+            // アイテム購入 / 装備
             const buyItem = (item) => {
 
+                // 既に持っている場合
                 if (ownedItems.includes(item.id)) {
-
-                    setTigerMessage('もう持ってるよ！');
-
+                    if (item.type === 'skin') {
+                        // スキンなら装備切り替え
+                        if (tigerSkin === item.skin) {
+                            setTigerSkin('normal');
+                            setTigerMessage('トラに戻ったがお🐯');
+                        } else {
+                            setTigerSkin(item.skin);
+                            setTigerMessage(`${item.name}に変身！`);
+                            setTigerAnimation('animate-spin');
+                            setTimeout(() => setTigerAnimation(''), 1000);
+                        }
+                    } else {
+                        setTigerMessage('もう持ってるよ！');
+                    }
                     return;
-
                 }
 
                 if (coins >= item.price) {
@@ -2009,7 +2496,13 @@
 
                     setTigerMessage(`✨ ${item.name}を手に入れた！`);
                     setTigerFace('😍');
-                    
+
+                    // スキンなら即装備
+                    if (item.type === 'skin') {
+                        setTigerSkin(item.skin);
+                        setTigerMessage(`${item.name}を手に入れた！変身！`);
+                    }
+
                     // 購入時のmood-love設定
                     setTigerMood('love');
                     setTigerAnimation('animate-bounce');
@@ -2025,8 +2518,8 @@
 
                 }
 
-                setTimeout(() => { 
-                    setTigerMessage(getBaseMessageByTime()); 
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
                     setTigerFace(getBaseFaceByTime());
                     setTigerMood(getBaseMoodByTime());
                 }, 3000);
@@ -2038,16 +2531,16 @@
                 if (!confirm('今日の習慣をリセットしますか？\n（完了状態のみリセットされ、レベルやコイン、連続日数は保持されます）')) {
                     return;
                 }
-                
+
                 // 現在の連続日数を保存（手動リセットでは連続日数を保持）
                 const currentStreak = streak;
-                
+
                 const resetHabits = habits.map(h => ({
                     ...h,
                     completed: false
                 }));
                 setHabits(resetHabits);
-                
+
                 // 連続日数を明示的に保持（変更しない）
                 setStreak(currentStreak);
 
@@ -2074,8 +2567,8 @@
                             <button className="music-toggle" onClick={toggleMusic} style={{ position: 'static' }}>
                                 {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
                             </button>
-                            <button 
-                                className="music-toggle" 
+                            <button
+                                className="music-toggle"
                                 onClick={resetDailyHabits}
                                 style={{ position: 'static', fontSize: '11px', padding: '6px 10px', display: 'none' }}
                             >
@@ -2117,13 +2610,13 @@
 
                     <div className="tiger-container">
 
-                        <div className={`tiger-box mood-${tigerMood} ${tigerAnimation}`}>
+                        <div className={`tiger-box mood-${tigerMood} ${tigerAnimation} skin-${tigerSkin}`}>
 
                             {/* 虎の特徴 */}
                             <div className="forehead-stripes"></div>
                             <div className="center-stripe"></div>
                             <div className="body-stripes"></div>
-                            
+
                             <div className="face">
                                 <div className="eyes">
                                     <div className="eye"></div>
@@ -2138,19 +2631,31 @@
                                     <div className="whisker"></div>
                                 </div>
                             </div>
-                            
+
                             <div className="cheek left"></div>
                             <div className="cheek right"></div>
-                            
+
                             {/* Zzz表示（mood-sleepy用） */}
                             <div className="zzz">Zzz</div>
-                            
-                            {/* 装飾アイテム */}
-                            {ownedItems.includes(1) && <div className="crown"></div>}
-                            {ownedItems.includes(2) && <div className="sunglasses"></div>}
-                            {ownedItems.includes(3) && <div className="ribbon"></div>}
-                            {ownedItems.includes(4) && <div className="flower-crown"></div>}
-                            
+
+                            {/* 装飾アイテム (Tiger) */}
+                            {tigerSkin === 'normal' && ownedItems.includes(1) && <div className="crown"></div>}
+                            {tigerSkin === 'normal' && ownedItems.includes(2) && <div className="sunglasses"></div>}
+                            {tigerSkin === 'normal' && ownedItems.includes(3) && <div className="ribbon"></div>}
+                            {tigerSkin === 'normal' && ownedItems.includes(4) && <div className="flower-crown"></div>}
+
+                            {/* 装飾アイテム (Penguin) */}
+                            {tigerSkin === 'penguin' && ownedItems.includes(101) && <div className="ice-crown"></div>}
+                            {tigerSkin === 'penguin' && ownedItems.includes(102) && <div className="goggles"></div>}
+
+                            {/* 装飾アイテム (Elephant) */}
+                            {tigerSkin === 'elephant' && ownedItems.includes(201) && <div className="circus-hat"></div>}
+                            {tigerSkin === 'elephant' && ownedItems.includes(202) && <div className="apple"></div>}
+
+                            {/* 装飾アイテム (Giraffe) */}
+                            {tigerSkin === 'giraffe' && ownedItems.includes(301) && <div className="cloud-necklace"></div>}
+                            {tigerSkin === 'giraffe' && ownedItems.includes(302) && <div className="scarf"></div>}
+
                             {/* 星のオーラ（mood-star用） */}
                             {tigerMood === 'star' && <div className="star-aura"></div>}
 
@@ -2344,21 +2849,50 @@
 
                     {activeTab === 'badges' && (
 
-                        <div className="badges-grid">
+                        <div style={{ padding: '0 20px', marginBottom: '80px' }}>
 
-                            {badges.map(badge => (
+                            {/* Streak Section */}
+                            <h3 style={{
+                                marginTop: '20px',
+                                marginBottom: '10px',
+                                color: '#ff6b6b',
+                                alignItems: 'center',
+                                gap: '8px',
+                                fontSize: '16px'
+                            }}>
+                                🔥 継続記録 <span style={{ fontSize: '12px', color: '#999', fontWeight: 'normal' }}> (途切れるとリセット)</span>
+                            </h3>
+                            <div className="badges-grid" style={{ padding: '0', marginBottom: '20px' }}>
+                                {badges.filter(b => b.type === 'streak').map(badge => (
+                                    <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
+                                        <div className="badge-icon">{badge.icon}</div>
+                                        <div className="badge-name">{badge.name}</div>
+                                        <div className="badge-description">{badge.description}</div>
+                                    </div>
+                                ))}
+                            </div>
 
-                                <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
-
-                                    <div className="badge-icon">{badge.icon}</div>
-
-                                    <div className="badge-name">{badge.name}</div>
-
-                                    <div className="badge-description">{badge.description}</div>
-
-                                </div>
-
-                            ))}
+                            {/* Total Section */}
+                            <h3 style={{
+                                marginTop: '20px',
+                                marginBottom: '10px',
+                                color: '#fdb931',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                fontSize: '16px'
+                            }}>
+                                👑 累計積み上げ <span style={{ fontSize: '12px', color: '#999', fontWeight: 'normal' }}> (途切れてもOK)</span>
+                            </h3>
+                            <div className="badges-grid" style={{ padding: '0' }}>
+                                {badges.filter(b => b.type === 'total').map(badge => (
+                                    <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
+                                        <div className="badge-icon">{badge.icon}</div>
+                                        <div className="badge-name">{badge.name}</div>
+                                        <div className="badge-description">{badge.description}</div>
+                                    </div>
+                                ))}
+                            </div>
 
                         </div>
 
@@ -2370,7 +2904,7 @@
 
                         <div className="shop-grid">
 
-                            {shopItems.map(item => (
+                            {shopItems.filter(item => item.type === 'skin' || (item.compat && item.compat.includes(tigerSkin))).map(item => (
 
                                 <div
 
@@ -2387,9 +2921,9 @@
                                     <div className="shop-name">{item.name}</div>
 
                                     <div className="shop-price">
-
-                                        {ownedItems.includes(item.id) ? '所持中' : `${item.price} コイン`}
-
+                                        {ownedItems.includes(item.id)
+                                            ? (item.type === 'skin' && tigerSkin === item.skin ? '変身中' : (item.type === 'skin' ? '変身する' : '所持中'))
+                                            : `${item.price} 💰`}
                                     </div>
 
                                 </div>
@@ -2404,7 +2938,7 @@
 
                     <div className="footer">
 
-                        Push Your Limits! 🐯✨<br/>
+                        Push Your Limits! 🐯✨<br />
 
                         限界を越える、仲間と共にその先へ
 
