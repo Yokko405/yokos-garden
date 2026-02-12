@@ -4,7 +4,7 @@
   "description": "Tiger-themed habit tracker that runs 100% in the browser. Cute, fast, and private.",
   "main": "generate-icons.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,9 @@
   "homepage": "https://github.com/Yokko405/yokos-garden#readme",
   "dependencies": {
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "serve": "^14.2.5"
   }
 }

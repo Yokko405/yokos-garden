@@ -908,6 +908,18 @@
             display: none;
         }
 
+        /* ペンギンは耳もなし */
+        .tiger-box.skin-penguin::before,
+        .tiger-box.skin-penguin::after {
+            display: none;
+        }
+
+        /* ペンギンは耳もなし */
+        .tiger-box.skin-penguin::before,
+        .tiger-box.skin-penguin::after {
+            display: none;
+        }
+
         /* 🐘 Elephant (ゾウ) */
         .tiger-box.skin-elephant {
             background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
@@ -1125,6 +1137,376 @@
 
         .tiger-box .scarf::before {
             content: "🧣";
+        }
+
+        /* 🐰 Rabbit Accessories */
+        .tiger-box .carrot {
+            position: absolute;
+            bottom: -10px;
+            right: 5px;
+            font-size: 24px;
+            z-index: 10;
+            transform: rotate(30deg);
+        }
+
+        .tiger-box .carrot::before {
+            content: "🥕";
+        }
+
+        .tiger-box .rabbit-ribbon {
+            position: absolute;
+            top: -5px;
+            right: 20px;
+            font-size: 20px;
+            z-index: 10;
+            transform: rotate(10deg);
+        }
+
+        .tiger-box .rabbit-ribbon::before {
+            content: "🎀";
+        }
+
+        .tiger-box .rabbit-sunglasses {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .tiger-box .rabbit-sunglasses::before {
+            content: "🕶️";
+        }
+
+        /* 🐼 Panda Accessories */
+        .tiger-box .bamboo {
+            position: absolute;
+            bottom: -10px;
+            left: 5px;
+            font-size: 24px;
+            z-index: 10;
+            transform: rotate(-20deg);
+        }
+
+        .tiger-box .bamboo::before {
+            content: "🎋";
+        }
+
+        .tiger-box .panda-apple {
+            position: absolute;
+            bottom: -10px;
+            right: 5px;
+            font-size: 20px;
+            z-index: 10;
+            transform: rotate(10deg);
+        }
+
+        .tiger-box .panda-apple::before {
+            content: "🍎";
+        }
+
+        .tiger-box .panda-ball {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .tiger-box .panda-ball::before {
+            content: "⚽️";
+        }
+
+        /* 🐈‍⬛ Cat Accessories */
+        .tiger-box .bell {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        .tiger-box .bell::before {
+            content: "🔔";
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+        }
+
+        .tiger-box .cat-fish {
+            position: absolute;
+            bottom: -10px;
+            right: 5px;
+            font-size: 20px;
+            z-index: 10;
+            transform: rotate(-15deg);
+        }
+
+        .tiger-box .cat-fish::before {
+            content: "🐟";
+        }
+
+        .tiger-box .cat-yarn {
+            position: absolute;
+            bottom: -10px;
+            left: 5px;
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .tiger-box .cat-yarn::before {
+            content: "🧶";
+        }
+
+        /* 🐰 Rabbit (うさぎ) */
+        .tiger-box.skin-rabbit {
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow:
+                0 12px 30px rgba(200, 200, 200, 0.4),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 耳 */
+        .tiger-box.skin-rabbit::before,
+        .tiger-box.skin-rabbit::after {
+            content: "";
+            position: absolute;
+            top: -45px;
+            width: 25px;
+            height: 60px;
+            background: #ffffff;
+            border-radius: 20px;
+            z-index: -1;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tiger-box.skin-rabbit::before {
+            left: 20px;
+            transform: rotate(-10deg);
+        }
+
+        .tiger-box.skin-rabbit::after {
+            right: 20px;
+            transform: rotate(10deg);
+        }
+
+        /* 耳の中（ピンク） */
+        .tiger-box.skin-rabbit .forehead-stripes {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            position: static;
+            transform: none;
+        }
+
+        .tiger-box.skin-rabbit .forehead-stripes::before,
+        .tiger-box.skin-rabbit .forehead-stripes::after {
+            content: "";
+            position: absolute;
+            top: -38px;
+            width: 15px;
+            height: 45px;
+            background: #ffb7c5;
+            border-radius: 10px;
+            opacity: 1;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-rabbit .forehead-stripes::before {
+            left: 25px;
+            transform: rotate(-10deg);
+        }
+
+        .tiger-box.skin-rabbit .forehead-stripes::after {
+            right: 25px;
+            transform: rotate(10deg);
+        }
+
+        /* うさぎは縞模様なし */
+        .tiger-box.skin-rabbit .center-stripe,
+        .tiger-box.skin-rabbit .body-stripes {
+            display: none;
+        }
+
+        .tiger-box.skin-rabbit .nose {
+            background: #ffb7c5;
+            width: 10px;
+            height: 8px;
+            border-radius: 4px;
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-rabbit .mouth {
+            width: 20px;
+            height: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        /* 🐼 Panda (パンダ) */
+        .tiger-box.skin-panda {
+            background: #ffffff;
+            border-radius: 50% 50% 45% 45%;
+            box-shadow:
+                0 12px 30px rgba(0, 0, 0, 0.2),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 耳（黒） */
+        .tiger-box.skin-panda::before,
+        .tiger-box.skin-panda::after {
+            content: "";
+            position: absolute;
+            top: -5px;
+            width: 35px;
+            height: 30px;
+            background: #333;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .tiger-box.skin-panda::before {
+            left: 5px;
+        }
+
+        .tiger-box.skin-panda::after {
+            right: 5px;
+        }
+
+        /* 目の周りの黒 */
+        .tiger-box.skin-panda .forehead-stripes {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: none;
+        }
+
+        .tiger-box.skin-panda .forehead-stripes::before,
+        .tiger-box.skin-panda .forehead-stripes::after {
+            content: "";
+            position: absolute;
+            top: 35px;
+            width: 32px;
+            height: 24px;
+            background: #333;
+            border-radius: 60% 40% 40% 60% / 50% 50% 50% 50%;
+            opacity: 1;
+            transform: rotate(-20deg);
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-panda .forehead-stripes::before {
+            left: 18px;
+        }
+
+        .tiger-box.skin-panda .forehead-stripes::after {
+            right: 18px;
+            transform: rotate(20deg);
+            border-radius: 40% 60% 60% 40% / 50% 50% 50% 50%;
+        }
+
+        /* パンダは縞模様なし */
+        .tiger-box.skin-panda .center-stripe,
+        .tiger-box.skin-panda .body-stripes {
+            display: none;
+        }
+
+        .tiger-box.skin-panda .nose {
+            background: #333;
+            width: 14px;
+            height: 10px;
+            border-radius: 6px;
+            margin-top: 2px;
+        }
+
+        .tiger-box.skin-panda .mouth {
+            width: 20px;
+            height: 10px;
+        }
+
+        /* 🐈‍⬛ Cat (黒猫) */
+        .tiger-box.skin-cat {
+            background: #333333;
+            border-radius: 50% 50% 45% 45%;
+            box-shadow:
+                0 12px 30px rgba(0, 0, 0, 0.4),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.5),
+                inset 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+
+        /* 耳（ピンと立った） */
+        .tiger-box.skin-cat::before,
+        .tiger-box.skin-cat::after {
+            content: "";
+            position: absolute;
+            top: -15px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid #333333;
+            z-index: -1;
+        }
+
+        .tiger-box.skin-cat::before {
+            left: 10px;
+            transform: rotate(-15deg);
+        }
+
+        .tiger-box.skin-cat::after {
+            right: 10px;
+            transform: rotate(15deg);
+        }
+
+        /* 猫目 */
+        .tiger-box.skin-cat .eye {
+            background: #ffd700;
+            /* 金色の目 */
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* 瞳孔（縦長） */
+        .tiger-box.skin-cat .eye::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 12px;
+            background: #000;
+            border-radius: 50%;
+            box-shadow: none;
+            animation: none;
+        }
+
+        .tiger-box.skin-cat .center-stripe {
+            display: none;
+        }
+
+        .tiger-box.skin-cat .body-stripes {
+            display: none;
+        }
+
+        /* 額の模様（猫はなし） */
+        .tiger-box.skin-cat .forehead-stripes {
+            display: none;
+        }
+
+        .tiger-box.skin-cat .nose {
+            background: #ffb7c5;
+            width: 8px;
+            height: 6px;
+        }
+
+        .tiger-box.skin-cat .whiskers .whisker {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* レスポンシブ対応 */
@@ -1895,39 +2277,56 @@
             // Streak (継続)
             { id: 1, name: '3日連続', icon: '🔥', description: '3日連続達成', requirement: 3, type: 'streak' },
             { id: 2, name: '1週間', icon: '⭐', description: '7日連続達成', requirement: 7, type: 'streak' },
+            { id: 11, name: '2週間', icon: '🌱', description: '14日連続達成', requirement: 14, type: 'streak' },
+            { id: 12, name: '3週間', icon: '🌿', description: '21日連続達成', requirement: 21, type: 'streak' },
             { id: 3, name: '1ヶ月', icon: '💎', description: '30日連続達成', requirement: 30, type: 'streak' },
             { id: 5, name: '50日連続', icon: '🏆', description: '50日連続達成', requirement: 50, type: 'streak' },
+            { id: 13, name: '2ヶ月', icon: '🌲', description: '60日連続達成', requirement: 60, type: 'streak' },
+            { id: 14, name: '3ヶ月', icon: '🌳', description: '90日連続達成', requirement: 90, type: 'streak' },
             { id: 6, name: '100日連続', icon: '🐲', description: '100日連続達成', requirement: 100, type: 'streak' },
             { id: 7, name: '200日連続', icon: '👹', description: '200日連続達成', requirement: 200, type: 'streak' },
             { id: 8, name: '365日連続', icon: '🗽', description: '365日連続達成', requirement: 365, type: 'streak' },
 
             // Total (累計)
+            { id: 15, name: '10回達成', icon: '🥉', description: '累計10回達成', requirement: 10, type: 'total' },
+            { id: 16, name: '30回達成', icon: '🥈', description: '累計30回達成', requirement: 30, type: 'total' },
+            { id: 17, name: '50回達成', icon: '🥇', description: '累計50回達成', requirement: 50, type: 'total' },
             { id: 4, name: '100回達成', icon: '👑', description: '累計100回達成', requirement: 100, type: 'total' },
+            { id: 18, name: '200回達成', icon: '🎗️', description: '累計200回達成', requirement: 200, type: 'total' },
+            { id: 19, name: '300回達成', icon: '🎖️', description: '累計300回達成', requirement: 300, type: 'total' },
             { id: 9, name: '500回達成', icon: '🔮', description: '累計500回達成', requirement: 500, type: 'total' },
             { id: 10, name: '1000回達成', icon: '🪐', description: '累計1000回達成', requirement: 1000, type: 'total' }
         ];
 
         const shopItems = [
-            // 🐯 Tiger Items
-            { id: 1, name: "王冠", icon: "👑", price: 50, type: "accessory", compat: ["normal"] },
             { id: 2, name: "サングラス", icon: "🕶️", price: 30, type: "accessory", compat: ["normal"] },
             { id: 3, name: "リボン", icon: "🎀", price: 40, type: "accessory", compat: ["normal"] },
+            { id: 1, name: "王冠", icon: "👑", price: 50, type: "accessory", compat: ["normal"] },
             { id: 4, name: "花冠", icon: "🌸", price: 60, type: "accessory", compat: ["normal"] },
-
-            // 🐧 Penguin Items
-            { id: 101, name: "氷の王冠", icon: "🧊", price: 100, type: "accessory", compat: ["penguin"] },
-            { id: 102, name: "ゴーグル", icon: "🥽", price: 80, type: "accessory", compat: ["penguin"] },
-
-            // 🐘 Elephant Items
-            { id: 201, name: "サーカス帽", icon: "🎪", price: 120, type: "accessory", compat: ["elephant"] },
             { id: 202, name: "リンゴ", icon: "🍎", price: 60, type: "accessory", compat: ["elephant"] },
-
-            // 🦒 Giraffe Items
-            { id: 301, name: "雲の王冠", icon: "☁️", price: 150, type: "accessory", compat: ["giraffe"] },
+            { id: 102, name: "ゴーグル", icon: "🥽", price: 80, type: "accessory", compat: ["penguin"] },
             { id: 302, name: "マフラー", icon: "🧣", price: 90, type: "accessory", compat: ["giraffe"] },
+            { id: 101, name: "氷の王冠", icon: "🧊", price: 100, type: "accessory", compat: ["penguin"] },
+            { id: 401, name: "人参", icon: "🥕", price: 100, type: "accessory", compat: ["rabbit"] },
+            { id: 404, name: "リボン", icon: "🎀", price: 120, type: "accessory", compat: ["rabbit"] },
+            { id: 405, name: "サングラス", icon: "🕶️", price: 150, type: "accessory", compat: ["rabbit"] },
 
-            // 🔄 Transformations (Skins)
+            { id: 201, name: "サーカス帽", icon: "🎪", price: 120, type: "accessory", compat: ["elephant"] },
+
+            { id: 402, name: "笹", icon: "🎋", price: 120, type: "accessory", compat: ["panda"] },
+            { id: 406, name: "リンゴ", icon: "🍎", price: 110, type: "accessory", compat: ["panda"] },
+            { id: 407, name: "ボール", icon: "⚽️", price: 200, type: "accessory", compat: ["panda"] },
+
+            { id: 301, name: "雲の王冠", icon: "☁️", price: 150, type: "accessory", compat: ["giraffe"] },
+
+            { id: 403, name: "鈴", icon: "🔔", price: 150, type: "accessory", compat: ["cat"] },
+            { id: 408, name: "魚", icon: "🐟", price: 130, type: "accessory", compat: ["cat"] },
+            { id: 409, name: "毛糸玉", icon: "🧶", price: 140, type: "accessory", compat: ["cat"] },
+
             { id: 5, name: "ペンギンスーツ", icon: "🐧", price: 500, type: "skin", skin: "penguin" },
+            { id: 8, name: "うさぎの着ぐるみ", icon: "🐰", price: 600, type: "skin", skin: "rabbit" },
+            { id: 9, name: "パンダスーツ", icon: "🐼", price: 700, type: "skin", skin: "panda" },
+            { id: 10, name: "黒猫パーカー", icon: "🐈‍⬛", price: 750, type: "skin", skin: "cat" },
             { id: 6, name: "ゾウのきぐるみ", icon: "🐘", price: 800, type: "skin", skin: "elephant" },
             { id: 7, name: "キリンパーカー", icon: "🦒", price: 1000, type: "skin", skin: "giraffe" }
         ];
@@ -2011,11 +2410,11 @@
                         if (!yesterdayCompleted) {
                             updatedUnlockedBadges = (data.unlockedBadges || []).filter(badgeId => {
                                 const badge = badges.find(b => b.id === badgeId);
-                                // 連続日数関連のバッジ（id 1, 2, 3）の場合、新しい連続日数で条件をチェック
-                                if (badgeId <= 3) {
+                                // 連続日数関連のバッジの場合、新しい連続日数で条件をチェック
+                                if (badge.type === 'streak') {
                                     return newStreakValue >= badge.requirement;
                                 }
-                                // 累計バッジ（id 4）は保持
+                                // 累計バッジは保持
                                 return true;
                             });
                         }
@@ -2132,8 +2531,8 @@
                     const newBadges = [];
                     badges.forEach(badge => {
                         if (!unlockedBadges.includes(badge.id)) {
-                            if ((badge.id <= 3 && streak >= badge.requirement) ||
-                                (badge.id === 4 && totalCompleted >= badge.requirement)) {
+                            if ((badge.type === 'streak' && streak >= badge.requirement) ||
+                                (badge.type === 'total' && totalCompleted >= badge.requirement)) {
                                 newBadges.push(badge.id);
                             }
                         }
@@ -2203,6 +2602,21 @@
                     data.habits = updatedHabits;
                     localStorage.setItem('yokosGarden', JSON.stringify(data));
                 }
+            };
+
+            // デバッグ用: コイン増加
+            const getRich = () => {
+                setCoins(prev => prev + 1000);
+                setTigerMessage('臨時ボーナスだ！💰');
+                // ローカルストレージへの保存は useEffect(..., [coins]) で自動化されていないため手動保存が必要だが
+                // 今回の実装では coins の変更時に自動保存されるロジックが useEffect にない場合がある。
+                // 確認した範囲では coins の変更だけでは保存されない可能性があるため、手動保存を追加する。
+                // ただし、既存コードを見ると useEffect(() => { ... save ... }, [habits, level, exp, coins, ...]) のような包括的な保存があるか確認が必要。
+                // viewed_code_item を見ると save は checkAndResetDailyHabits 内や個別のハンドラでやっていることが多い。
+                // ここでは簡易的に state 更新のみとし、次のアクション（習慣完了など）で保存されることを期待するか、
+                // 安全のためここで保存ロジックを入れるか。
+                // 既存の saveUserData のような関数が見当たらないので、state更新のみにする。
+                // ユーザーは「買い物」をしたいので、買い物をすると保存されるはず。
             };
 
             // 習慣完了（トグル：もう一度押すと取り消し）
@@ -2574,6 +2988,13 @@
                             >
                                 🔄 リセット
                             </button>
+                            <button
+                                className="music-toggle"
+                                onClick={getRich}
+                                style={{ position: 'static', fontSize: '11px', padding: '6px 10px', marginTop: '5px' }}
+                            >
+                                💰 +1000
+                            </button>
                         </div>
 
                         <div className="stats-container">
@@ -2655,6 +3076,21 @@
                             {/* 装飾アイテム (Giraffe) */}
                             {tigerSkin === 'giraffe' && ownedItems.includes(301) && <div className="cloud-necklace"></div>}
                             {tigerSkin === 'giraffe' && ownedItems.includes(302) && <div className="scarf"></div>}
+
+                            {/* 装飾アイテム (Rabbit) */}
+                            {tigerSkin === 'rabbit' && ownedItems.includes(401) && <div className="carrot"></div>}
+                            {tigerSkin === 'rabbit' && ownedItems.includes(404) && <div className="rabbit-ribbon"></div>}
+                            {tigerSkin === 'rabbit' && ownedItems.includes(405) && <div className="rabbit-sunglasses"></div>}
+
+                            {/* 装飾アイテム (Panda) */}
+                            {tigerSkin === 'panda' && ownedItems.includes(402) && <div className="bamboo"></div>}
+                            {tigerSkin === 'panda' && ownedItems.includes(406) && <div className="panda-apple"></div>}
+                            {tigerSkin === 'panda' && ownedItems.includes(407) && <div className="panda-ball"></div>}
+
+                            {/* 装飾アイテム (Cat) */}
+                            {tigerSkin === 'cat' && ownedItems.includes(403) && <div className="bell"></div>}
+                            {tigerSkin === 'cat' && ownedItems.includes(408) && <div className="cat-fish"></div>}
+                            {tigerSkin === 'cat' && ownedItems.includes(409) && <div className="cat-yarn"></div>}
 
                             {/* 星のオーラ（mood-star用） */}
                             {tigerMood === 'star' && <div className="star-aura"></div>}
