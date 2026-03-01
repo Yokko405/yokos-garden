@@ -2989,13 +2989,15 @@
                             >
                                 🔄 リセット
                             </button>
-                            <button
-                                className="music-toggle"
-                                onClick={getRich}
-                                style={{ position: 'static', fontSize: '11px', padding: '6px 10px', marginTop: '5px' }}
-                            >
-                                💰 +1000
-                            </button>
+                            {new URLSearchParams(window.location.search).has('admin') && (
+                                <button
+                                    className="music-toggle"
+                                    onClick={getRich}
+                                    style={{ position: 'static', fontSize: '11px', padding: '6px 10px', marginTop: '5px' }}
+                                >
+                                    💰 +1000
+                                </button>
+                            )}
                         </div>
 
                         <div className="stats-container">
