@@ -14,4 +14,5 @@ test('badges tab displays new accumulation goals', async ({ page }) => {
   await expect(page.locator('.badge-name:has-text("10回達成")')).toBeVisible();
   await expect(page.locator('.badge-name:has-text("30回達成")')).toBeVisible();
   await expect(page.locator('.badge-name:has-text("777回達成")')).toBeVisible();
+  await expect(page.locator('img[alt="777回達成"]')).toBeVisible();
 });

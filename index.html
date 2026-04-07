@@ -1883,6 +1883,20 @@
 
         }
 
+        .badge-icon img {
+
+            width: 56px;
+
+            height: 56px;
+
+            display: block;
+
+            margin: 0 auto;
+
+            object-fit: contain;
+
+        }
+
         .badge-card.unlocked .badge-icon {
 
             filter: grayscale(0%);
@@ -2299,7 +2313,7 @@
             { id: 18, name: '200回達成', icon: '🎗️', description: '累計200回達成', requirement: 200, type: 'total' },
             { id: 19, name: '300回達成', icon: '🎖️', description: '累計300回達成', requirement: 300, type: 'total' },
             { id: 9, name: '500回達成', icon: '🔮', description: '累計500回達成', requirement: 500, type: 'total' },
-            { id: 21, name: '777回達成', icon: '🎰', description: '累計777回達成！フィーバー！', requirement: 777, type: 'total' },
+            { id: 21, name: '777回達成', icon: '🎰', imageSrc: 'badge-777-total.svg', description: '累計777回達成！フィーバー！', requirement: 777, type: 'total' },
             { id: 10, name: '1000回達成', icon: '🪐', description: '累計1000回達成', requirement: 1000, type: 'total' }
         ];
 
@@ -3308,7 +3322,13 @@
                             <div className="badges-grid" style={{ padding: '0', marginBottom: '20px' }}>
                                 {badges.filter(b => b.type === 'streak').map(badge => (
                                     <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
-                                        <div className="badge-icon">{badge.icon}</div>
+                                        <div className="badge-icon">
+                                            {badge.imageSrc ? (
+                                                <img src={badge.imageSrc} alt={badge.name} />
+                                            ) : (
+                                                badge.icon
+                                            )}
+                                        </div>
                                         <div className="badge-name">{badge.name}</div>
                                         <div className="badge-description">{badge.description}</div>
                                     </div>
@@ -3330,7 +3350,13 @@
                             <div className="badges-grid" style={{ padding: '0' }}>
                                 {badges.filter(b => b.type === 'total').map(badge => (
                                     <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
-                                        <div className="badge-icon">{badge.icon}</div>
+                                        <div className="badge-icon">
+                                            {badge.imageSrc ? (
+                                                <img src={badge.imageSrc} alt={badge.name} />
+                                            ) : (
+                                                badge.icon
+                                            )}
+                                        </div>
                                         <div className="badge-name">{badge.name}</div>
                                         <div className="badge-description">{badge.description}</div>
                                     </div>

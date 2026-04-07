@@ -1,0 +1,26 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="48" y1="40" x2="208" y2="216" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF3C4"/>
+      <stop offset="1" stop-color="#F4A340"/>
+    </linearGradient>
+    <linearGradient id="core" x1="76" y1="68" x2="180" y2="188" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#77D5FF"/>
+      <stop offset="1" stop-color="#315BFF"/>
+    </linearGradient>
+    <filter id="shadow" x="16" y="20" width="224" height="220" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#C97A1D" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <path d="M88 164L66 224L112 196L128 220L144 196L190 224L168 164H88Z" fill="#D64A5E"/>
+    <path d="M96 164L82 210L116 188L128 208L140 188L174 210L160 164H96Z" fill="#F26F81"/>
+    <circle cx="128" cy="112" r="72" fill="url(#bg)"/>
+    <circle cx="128" cy="112" r="58" fill="url(#core)"/>
+    <circle cx="128" cy="112" r="48" stroke="#C5F1FF" stroke-width="4" stroke-opacity="0.7"/>
+    <path d="M128 70L134 82L148 84L138 94L140 108L128 101L116 108L118 94L108 84L122 82L128 70Z" fill="#FFF7D6" fill-opacity="0.95"/>
+    <text x="128" y="137" text-anchor="middle" font-size="42" font-weight="800" font-family="Arial, Helvetica, sans-serif" fill="#FFFDF5">777</text>
+    <text x="128" y="162" text-anchor="middle" font-size="14" font-weight="700" font-family="Arial, Helvetica, sans-serif" fill="#EAF8FF">TOTAL</text>
+  </g>
+</svg>
