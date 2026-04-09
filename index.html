@@ -1863,6 +1863,12 @@
 
         }
 
+        .badge-card.badge-card-featured {
+
+            padding-top: 16px;
+
+        }
+
         .badge-card.unlocked {
 
             border-color: #ffd700;
@@ -1894,6 +1900,32 @@
             margin: 0 auto;
 
             object-fit: contain;
+
+        }
+
+        .badge-icon.badge-icon-featured img {
+
+            width: 82px;
+
+            height: 82px;
+
+            margin-top: -4px;
+
+            margin-bottom: -2px;
+
+        }
+
+        .badge-card.badge-card-featured .badge-name {
+
+            font-size: 16px;
+
+            line-height: 1.25;
+
+        }
+
+        .badge-card.badge-card-featured .badge-description {
+
+            font-size: 12px;
 
         }
 
@@ -3321,8 +3353,8 @@
                             </h3>
                             <div className="badges-grid" style={{ padding: '0', marginBottom: '20px' }}>
                                 {badges.filter(b => b.type === 'streak').map(badge => (
-                                    <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
-                                        <div className="badge-icon">
+                                    <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''} ${badge.id === 21 ? 'badge-card-featured' : ''}`}>
+                                        <div className={`badge-icon ${badge.id === 21 ? 'badge-icon-featured' : ''}`}>
                                             {badge.imageSrc ? (
                                                 <img src={badge.imageSrc} alt={badge.name} />
                                             ) : (
@@ -3349,8 +3381,8 @@
                             </h3>
                             <div className="badges-grid" style={{ padding: '0' }}>
                                 {badges.filter(b => b.type === 'total').map(badge => (
-                                    <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''}`}>
-                                        <div className="badge-icon">
+                                    <div key={badge.id} className={`badge-card ${unlockedBadges.includes(badge.id) ? 'unlocked' : ''} ${badge.id === 21 ? 'badge-card-featured' : ''}`}>
+                                        <div className={`badge-icon ${badge.id === 21 ? 'badge-icon-featured' : ''}`}>
                                             {badge.imageSrc ? (
                                                 <img src={badge.imageSrc} alt={badge.name} />
                                             ) : (
