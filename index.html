@@ -2382,6 +2382,208 @@
             { id: 7, name: "キリンパーカー", icon: "🦒", price: 1000, type: "skin", skin: "giraffe" }
         ];
 
+        const STORAGE_KEYS = {
+            app: 'yokosGarden',
+            backup: 'yokosGarden_backup',
+            lastReset: 'yg_lastResetDate',
+            lastStreakUpdate: 'yg_lastStreakUpdateDate',
+            music: 'yg_music'
+        };
+        const STORAGE_VERSION = 1;
+        const VALID_FREQUENCIES = new Set(['毎日', '週3回', '週5回', '平日']);
+        const VALID_SKINS = new Set(['normal', ...shopItems.filter(item => item.type === 'skin').map(item => item.skin)]);
+        const KNOWN_BADGE_IDS = new Set(badges.map(badge => badge.id));
+        const KNOWN_ITEM_IDS = new Set(shopItems.map(item => item.id));
+        const LOCAL_ADMIN_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+        function storageGet(key) {
+            try {
+                return localStorage.getItem(key);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function storageSet(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function storageRemove(key) {
+            try {
+                localStorage.removeItem(key);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function safeParseJSON(value) {
+            if (typeof value !== 'string' || value.length === 0) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function clampNumber(value, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) {
+            const num = Number(value);
+            if (!Number.isFinite(num)) {
+                return fallback;
+            }
+            return Math.min(max, Math.max(min, num));
+        }
+
+        function cloneInitialHabits() {
+            return initialHabits.map(habit => ({ ...habit }));
+        }
+
+        function sanitizeIdList(list, allowedIds) {
+            if (!Array.isArray(list)) {
+                return [];
+            }
+
+            const unique = new Set();
+            list.forEach(value => {
+                const id = Number(value);
+                if (Number.isInteger(id) && allowedIds.has(id)) {
+                    unique.add(id);
+                }
+            });
+            return [...unique];
+        }
+
+        function sanitizeHabit(rawHabit, index, usedIds) {
+            const rawName = typeof rawHabit?.name === 'string' ? rawHabit.name.trim() : '';
+            const name = (rawName || `習慣 ${index + 1}`).slice(0, 80);
+            const rawIcon = typeof rawHabit?.icon === 'string' ? rawHabit.icon.trim() : '';
+            const icon = Array.from(rawIcon || '🐯').slice(0, 2).join('') || '🐯';
+
+            let id = Number(rawHabit?.id);
+            if (!Number.isInteger(id) || id <= 0 || usedIds.has(id)) {
+                id = 1;
+                while (usedIds.has(id)) {
+                    id += 1;
+                }
+            }
+            usedIds.add(id);
+
+            const frequency = VALID_FREQUENCIES.has(rawHabit?.frequency) ? rawHabit.frequency : '毎日';
+
+            return {
+                id,
+                name,
+                icon,
+                points: clampNumber(rawHabit?.points, 10, 1, 1000000),
+                frequency,
+                completed: Boolean(rawHabit?.completed)
+            };
+        }
+
+        function createDefaultAppData() {
+            return {
+                version: STORAGE_VERSION,
+                habits: cloneInitialHabits(),
+                level: 1,
+                exp: 0,
+                coins: 0,
+                streak: 0,
+                totalCompleted: 0,
+                unlockedBadges: [],
+                ownedItems: [],
+                tigerSkin: 'normal'
+            };
+        }
+
+        function sanitizeAppData(rawData) {
+            const defaults = createDefaultAppData();
+            if (!rawData || typeof rawData !== 'object' || Array.isArray(rawData)) {
+                return defaults;
+            }
+
+            const usedIds = new Set();
+            const habitsSource = Array.isArray(rawData.habits) && rawData.habits.length > 0
+                ? rawData.habits
+                : defaults.habits;
+
+            const habits = habitsSource.map((habit, index) => sanitizeHabit(habit, index, usedIds));
+            const tigerSkin = VALID_SKINS.has(rawData.tigerSkin) ? rawData.tigerSkin : 'normal';
+
+            return {
+                version: STORAGE_VERSION,
+                habits,
+                level: clampNumber(rawData.level, defaults.level, 1),
+                exp: clampNumber(rawData.exp, defaults.exp, 0),
+                coins: clampNumber(rawData.coins, defaults.coins, 0),
+                streak: clampNumber(rawData.streak, defaults.streak, 0),
+                totalCompleted: clampNumber(rawData.totalCompleted, defaults.totalCompleted, 0),
+                unlockedBadges: sanitizeIdList(rawData.unlockedBadges, KNOWN_BADGE_IDS),
+                ownedItems: sanitizeIdList(rawData.ownedItems, KNOWN_ITEM_IDS),
+                tigerSkin
+            };
+        }
+
+        function backupRawAppData(rawValue, reason) {
+            if (typeof rawValue !== 'string' || rawValue.length === 0) {
+                return;
+            }
+
+            storageSet(STORAGE_KEYS.backup, JSON.stringify({
+                reason,
+                savedAt: new Date().toISOString(),
+                raw: rawValue
+            }));
+        }
+
+        function persistAppData(appData) {
+            const sanitized = sanitizeAppData(appData);
+            storageSet(STORAGE_KEYS.app, JSON.stringify(sanitized));
+            return sanitized;
+        }
+
+        function loadAppData() {
+            const rawValue = storageGet(STORAGE_KEYS.app);
+            if (!rawValue) {
+                return {
+                    data: createDefaultAppData(),
+                    shouldPersist: false,
+                    recoveredFromBackup: false
+                };
+            }
+
+            const parsed = safeParseJSON(rawValue);
+            if (!parsed) {
+                backupRawAppData(rawValue, 'invalid-json');
+                return {
+                    data: createDefaultAppData(),
+                    shouldPersist: true,
+                    recoveredFromBackup: true
+                };
+            }
+
+            const sanitized = sanitizeAppData(parsed);
+            const normalizedValue = JSON.stringify(sanitized);
+            const shouldPersist = rawValue !== normalizedValue;
+
+            if (shouldPersist) {
+                backupRawAppData(rawValue, 'normalized');
+            }
+
+            return {
+                data: sanitized,
+                shouldPersist,
+                recoveredFromBackup: shouldPersist
+            };
+        }
+
         function App() {
 
             const [activeTab, setActiveTab] = useState('habits');
@@ -2418,6 +2620,9 @@
             const [newIcon, setNewIcon] = useState('🐯');
             const [newPoints, setNewPoints] = useState(10);
             const [newFreq, setNewFreq] = useState('毎日');
+            const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
+            const canUseAdminTools = LOCAL_ADMIN_HOSTS.has(window.location.hostname)
+                && new URLSearchParams(window.location.search).has('admin');
 
             // 午前1時基準で日付を計算する関数
             const getDateKey = (date) => {
@@ -2431,74 +2636,71 @@
 
             // 日付チェックとリセット処理を関数として抽出（PWA対応）
             const checkAndResetDailyHabits = () => {
-                const saved = localStorage.getItem('yokosGarden');
+                const { data: loadedData, shouldPersist, recoveredFromBackup } = loadAppData();
                 const now = new Date();
                 const today = getDateKey(now); // 午前1時基準の日付文字列
-                const lastResetDate = localStorage.getItem('yg_lastResetDate');
+                const lastResetDate = storageGet(STORAGE_KEYS.lastReset);
+                let data = loadedData;
 
-                if (saved) {
-                    const data = JSON.parse(saved);
+                if (lastResetDate !== today) {
+                    // リセット前に昨日の完了状態をチェック
+                    const yesterdayCompleted = data.habits.some(h => h.completed);
 
-                    // 日付が変わっていたら習慣の完了状態をリセット（午前1時基準）
-                    if (lastResetDate !== today) {
-                        // リセット前に昨日の完了状態をチェック
-                        const yesterdayCompleted = data.habits && data.habits.some(h => h.completed);
+                    // 習慣のcompletedをfalseにリセット
+                    const resetHabits = data.habits.map(h => ({
+                        ...h,
+                        completed: false
+                    }));
 
-                        // 習慣のcompletedをfalseにリセット
-                        const resetHabits = (data.habits || initialHabits).map(h => ({
-                            ...h,
-                            completed: false
-                        }));
-                        setHabits(resetHabits);
+                    // 連続日数の更新（昨日習慣を完了していなかった場合は0にリセット）
+                    const newStreakValue = yesterdayCompleted ? data.streak : 0;
 
-                        // 連続日数の更新（昨日習慣を完了していなかった場合は0にリセット）
-                        let newStreakValue = yesterdayCompleted ? (data.streak || 0) : 0;
-
-                        setStreak(newStreakValue);
-
-                        // 連続日数がリセットされる場合、連続日数関連のバッジも削除
-                        let updatedUnlockedBadges = data.unlockedBadges || [];
-                        if (!yesterdayCompleted) {
-                            updatedUnlockedBadges = (data.unlockedBadges || []).filter(badgeId => {
-                                const badge = badges.find(b => b.id === badgeId);
-                                // 連続日数関連のバッジの場合、新しい連続日数で条件をチェック
-                                if (badge.type === 'streak') {
-                                    return newStreakValue >= badge.requirement;
-                                }
-                                // 累計バッジは保持
-                                return true;
-                            });
-                        }
-                        setUnlockedBadges(updatedUnlockedBadges);
-
-                        // 今日の日付を保存
-                        localStorage.setItem('yg_lastResetDate', today);
-                        // 連続日数更新日もリセット
-                        localStorage.removeItem('yg_lastStreakUpdateDate');
-
-                        // データを保存
-                        localStorage.setItem('yokosGarden', JSON.stringify({
-                            ...data,
-                            habits: resetHabits,
-                            streak: newStreakValue,
-                            unlockedBadges: updatedUnlockedBadges
-                        }));
-                    } else {
-                        // 日付が変わっていない場合はそのまま読み込み
-                        setHabits(data.habits || initialHabits);
-                        setStreak(data.streak || 0);
-                        setUnlockedBadges(data.unlockedBadges || []);
+                    // 連続日数がリセットされる場合、連続日数関連のバッジも削除
+                    let updatedUnlockedBadges = data.unlockedBadges;
+                    if (!yesterdayCompleted) {
+                        updatedUnlockedBadges = data.unlockedBadges.filter(badgeId => {
+                            const badge = badges.find(b => b.id === badgeId);
+                            if (!badge) {
+                                return false;
+                            }
+                            if (badge.type === 'streak') {
+                                return newStreakValue >= badge.requirement;
+                            }
+                            return true;
+                        });
                     }
 
-                    setLevel(data.level || 1);
-                    setExp(data.exp || 0);
-                    setCoins(data.coins || 0);
-                    setTotalCompleted(data.totalCompleted || 0);
-                    setOwnedItems(data.ownedItems || []);
-                    setTigerSkin(data.tigerSkin || 'normal');
-                } else {
-                    setHabits(initialHabits);
-                    localStorage.setItem('yg_lastResetDate', today);
+                    data = persistAppData({
+                        ...data,
+                        habits: resetHabits,
+                        streak: newStreakValue,
+                        unlockedBadges: updatedUnlockedBadges
+                    });
+
+                    // 今日の日付を保存
+                    storageSet(STORAGE_KEYS.lastReset, today);
+                    // 連続日数更新日もリセット
+                    storageRemove(STORAGE_KEYS.lastStreakUpdate);
+                } else if (shouldPersist) {
+                    data = persistAppData(data);
+                }
+
+                setHabits(data.habits);
+                setStreak(data.streak);
+                setUnlockedBadges(data.unlockedBadges);
+                setLevel(data.level);
+                setExp(data.exp);
+                setCoins(data.coins);
+                setTotalCompleted(data.totalCompleted);
+                setOwnedItems(data.ownedItems);
+                setTigerSkin(data.tigerSkin);
+
+                if (!lastResetDate) {
+                    storageSet(STORAGE_KEYS.lastReset, today);
+                }
+
+                if (recoveredFromBackup) {
+                    setTigerMessage('保存データを安全に読み直したよ。念のためバックアップも残してあるよ🐯');
                 }
             };
 
@@ -2506,11 +2708,12 @@
             useEffect(() => {
                 checkAndResetDailyHabits();
 
-                const pref = localStorage.getItem('yg_music');
+                const pref = storageGet(STORAGE_KEYS.music);
                 if (pref === 'on') setMusicEnabled(true);
 
                 // 初期mood設定
                 setTigerMood(getBaseMoodByTime());
+                setHasLoadedStorage(true);
             }, []);
 
             // ページが表示されたとき（PWA対応：visibilitychange）
@@ -2542,39 +2745,33 @@
             // ローカルストレージに保存
 
             useEffect(() => {
+                if (!hasLoadedStorage) {
+                    return;
+                }
 
                 const data = {
-
                     habits,
-
                     level,
-
                     exp,
-
                     coins,
-
                     streak,
-
                     totalCompleted,
-
                     unlockedBadges,
-
-                    unlockedBadges,
-
                     ownedItems,
-
                     tigerSkin
-
                 };
 
-                localStorage.setItem('yokosGarden', JSON.stringify(data));
+                persistAppData(data);
 
-            }, [habits, level, exp, coins, streak, totalCompleted, unlockedBadges, ownedItems, tigerSkin]);
+            }, [hasLoadedStorage, habits, level, exp, coins, streak, totalCompleted, unlockedBadges, ownedItems, tigerSkin]);
 
             // Music preference side-effect
             useEffect(() => {
-                localStorage.setItem('yg_music', musicEnabled ? 'on' : 'off');
-            }, [musicEnabled]);
+                if (!hasLoadedStorage) {
+                    return;
+                }
+                storageSet(STORAGE_KEYS.music, musicEnabled ? 'on' : 'off');
+            }, [hasLoadedStorage, musicEnabled]);
 
             // バッジの自動チェック（連続日数と累計完了数が変更されたとき）
             useEffect(() => {
@@ -2647,12 +2844,11 @@
                 const updatedHabits = habits.filter(h => h.id !== habitId);
                 setHabits(updatedHabits);
                 // 即座にlocalStorageに保存
-                const saved = localStorage.getItem('yokosGarden');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    data.habits = updatedHabits;
-                    localStorage.setItem('yokosGarden', JSON.stringify(data));
-                }
+                const currentData = loadAppData().data;
+                persistAppData({
+                    ...currentData,
+                    habits: updatedHabits
+                });
             };
 
             // デバッグ用: コイン増加
@@ -2706,17 +2902,20 @@
                     const remainingCompletedToday = habits.filter(h => h.completed && h.id !== habitId).length;
                     const now = new Date();
                     const today = getDateKey(now);
-                    const lastStreakUpdateDate = localStorage.getItem('yg_lastStreakUpdateDate');
+                    const lastStreakUpdateDate = storageGet(STORAGE_KEYS.lastStreakUpdate);
 
                     let newStreak = streak;
                     if (remainingCompletedToday === 0 && lastStreakUpdateDate === today) {
                         newStreak = Math.max(0, streak - 1);
                         setStreak(newStreak);
-                        localStorage.removeItem('yg_lastStreakUpdateDate');
+                        storageRemove(STORAGE_KEYS.lastStreakUpdate);
 
                         // 連続日数が減った場合、連続日数関連のバッジをチェック
                         const updatedBadges = unlockedBadges.filter(badgeId => {
                             const badge = badges.find(b => b.id === badgeId);
+                            if (!badge) {
+                                return false;
+                            }
                             if (badge.type === 'streak') {
                                 return newStreak >= badge.requirement;
                             }
@@ -2806,14 +3005,14 @@
                 // 連続日数の更新（今日初めて習慣を完了したとき）
                 const now = new Date();
                 const today = getDateKey(now); // 午前1時基準
-                const lastStreakUpdateDate = localStorage.getItem('yg_lastStreakUpdateDate');
+                const lastStreakUpdateDate = storageGet(STORAGE_KEYS.lastStreakUpdate);
 
                 let newStreak = streak;
                 // 今日初めて習慣を完了した場合、連続日数を+1
                 if (lastStreakUpdateDate !== today) {
                     newStreak = streak + 1;
                     setStreak(newStreak);
-                    localStorage.setItem('yg_lastStreakUpdateDate', today);
+                    storageSet(STORAGE_KEYS.lastStreakUpdate, today);
                 }
 
                 // 虎のリアクション
@@ -3011,7 +3210,7 @@
 
                 // 今日の日付を更新（自動リセットを防ぐため）
                 const today = getDateKey(new Date()); // 午前1時基準
-                localStorage.setItem('yg_lastResetDate', today);
+                storageSet(STORAGE_KEYS.lastReset, today);
 
                 setTigerMessage('リセット完了！今日も頑張ろう！🐯');
                 setTigerFace('😺');
@@ -3039,7 +3238,7 @@
                             >
                                 🔄 リセット
                             </button>
-                            {new URLSearchParams(window.location.search).has('admin') && (
+                            {canUseAdminTools && (
                                 <button
                                     className="music-toggle"
                                     onClick={getRich}

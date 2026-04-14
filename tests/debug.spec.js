@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 test('debug button adds coins', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?admin=1');
 
   // Initial coin check (starts at 0)
   const coinDisplay = page.locator('.stat-box').filter({ hasText: 'コイン' }).locator('.stat-value');

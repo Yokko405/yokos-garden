@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 test('shop displays new animal skins and accessories', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?admin=1');
 
   // 1. Get Coins for testing (Need ~3000+ for all items)
   await page.click('button:has-text("💰 +1000")');
