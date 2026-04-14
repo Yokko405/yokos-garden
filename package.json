@@ -4,6 +4,8 @@
   "description": "Tiger-themed habit tracker that runs 100% in the browser. Cute, fast, and private.",
   "main": "generate-icons.js",
   "scripts": {
+    "build": "esbuild src/app.jsx --bundle --format=esm --minify --target=es2020 --outfile=app.bundle.js",
+    "pretest": "npm run build",
     "test": "playwright test"
   },
   "repository": {
@@ -22,6 +24,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
+    "esbuild": "^0.28.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "serve": "^14.2.5"
   }
 }
