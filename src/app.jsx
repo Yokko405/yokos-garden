@@ -186,7 +186,43 @@ import { createRoot } from 'react-dom/client';
             { id: 9, name: "パンダスーツ", icon: "🐼", price: 700, type: "skin", skin: "panda" },
             { id: 10, name: "黒猫パーカー", icon: "🐈‍⬛", price: 750, type: "skin", skin: "cat" },
             { id: 6, name: "ゾウのきぐるみ", icon: "🐘", price: 800, type: "skin", skin: "elephant" },
-            { id: 7, name: "キリンパーカー", icon: "🦒", price: 1000, type: "skin", skin: "giraffe" }
+            { id: 7, name: "キリンパーカー", icon: "🦒", price: 1000, type: "skin", skin: "giraffe" },
+
+            { id: 11, name: "ハリネズミフード", icon: "🦔", price: 1200, type: "skin", skin: "hedgehog" },
+            { id: 12, name: "ひつじもこもこ", icon: "🐑", price: 1500, type: "skin", skin: "sheep" },
+            { id: 13, name: "くまの着ぐるみ", icon: "🐻", price: 1800, type: "skin", skin: "bear" },
+            { id: 14, name: "きつねパーカー", icon: "🦊", price: 2200, type: "skin", skin: "fox" },
+            { id: 15, name: "コアラスーツ", icon: "🐨", price: 2800, type: "skin", skin: "koala" },
+            { id: 16, name: "ふくろうマント", icon: "🦉", price: 3500, type: "skin", skin: "owl" },
+
+            { id: 501, name: "どんぐり", icon: "🌰", price: 120, type: "accessory", compat: ["hedgehog"] },
+            { id: 502, name: "きのこ帽", icon: "🍄", price: 150, type: "accessory", compat: ["hedgehog"] },
+            { id: 503, name: "木の葉マント", icon: "🍃", price: 200, type: "accessory", compat: ["hedgehog"] },
+            { id: 504, name: "小さな星", icon: "🌟", price: 280, type: "accessory", compat: ["hedgehog"] },
+
+            { id: 601, name: "クローバー", icon: "☘️", price: 150, type: "accessory", compat: ["sheep"] },
+            { id: 602, name: "ニット帽", icon: "🧢", price: 180, type: "accessory", compat: ["sheep"] },
+            { id: 604, name: "三日月クッション", icon: "🌙", price: 320, type: "accessory", compat: ["sheep"] },
+
+            { id: 701, name: "はちみつ壺", icon: "🍯", price: 180, type: "accessory", compat: ["bear"] },
+            { id: 702, name: "ベレー帽", icon: "🎨", price: 220, type: "accessory", compat: ["bear"] },
+            { id: 703, name: "鮭", icon: "🐟", price: 280, type: "accessory", compat: ["bear"] },
+            { id: 704, name: "星のメダル", icon: "⭐", price: 380, type: "accessory", compat: ["bear"] },
+
+            { id: 801, name: "扇子", icon: "🪭", price: 220, type: "accessory", compat: ["fox"] },
+            { id: 802, name: "紅葉", icon: "🍁", price: 280, type: "accessory", compat: ["fox"] },
+            { id: 803, name: "神楽鈴", icon: "🎐", price: 360, type: "accessory", compat: ["fox"] },
+            { id: 804, name: "九尾飾り", icon: "✨", price: 450, type: "accessory", compat: ["fox"] },
+
+            { id: 901, name: "ユーカリ", icon: "🌿", price: 250, type: "accessory", compat: ["koala"] },
+            { id: 902, name: "マグカップ", icon: "☕", price: 300, type: "accessory", compat: ["koala"] },
+            { id: 903, name: "麦わら帽", icon: "👒", price: 380, type: "accessory", compat: ["koala"] },
+            { id: 904, name: "お星さま", icon: "⭐", price: 500, type: "accessory", compat: ["koala"] },
+
+            { id: 1001, name: "眼鏡", icon: "👓", price: 300, type: "accessory", compat: ["owl"] },
+            { id: 1002, name: "本", icon: "📚", price: 380, type: "accessory", compat: ["owl"] },
+            { id: 1003, name: "月見団子", icon: "🍡", price: 450, type: "accessory", compat: ["owl"] },
+            { id: 1004, name: "魔法の杖", icon: "🪄", price: 600, type: "accessory", compat: ["owl"] }
         ];
 
         const STORAGE_KEYS = {
@@ -1150,6 +1186,41 @@ import { createRoot } from 'react-dom/client';
                             {tigerSkin === 'cat' && ownedItems.includes(403) && <div className="bell"></div>}
                             {tigerSkin === 'cat' && ownedItems.includes(408) && <div className="cat-fish"></div>}
                             {tigerSkin === 'cat' && ownedItems.includes(409) && <div className="cat-yarn"></div>}
+
+                            {/* 装飾アイテム (Hedgehog) */}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(501) && <div className="hedgehog-acorn"></div>}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(502) && <div className="hedgehog-mushroom"></div>}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(503) && <div className="hedgehog-leaf"></div>}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(504) && <div className="hedgehog-star"></div>}
+
+                            {/* 装飾アイテム (Sheep) */}
+                            {tigerSkin === 'sheep' && ownedItems.includes(601) && <div className="sheep-clover"></div>}
+                            {tigerSkin === 'sheep' && ownedItems.includes(602) && <div className="sheep-knit-hat"></div>}
+                            {tigerSkin === 'sheep' && ownedItems.includes(604) && <div className="sheep-moon"></div>}
+
+                            {/* 装飾アイテム (Bear) */}
+                            {tigerSkin === 'bear' && ownedItems.includes(701) && <div className="bear-honey"></div>}
+                            {tigerSkin === 'bear' && ownedItems.includes(702) && <div className="bear-beret"></div>}
+                            {tigerSkin === 'bear' && ownedItems.includes(703) && <div className="bear-fish"></div>}
+                            {tigerSkin === 'bear' && ownedItems.includes(704) && <div className="bear-medal"></div>}
+
+                            {/* 装飾アイテム (Fox) */}
+                            {tigerSkin === 'fox' && ownedItems.includes(801) && <div className="fox-inari"></div>}
+                            {tigerSkin === 'fox' && ownedItems.includes(802) && <div className="fox-maple"></div>}
+                            {tigerSkin === 'fox' && ownedItems.includes(803) && <div className="fox-bell"></div>}
+                            {tigerSkin === 'fox' && ownedItems.includes(804) && <div className="fox-tail"></div>}
+
+                            {/* 装飾アイテム (Koala) */}
+                            {tigerSkin === 'koala' && ownedItems.includes(901) && <div className="koala-eucalyptus"></div>}
+                            {tigerSkin === 'koala' && ownedItems.includes(902) && <div className="koala-mug"></div>}
+                            {tigerSkin === 'koala' && ownedItems.includes(903) && <div className="koala-straw-hat"></div>}
+                            {tigerSkin === 'koala' && ownedItems.includes(904) && <div className="koala-star"></div>}
+
+                            {/* 装飾アイテム (Owl) */}
+                            {tigerSkin === 'owl' && ownedItems.includes(1001) && <div className="owl-glasses"></div>}
+                            {tigerSkin === 'owl' && ownedItems.includes(1002) && <div className="owl-book"></div>}
+                            {tigerSkin === 'owl' && ownedItems.includes(1003) && <div className="owl-dango"></div>}
+                            {tigerSkin === 'owl' && ownedItems.includes(1004) && <div className="owl-wand"></div>}
 
                             {/* 星のオーラ（mood-star用） */}
                             {tigerMood === 'star' && <div className="star-aura"></div>}
