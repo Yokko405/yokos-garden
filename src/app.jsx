@@ -243,6 +243,7 @@ import { createClient } from '@supabase/supabase-js';
         const STORAGE_VERSION = 1;
         const SUPABASE_URL = 'https://jrigfkeimvtudnthsgsj.supabase.co';
         const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_MfqOD7ki8UqTiQK3cbg8Bw_G36EXIBQ';
+        const PRODUCTION_WEB_URL = 'https://yokko405.github.io/yokos-garden/';
         const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
             auth: {
                 persistSession: true,
@@ -879,6 +880,7 @@ import { createClient } from '@supabase/supabase-js';
             const [authEmail, setAuthEmail] = useState('');
             const [authMessage, setAuthMessage] = useState('Supabase未ログイン');
             const [deviceBackupText, setDeviceBackupText] = useState('');
+            const [oauthLaunch, setOauthLaunch] = useState(null);
             const [cloudBusy, setCloudBusy] = useState(false);
             const [pendingRestore, setPendingRestore] = useState(null);
             const [pendingCloudOverwrite, setPendingCloudOverwrite] = useState(null);
@@ -1267,10 +1269,17 @@ import { createClient } from '@supabase/supabase-js';
                     ? '設定済みのProviderはこのボタンからログインできるよ。メールリンクも使えるよ。'
                     : 'Google/AppleはSupabaseのProvider設定後に有効化。今はメールリンクでログインしてね。';
             const currentAppUrl = `${window.location.origin}${window.location.pathname}`;
-            const isProductionUrl = currentAppUrl === 'https://yokko405.github.io/yokos-garden/';
+            const isProductionUrl = currentAppUrl === PRODUCTION_WEB_URL;
+            const isIOSRuntime = /iPad|iPhone|iPod/.test(navigator.userAgent || '')
+                || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const isStandaloneRuntime = Boolean(window.navigator.standalone)
+                || Boolean(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
             const isLikelyPhoneDevUrl = window.location.hostname === 'localhost'
                 || window.location.hostname === '127.0.0.1'
                 || window.location.protocol === 'file:';
+            const plannedAuthRedirectTo = isIOSRuntime && !isProductionUrl
+                ? PRODUCTION_WEB_URL
+                : currentAppUrl;
             const visibleAllies = remoteAllies.length > 0 ? remoteAllies : demoAllies;
             const showingDemoAllies = remoteAllies.length === 0;
 
@@ -1986,12 +1995,40 @@ import { createClient } from '@supabase/supabase-js';
                 if (!allowedProtocols.includes(window.location.protocol)) {
                     return null;
                 }
-                return `${window.location.origin}${window.location.pathname}`;
+                return plannedAuthRedirectTo;
+            };
+
+            const openOAuthLaunchUrl = () => {
+                if (!oauthLaunch?.url) {
+                    setAuthMessage('ログインURLを先に作成してね');
+                    return;
+                }
+
+                if (isIOSRuntime && isStandaloneRuntime && oauthLaunch.url.startsWith('https://')) {
+                    window.location.href = `x-safari-${oauthLaunch.url}`;
+                    setAuthMessage('Safariでログイン画面を開いたよ。戻ったら設定で端末データ保存まで進めてね');
+                    return;
+                }
+
+                window.location.assign(oauthLaunch.url);
+            };
+
+            const copyOAuthLaunchUrl = async () => {
+                if (!oauthLaunch?.url) {
+                    setAuthMessage('ログインURLを先に作成してね');
+                    return;
+                }
+
+                const copied = await copyTextToClipboard(oauthLaunch.url);
+                setAuthMessage(copied
+                    ? 'ログインURLをコピーしたよ。Safariに貼って開けるよ'
+                    : 'ログインURLを下の欄からコピーしてSafariで開いてね');
             };
 
             const handleOAuthSignIn = async (provider) => {
                 const providerLabel = provider === 'apple' ? 'Apple' : 'Google';
                 authFailureMessageRef.current = '';
+                setOauthLaunch(null);
                 if (!authProviderStatus[provider]) {
                     const providerMessage = authProviderStatus.checked
                         ? 'Supabase側のProvider設定がまだだよ。今はメールリンクで入ってね'
@@ -2007,19 +2044,45 @@ import { createClient } from '@supabase/supabase-js';
                 }
 
                 setCloudBusy(true);
-                setAuthMessage(`${providerLabel}ログインへ移動するね`);
+                setAuthMessage(`${providerLabel}ログインURLを作成中...`);
                 const credentials = { provider };
-                credentials.options = { redirectTo };
+                credentials.options = {
+                    redirectTo,
+                    skipBrowserRedirect: true
+                };
                 if (provider === 'google') {
                     credentials.options.queryParams = { prompt: 'select_account' };
                 }
 
-                const { error } = await supabase.auth.signInWithOAuth(credentials);
+                let authResult;
+                try {
+                    authResult = await supabase.auth.signInWithOAuth(credentials);
+                } catch (error) {
+                    setCloudBusy(false);
+                    setAuthMessage(`${providerLabel}ログイン失敗: ${getFriendlyAuthError(error)}`);
+                    return;
+                }
+
                 setCloudBusy(false);
+                const { data, error } = authResult;
 
                 if (error) {
                     setAuthMessage(`${providerLabel}ログイン失敗: ${getFriendlyAuthError(error)}`);
+                    return;
                 }
+
+                if (!data?.url) {
+                    setAuthMessage(`${providerLabel}ログインURLを作れなかったよ。メールリンクで入ってね`);
+                    return;
+                }
+
+                setOauthLaunch({
+                    provider,
+                    providerLabel,
+                    url: data.url,
+                    redirectTo
+                });
+                setAuthMessage(`${providerLabel}ログインURLを作ったよ。iPhoneなら先に端末データをコピーしてからSafariで開いてね`);
             };
 
             const handleMagicLink = async () => {
@@ -3084,11 +3147,39 @@ import { createClient } from '@supabase/supabase-js';
 
                                 <div className="auth-message">{authMessage}</div>
 
+                                {oauthLaunch && !currentSupabaseUser && (
+                                    <div className="sync-state-card oauth-launch-card" role="status">
+                                        <div>
+                                            <strong>{oauthLaunch.providerLabel}ログインを開く</strong>
+                                            <span>戻り先: {oauthLaunch.redirectTo}</span>
+                                        </div>
+                                        <p>
+                                            iPhoneのホーム画面アプリで白画面になる時の回避ルート。
+                                            端末データをコピーしてからSafariで開くと安全。
+                                        </p>
+                                        <input
+                                            type="text"
+                                            value={oauthLaunch.url}
+                                            readOnly
+                                            aria-label="OAuthログインURL"
+                                            onFocus={event => event.target.select()}
+                                        />
+                                        <div className="cloud-actions">
+                                            <button type="button" className="primary" onClick={openOAuthLaunchUrl}>
+                                                Safariで開く
+                                            </button>
+                                            <button type="button" onClick={copyOAuthLaunchUrl}>
+                                                URLをコピー
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {(isLikelyPhoneDevUrl || !isProductionUrl) && (
                                     <div className="sync-state-card url-warning-card" role="status">
                                         <div>
                                             <strong>ログイン戻り先を確認</strong>
-                                            <span>{currentAppUrl}</span>
+                                            <span>{plannedAuthRedirectTo}</span>
                                         </div>
                                         <p>
                                             iPhoneでGoogleログイン後にページを開けない時は、戻り先が開発URLの可能性があるよ。

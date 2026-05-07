@@ -115,7 +115,7 @@ test('oauth provider buttons follow Supabase auth settings', async ({ page }) =>
   await expect(page.locator('.auth-note')).toContainText('メールリンクも使える');
 });
 
-test('oauth provider buttons start Supabase OAuth redirects', async ({ page }) => {
+test('oauth provider buttons create Supabase OAuth launch URLs', async ({ page }) => {
   await page.addInitScript(() => {
     const originalFetch = window.fetch.bind(window);
     window.fetch = async (input, init) => {
@@ -134,22 +134,12 @@ test('oauth provider buttons start Supabase OAuth redirects', async ({ page }) =
     };
   });
 
-  const capturedAuthorizeUrls = [];
-  await page.route('https://jrigfkeimvtudnthsgsj.supabase.co/auth/v1/authorize**', route => {
-    capturedAuthorizeUrls.push(route.request().url());
-    return route.fulfill({
-      status: 200,
-      contentType: 'text/html',
-      body: '<!doctype html><title>OAuth captured</title><p>ok</p>'
-    });
-  });
-
   await page.goto('/');
   await page.click('button[aria-label="設定"]');
   await page.getByRole('button', { name: 'Googleで続ける', exact: true }).click();
-  await page.waitForURL('**/auth/v1/authorize**');
+  await expect(page.locator('.oauth-launch-card')).toContainText('Googleログインを開く');
 
-  const googleUrl = new URL(capturedAuthorizeUrls.at(-1));
+  const googleUrl = new URL(await page.getByLabel('OAuthログインURL').inputValue());
   expect(googleUrl.searchParams.get('provider')).toBe('google');
   expect(googleUrl.searchParams.get('redirect_to')).toBe('http://localhost:3000/');
   expect(googleUrl.searchParams.get('prompt')).toBe('select_account');
@@ -159,9 +149,9 @@ test('oauth provider buttons start Supabase OAuth redirects', async ({ page }) =
   await page.goto('/');
   await page.click('button[aria-label="設定"]');
   await page.getByRole('button', { name: 'Appleで続ける', exact: true }).click();
-  await page.waitForURL('**/auth/v1/authorize**');
+  await expect(page.locator('.oauth-launch-card')).toContainText('Appleログインを開く');
 
-  const appleUrl = new URL(capturedAuthorizeUrls.at(-1));
+  const appleUrl = new URL(await page.getByLabel('OAuthログインURL').inputValue());
   expect(appleUrl.searchParams.get('provider')).toBe('apple');
   expect(appleUrl.searchParams.get('redirect_to')).toBe('http://localhost:3000/');
   expect(appleUrl.searchParams.get('code_challenge')).toBeNull();

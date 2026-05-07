@@ -6,9 +6,11 @@ This app uses Supabase Auth from the browser with these entry points:
 - Apple: `supabase.auth.signInWithOAuth({ provider: 'apple' })`
 - Magic link: `supabase.auth.signInWithOtp({ email })`
 
-The app sends the current HTTP/HTTPS page as the auth redirect target. Do not test auth from `file://`; use local dev or the published URL.
+The app sends the current HTTP/HTTPS page as the auth redirect target. On iPhone, if the app is not already on the production URL, OAuth uses the production URL as the return target so the device does not try to return to an unreachable local dev server. Do not test auth from `file://`; use local dev or the published URL.
 
 The browser client intentionally uses Supabase's `implicit` flow instead of PKCE. On iOS home-screen PWAs, Google/Apple authentication can leave the standalone app and return through a separate browser context. PKCE depends on a code verifier saved in the original browser storage, so it can fail in that handoff. The implicit flow keeps this static PWA's return path self-contained.
+
+OAuth provider buttons use `skipBrowserRedirect: true`. Instead of immediately navigating the current PWA window, HabiTora shows the generated Supabase `/auth/v1/authorize` URL and provides `Safariで開く` / `URLをコピー`. This avoids the iOS home-screen PWA failure mode where the automatic external OAuth hop can open a blank "server could not be reached" page.
 
 At startup and when the settings screen regains focus, the app reads Supabase Auth settings from `/auth/v1/settings`. Google and Apple buttons stay disabled while their Supabase providers are off, and become available automatically after the provider is enabled in Supabase.
 
@@ -89,10 +91,21 @@ No app code change is needed after enabling the provider; return to the app sett
 
 - Disabled Google/Apple buttons while Supabase providers are off
 - Enabled Google/Apple buttons while Supabase providers are on
-- Google and Apple buttons start the correct `/auth/v1/authorize` OAuth redirect
+- Google and Apple buttons create the correct `/auth/v1/authorize` OAuth launch URL without automatic browser redirect
 - OAuth redirect errors are shown as friendly in-app messages
 
 Apple does not reliably give the user's display name through the web OAuth flow after the first authorization, so HabiTora keeps using its own public nickname field.
+
+## iPhone safe migration flow
+
+When the phone's local data is the source of truth:
+
+1. Open settings in the current iPhone web app.
+2. Tap `端末データをコピー`, then paste the backup text into Notes or another safe place.
+3. Tap Google/Apple login to create the login URL.
+4. Tap `Safariで開く`. If Safari cannot open from the PWA, tap `URLをコピー` and paste it into Safari manually.
+5. After login returns to HabiTora, paste the backup text into `バックアップ文字列` and tap `バックアップを読み込む` if the Safari copy does not already have the data.
+6. Tap `端末データを保存`. If there is a server conflict, choose `端末データでサーバー上書き`.
 
 ## References
 
