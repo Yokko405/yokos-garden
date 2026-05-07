@@ -5,6 +5,7 @@
   "main": "generate-icons.js",
   "scripts": {
     "build": "esbuild src/app.jsx --bundle --format=esm --minify --target=es2020 --outfile=app.bundle.js",
+    "dev": "node scripts/serve-static.mjs . 3000",
     "pretest": "npm run build",
     "test": "playwright test"
   },
@@ -20,13 +21,13 @@
   },
   "homepage": "https://github.com/Yokko405/yokos-garden#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.105.2",
     "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "esbuild": "^0.28.0",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "serve": "^14.2.5"
+    "react-dom": "^19.2.5"
   }
 }

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { createClient } from '@supabase/supabase-js';
 
         // 時間帯に応じたデフォルトメッセージ
         function getBaseMessageByTime() {
@@ -186,7 +187,43 @@ import { createRoot } from 'react-dom/client';
             { id: 9, name: "パンダスーツ", icon: "🐼", price: 700, type: "skin", skin: "panda" },
             { id: 10, name: "黒猫パーカー", icon: "🐈‍⬛", price: 750, type: "skin", skin: "cat" },
             { id: 6, name: "ゾウのきぐるみ", icon: "🐘", price: 800, type: "skin", skin: "elephant" },
-            { id: 7, name: "キリンパーカー", icon: "🦒", price: 1000, type: "skin", skin: "giraffe" }
+            { id: 7, name: "キリンパーカー", icon: "🦒", price: 1000, type: "skin", skin: "giraffe" },
+
+            { id: 11, name: "ハリネズミフード", icon: "🦔", price: 1200, type: "skin", skin: "hedgehog" },
+            { id: 12, name: "ひつじもこもこ", icon: "🐑", price: 1500, type: "skin", skin: "sheep" },
+            { id: 13, name: "くまの着ぐるみ", icon: "🐻", price: 1800, type: "skin", skin: "bear" },
+            { id: 14, name: "きつねパーカー", icon: "🦊", price: 2200, type: "skin", skin: "fox" },
+            { id: 15, name: "コアラスーツ", icon: "🐨", price: 2800, type: "skin", skin: "koala" },
+            { id: 16, name: "ふくろうマント", icon: "🦉", price: 3500, type: "skin", skin: "owl" },
+
+            { id: 501, name: "どんぐり", icon: "🌰", price: 120, type: "accessory", compat: ["hedgehog"] },
+            { id: 502, name: "きのこ帽", icon: "🍄", price: 150, type: "accessory", compat: ["hedgehog"] },
+            { id: 503, name: "木の葉マント", icon: "🍃", price: 200, type: "accessory", compat: ["hedgehog"] },
+            { id: 504, name: "小さな星", icon: "🌟", price: 280, type: "accessory", compat: ["hedgehog"] },
+
+            { id: 601, name: "クローバー", icon: "☘️", price: 150, type: "accessory", compat: ["sheep"] },
+            { id: 602, name: "ニット帽", icon: "🧢", price: 180, type: "accessory", compat: ["sheep"] },
+            { id: 604, name: "三日月クッション", icon: "🌙", price: 320, type: "accessory", compat: ["sheep"] },
+
+            { id: 701, name: "はちみつ壺", icon: "🍯", price: 180, type: "accessory", compat: ["bear"] },
+            { id: 702, name: "ベレー帽", icon: "🎨", price: 220, type: "accessory", compat: ["bear"] },
+            { id: 703, name: "鮭", icon: "🐟", price: 280, type: "accessory", compat: ["bear"] },
+            { id: 704, name: "星のメダル", icon: "⭐", price: 380, type: "accessory", compat: ["bear"] },
+
+            { id: 801, name: "扇子", icon: "🪭", price: 220, type: "accessory", compat: ["fox"] },
+            { id: 802, name: "紅葉", icon: "🍁", price: 280, type: "accessory", compat: ["fox"] },
+            { id: 803, name: "神楽鈴", icon: "🎐", price: 360, type: "accessory", compat: ["fox"] },
+            { id: 804, name: "九尾飾り", icon: "✨", price: 450, type: "accessory", compat: ["fox"] },
+
+            { id: 901, name: "ユーカリ", icon: "🌿", price: 250, type: "accessory", compat: ["koala"] },
+            { id: 902, name: "マグカップ", icon: "☕", price: 300, type: "accessory", compat: ["koala"] },
+            { id: 903, name: "麦わら帽", icon: "👒", price: 380, type: "accessory", compat: ["koala"] },
+            { id: 904, name: "お星さま", icon: "⭐", price: 500, type: "accessory", compat: ["koala"] },
+
+            { id: 1001, name: "眼鏡", icon: "👓", price: 300, type: "accessory", compat: ["owl"] },
+            { id: 1002, name: "本", icon: "📚", price: 380, type: "accessory", compat: ["owl"] },
+            { id: 1003, name: "月見団子", icon: "🍡", price: 450, type: "accessory", compat: ["owl"] },
+            { id: 1004, name: "魔法の杖", icon: "🪄", price: 600, type: "accessory", compat: ["owl"] }
         ];
 
         const STORAGE_KEYS = {
@@ -194,14 +231,86 @@ import { createRoot } from 'react-dom/client';
             backup: 'yokosGarden_backup',
             lastReset: 'yg_lastResetDate',
             lastStreakUpdate: 'yg_lastStreakUpdateDate',
-            music: 'yg_music'
+            music: 'yg_music',
+            progressHistory: 'yg_progressHistory',
+            shareVisibility: 'yg_shareVisibility',
+            cheerLog: 'yg_cheerLog',
+            cloudProfile: 'yg_cloudProfile',
+            cloudOutbox: 'yg_cloudOutbox',
+            syncMeta: 'yg_syncMeta'
         };
+        const CLOUD_SYNC_VERSION = 1;
         const STORAGE_VERSION = 1;
+        const SUPABASE_URL = 'https://jrigfkeimvtudnthsgsj.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_MfqOD7ki8UqTiQK3cbg8Bw_G36EXIBQ';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+                persistSession: true,
+                detectSessionInUrl: true,
+                flowType: 'pkce'
+            }
+        });
+        const AUTH_PROVIDER_DEFAULTS = {
+            google: false,
+            apple: false
+        };
         const VALID_FREQUENCIES = new Set(['毎日', '週3回', '週5回', '平日']);
         const VALID_SKINS = new Set(['normal', ...shopItems.filter(item => item.type === 'skin').map(item => item.skin)]);
         const KNOWN_BADGE_IDS = new Set(badges.map(badge => badge.id));
         const KNOWN_ITEM_IDS = new Set(shopItems.map(item => item.id));
         const LOCAL_ADMIN_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
+        const VALID_SHARE_VISIBILITIES = new Set(['progress', 'habits', 'private']);
+        const VALID_SYNC_STATUSES = new Set(['local_only', 'pending', 'synced', 'conflict', 'error']);
+        const CHEER_STAMPS = [
+            { id: 'great', icon: '✨', label: 'すごい' },
+            { id: 'together', icon: '🤝', label: '一緒にやろ' },
+            { id: 'almost', icon: '🔥', label: 'あと少し' },
+            { id: 'rest', icon: '🍵', label: '無理せず' }
+        ];
+        const SKIN_AVATARS = {
+            normal: '🐯',
+            penguin: '🐧',
+            rabbit: '🐰',
+            panda: '🐼',
+            cat: '🐈‍⬛',
+            elephant: '🐘',
+            giraffe: '🦒'
+        };
+        const demoAllies = [
+            {
+                id: 'mika',
+                name: 'Mika',
+                avatar: '🐧',
+                todayCompleted: 2,
+                totalHabits: 4,
+                weekRate: 71,
+                streak: 9,
+                status: 'いい感じ',
+                latestCheer: '一緒にやろ'
+            },
+            {
+                id: 'ren',
+                name: 'Ren',
+                avatar: '🐘',
+                todayCompleted: 0,
+                totalHabits: 3,
+                weekRate: 43,
+                streak: 2,
+                status: 'これから',
+                latestCheer: '無理せず'
+            },
+            {
+                id: 'sora',
+                name: 'Sora',
+                avatar: '🐼',
+                todayCompleted: 5,
+                totalHabits: 5,
+                weekRate: 88,
+                streak: 21,
+                status: '全達成',
+                latestCheer: 'すごい'
+            }
+        ];
 
         function storageGet(key) {
             try {
@@ -226,6 +335,119 @@ import { createRoot } from 'react-dom/client';
                 return true;
             } catch (error) {
                 return false;
+            }
+        }
+
+        function getFriendlyAuthError(error) {
+            const code = error?.code || error?.error_code || error?.status || '';
+            const message = error?.message || '';
+
+            if (
+                code === 'bad_oauth_state'
+                || message.includes('OAuth state has expired')
+                || message.includes('state has expired')
+            ) {
+                return '認証画面の期限が切れたよ。もう一度ログインボタンを押して、5分以内に完了してね';
+            }
+            if (code === 'pkce_code_verifier_not_found' || message.includes('code verifier')) {
+                return '認証の再開情報が見つからないよ。もう一度ログインボタンから始めてね';
+            }
+            if (code === 'over_email_send_rate_limit' || message.includes('email rate limit')) {
+                return 'メール送信上限に達したよ。少し待ってからもう一度試してね';
+            }
+            if (message.includes('provider is not enabled') || message.includes('Unsupported provider')) {
+                return 'このログイン方法はSupabase側の設定がまだだよ';
+            }
+            if (message.includes('Email address') && message.includes('invalid')) {
+                return 'メールアドレスを確認してね';
+            }
+
+            return message || 'ログイン処理でエラーが起きたよ';
+        }
+
+        function getAuthRedirectErrorFromUrl() {
+            const candidates = [
+                { type: 'hash', value: window.location.hash },
+                { type: 'search', value: window.location.search }
+            ];
+
+            for (const candidate of candidates) {
+                if (!candidate.value || candidate.value.length <= 1) {
+                    continue;
+                }
+                const params = new URLSearchParams(candidate.value.slice(1));
+                const error = params.get('error');
+                const errorCode = params.get('error_code');
+                const errorDescription = params.get('error_description');
+
+                if (error || errorCode || errorDescription) {
+                    return {
+                        source: candidate.type,
+                        code: errorCode || error || '',
+                        message: errorDescription || errorCode || error || ''
+                    };
+                }
+            }
+
+            return null;
+        }
+
+        function clearAuthRedirectErrorFromUrl(source) {
+            if (!window.history?.replaceState) {
+                return;
+            }
+
+            const url = new URL(window.location.href);
+            const errorParams = ['error', 'error_code', 'error_description'];
+            if (source === 'search') {
+                errorParams.forEach(param => url.searchParams.delete(param));
+            } else {
+                const params = new URLSearchParams(url.hash.slice(1));
+                errorParams.forEach(param => params.delete(param));
+                const nextHash = params.toString();
+                url.hash = nextHash ? `#${nextHash}` : '';
+            }
+            const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+            window.history.replaceState({}, document.title, nextUrl || '/');
+        }
+
+        function createDefaultAuthProviderStatus() {
+            return {
+                ...AUTH_PROVIDER_DEFAULTS,
+                checked: false,
+                error: null
+            };
+        }
+
+        function normalizeAuthProviderStatus(settings) {
+            return {
+                google: Boolean(settings?.external?.google),
+                apple: Boolean(settings?.external?.apple),
+                checked: true,
+                error: null
+            };
+        }
+
+        async function loadAuthProviderStatus() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/settings`, {
+                    headers: { apikey: SUPABASE_PUBLISHABLE_KEY }
+                });
+                if (!response.ok) {
+                    return {
+                        ...AUTH_PROVIDER_DEFAULTS,
+                        checked: true,
+                        error: `settings:${response.status}`
+                    };
+                }
+                const settings = await response.json();
+                return normalizeAuthProviderStatus(settings);
+            } catch (error) {
+                return {
+                    ...AUTH_PROVIDER_DEFAULTS,
+                    checked: true,
+                    error: error?.message || 'settings:error'
+                };
             }
         }
 
@@ -266,6 +488,230 @@ import { createRoot } from 'react-dom/client';
                 }
             });
             return [...unique];
+        }
+
+        function sanitizeProgressHistory(rawHistory) {
+            if (!rawHistory || typeof rawHistory !== 'object' || Array.isArray(rawHistory)) {
+                return {};
+            }
+
+            const entries = Object.entries(rawHistory)
+                .map(([dateKey, entry]) => {
+                    const key = typeof dateKey === 'string' ? dateKey.slice(0, 80) : '';
+                    if (!key || !entry || typeof entry !== 'object') {
+                        return null;
+                    }
+
+                    return [
+                        key,
+                        {
+                            completed: clampNumber(entry.completed, 0, 0, 1000000),
+                            total: clampNumber(entry.total, 0, 0, 1000000),
+                            updatedAt: typeof entry.updatedAt === 'string' ? entry.updatedAt : new Date().toISOString()
+                        }
+                    ];
+                })
+                .filter(Boolean)
+                .sort((a, b) => {
+                    const aTime = Date.parse(a[1].updatedAt) || 0;
+                    const bTime = Date.parse(b[1].updatedAt) || 0;
+                    return bTime - aTime;
+                })
+                .slice(0, 14);
+
+            return Object.fromEntries(entries);
+        }
+
+        function loadProgressHistory() {
+            return sanitizeProgressHistory(safeParseJSON(storageGet(STORAGE_KEYS.progressHistory)));
+        }
+
+        function loadShareVisibility() {
+            const visibility = storageGet(STORAGE_KEYS.shareVisibility);
+            return VALID_SHARE_VISIBILITIES.has(visibility) ? visibility : 'progress';
+        }
+
+        function sanitizeCheerLog(rawLog) {
+            if (!rawLog || typeof rawLog !== 'object' || Array.isArray(rawLog)) {
+                return {};
+            }
+
+            const validStampIds = new Set(CHEER_STAMPS.map(stamp => stamp.id));
+            return Object.fromEntries(Object.entries(rawLog)
+                .map(([friendId, record]) => {
+                    const id = typeof friendId === 'string' ? friendId.slice(0, 80) : '';
+                    if (!id || !record || typeof record !== 'object' || !validStampIds.has(record.stampId)) {
+                        return null;
+                    }
+                    const stamp = CHEER_STAMPS.find(item => item.id === record.stampId);
+                    return [
+                        id,
+                        {
+                            stampId: stamp.id,
+                            icon: stamp.icon,
+                            label: stamp.label,
+                            count: clampNumber(record.count, 1, 1, 1000000),
+                            lastSentAt: typeof record.lastSentAt === 'string' ? record.lastSentAt : new Date().toISOString()
+                        }
+                    ];
+                })
+                .filter(Boolean));
+        }
+
+        function loadCheerLog() {
+            return sanitizeCheerLog(safeParseJSON(storageGet(STORAGE_KEYS.cheerLog)));
+        }
+
+        function normalizeFriendCode(value) {
+            return typeof value === 'string' ? value.trim().toLowerCase() : '';
+        }
+
+        function isValidUserId(value) {
+            return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value);
+        }
+
+        function getProgressStatus(completed, total) {
+            if (total <= 0) {
+                return '準備中';
+            }
+            if (completed >= total) {
+                return '全達成';
+            }
+            if (completed <= 0) {
+                return 'これから';
+            }
+            return completed / total >= 0.6 ? 'いい感じ' : 'あと少し';
+        }
+
+        function sanitizeDisplayName(value) {
+            const normalized = typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
+            return Array.from(normalized || 'YOKO').slice(0, 20).join('');
+        }
+
+        function createDefaultCloudProfile() {
+            return {
+                displayName: 'YOKO',
+                accountState: 'local',
+                migrationState: 'not_ready',
+                lastPreparedAt: null,
+                lastQueuedAt: null
+            };
+        }
+
+        function sanitizeCloudProfile(rawProfile) {
+            const defaults = createDefaultCloudProfile();
+            if (!rawProfile || typeof rawProfile !== 'object' || Array.isArray(rawProfile)) {
+                return defaults;
+            }
+
+            return {
+                displayName: sanitizeDisplayName(rawProfile.displayName),
+                accountState: rawProfile.accountState === 'cloud_ready' ? 'cloud_ready' : 'local',
+                migrationState: rawProfile.migrationState === 'ready' ? 'ready' : 'not_ready',
+                lastPreparedAt: typeof rawProfile.lastPreparedAt === 'string' ? rawProfile.lastPreparedAt : null,
+                lastQueuedAt: typeof rawProfile.lastQueuedAt === 'string' ? rawProfile.lastQueuedAt : null
+            };
+        }
+
+        function loadCloudProfile() {
+            return sanitizeCloudProfile(safeParseJSON(storageGet(STORAGE_KEYS.cloudProfile)));
+        }
+
+        function createDefaultSyncMeta() {
+            return {
+                status: 'local_only',
+                sourceOfTruth: 'local',
+                cacheMode: 'primary',
+                revision: 0,
+                pendingSince: null,
+                lastQueuedAt: null,
+                lastSyncedAt: null,
+                errorMessage: null
+            };
+        }
+
+        function sanitizeSyncMeta(rawMeta) {
+            const defaults = createDefaultSyncMeta();
+            if (!rawMeta || typeof rawMeta !== 'object' || Array.isArray(rawMeta)) {
+                return defaults;
+            }
+
+            const status = VALID_SYNC_STATUSES.has(rawMeta.status) ? rawMeta.status : defaults.status;
+            const sourceOfTruth = rawMeta.sourceOfTruth === 'server'
+                ? 'server'
+                : status === 'synced'
+                    ? 'server'
+                    : 'local';
+            const cacheMode = sourceOfTruth === 'server' ? 'cache_outbox' : 'primary';
+
+            return {
+                status,
+                sourceOfTruth,
+                cacheMode,
+                revision: clampNumber(rawMeta.revision, defaults.revision, 0),
+                pendingSince: typeof rawMeta.pendingSince === 'string' ? rawMeta.pendingSince : null,
+                lastQueuedAt: typeof rawMeta.lastQueuedAt === 'string' ? rawMeta.lastQueuedAt : null,
+                lastSyncedAt: typeof rawMeta.lastSyncedAt === 'string' ? rawMeta.lastSyncedAt : null,
+                errorMessage: typeof rawMeta.errorMessage === 'string' ? rawMeta.errorMessage.slice(0, 120) : null
+            };
+        }
+
+        function loadSyncMeta() {
+            return sanitizeSyncMeta(safeParseJSON(storageGet(STORAGE_KEYS.syncMeta)));
+        }
+
+        function persistSyncMeta(meta) {
+            const safeMeta = sanitizeSyncMeta(meta);
+            storageSet(STORAGE_KEYS.syncMeta, JSON.stringify(safeMeta));
+            return safeMeta;
+        }
+
+        function getSkinAvatar(skin) {
+            return SKIN_AVATARS[skin] || SKIN_AVATARS.normal;
+        }
+
+        function buildCloudSyncBundle({ appData, progressHistory, shareVisibility, cheerLog, cloudProfile, syncMeta }) {
+            const preparedAt = new Date().toISOString();
+            const profile = sanitizeCloudProfile(cloudProfile);
+            const safeSyncMeta = sanitizeSyncMeta(syncMeta);
+
+            return {
+                syncVersion: CLOUD_SYNC_VERSION,
+                preparedAt,
+                sync: {
+                    status: 'pending',
+                    sourceOfTruth: safeSyncMeta.sourceOfTruth,
+                    cacheMode: safeSyncMeta.cacheMode,
+                    baseRevision: safeSyncMeta.revision,
+                    previousSyncedAt: safeSyncMeta.lastSyncedAt
+                },
+                profile: {
+                    displayName: profile.displayName,
+                    shareVisibility,
+                    avatarSkin: appData.tigerSkin,
+                    avatarIcon: getSkinAvatar(appData.tigerSkin)
+                },
+                habitState: {
+                    version: STORAGE_VERSION,
+                    data: sanitizeAppData(appData)
+                },
+                progressDays: sanitizeProgressHistory(progressHistory),
+                cheerLog: sanitizeCheerLog(cheerLog),
+                migration: {
+                    source: 'localStorage',
+                    localKeys: [
+                        STORAGE_KEYS.app,
+                        STORAGE_KEYS.progressHistory,
+                        STORAGE_KEYS.shareVisibility,
+                        STORAGE_KEYS.cheerLog
+                    ]
+                }
+            };
+        }
+
+        function queueCloudSyncBundle(bundle) {
+            storageSet(STORAGE_KEYS.cloudOutbox, JSON.stringify(bundle));
+            return bundle;
         }
 
         function sanitizeHabit(rawHabit, index, usedIds) {
@@ -422,6 +868,31 @@ import { createRoot } from 'react-dom/client';
             const [tigerSkin, setTigerSkin] = useState('normal'); // 'normal', 'white', 'gold'
 
             const [musicEnabled, setMusicEnabled] = useState(false);
+            const [progressHistory, setProgressHistory] = useState({});
+            const [shareVisibility, setShareVisibility] = useState('progress');
+            const [cheerLog, setCheerLog] = useState({});
+            const [cloudProfile, setCloudProfile] = useState(createDefaultCloudProfile());
+            const [syncMeta, setSyncMeta] = useState(createDefaultSyncMeta());
+            const [displayNameDraft, setDisplayNameDraft] = useState('YOKO');
+            const [supabaseSession, setSupabaseSession] = useState(null);
+            const [authProviderStatus, setAuthProviderStatus] = useState(createDefaultAuthProviderStatus);
+            const [authEmail, setAuthEmail] = useState('');
+            const [authMessage, setAuthMessage] = useState('Supabase未ログイン');
+            const [cloudBusy, setCloudBusy] = useState(false);
+            const [pendingRestore, setPendingRestore] = useState(null);
+            const [pendingCloudOverwrite, setPendingCloudOverwrite] = useState(null);
+            const [remoteAllies, setRemoteAllies] = useState([]);
+            const [friendRequests, setFriendRequests] = useState([]);
+            const [outgoingRequests, setOutgoingRequests] = useState([]);
+            const [friendCodeDraft, setFriendCodeDraft] = useState('');
+            const [cheerBusy, setCheerBusy] = useState(false);
+            const [cheerMessage, setCheerMessage] = useState('');
+            const suppressCloudQueueUntilRef = useRef(0);
+            const friendIdRef = useRef(null);
+            const authRedirectErrorRef = useRef(getAuthRedirectErrorFromUrl());
+            const authFailureMessageRef = useRef(authRedirectErrorRef.current
+                ? `ログイン失敗: ${getFriendlyAuthError(authRedirectErrorRef.current)}`
+                : '');
             // 新規習慣フォーム
             const [newName, setNewName] = useState('');
             const [newIcon, setNewIcon] = useState('🐯');
@@ -430,6 +901,28 @@ import { createRoot } from 'react-dom/client';
             const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
             const canUseAdminTools = LOCAL_ADMIN_HOSTS.has(window.location.hostname)
                 && new URLSearchParams(window.location.search).has('admin');
+
+            const refreshAuthProviderStatus = async () => {
+                const status = await loadAuthProviderStatus();
+                setAuthProviderStatus(status);
+                return status;
+            };
+
+            const getAuthSessionMessage = session => {
+                if (session) {
+                    authRedirectErrorRef.current = null;
+                    authFailureMessageRef.current = '';
+                    return 'Supabaseログイン中';
+                }
+
+                if (authRedirectErrorRef.current) {
+                    const redirectError = authRedirectErrorRef.current;
+                    authRedirectErrorRef.current = null;
+                    clearAuthRedirectErrorFromUrl(redirectError.source);
+                }
+
+                return authFailureMessageRef.current || 'Supabase未ログイン';
+            };
 
             // 午前1時基準で日付を計算する関数
             const getDateKey = (date) => {
@@ -517,26 +1010,92 @@ import { createRoot } from 'react-dom/client';
 
                 const pref = storageGet(STORAGE_KEYS.music);
                 if (pref === 'on') setMusicEnabled(true);
+                setProgressHistory(loadProgressHistory());
+                setShareVisibility(loadShareVisibility());
+                setCheerLog(loadCheerLog());
+                const savedCloudProfile = loadCloudProfile();
+                setCloudProfile(savedCloudProfile);
+                setDisplayNameDraft(savedCloudProfile.displayName);
+                const savedSyncMeta = loadSyncMeta();
+                setSyncMeta(savedSyncMeta);
+                if (savedSyncMeta.sourceOfTruth === 'server') {
+                    suppressCloudQueueUntilRef.current = Date.now() + 3000;
+                }
 
                 // 初期mood設定
                 setTigerMood(getBaseMoodByTime());
                 setHasLoadedStorage(true);
             }, []);
 
+            useEffect(() => {
+                let mounted = true;
+
+                loadAuthProviderStatus().then(status => {
+                    if (mounted) {
+                        setAuthProviderStatus(status);
+                    }
+                });
+
+                supabase.auth.getSession().then(({ data, error }) => {
+                    if (!mounted) {
+                        return;
+                    }
+                    if (error) {
+                        setAuthMessage(`セッション確認失敗: ${error.message}`);
+                        return;
+                    }
+                    setSupabaseSession(data.session || null);
+                    setAuthMessage(getAuthSessionMessage(data.session));
+                });
+
+                const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+                    setSupabaseSession(session);
+                    setAuthMessage(getAuthSessionMessage(session));
+                });
+
+                return () => {
+                    mounted = false;
+                    authListener.subscription.unsubscribe();
+                };
+            }, []);
+
+            useEffect(() => {
+                if (activeTab !== 'settings') {
+                    return;
+                }
+
+                let cancelled = false;
+                loadAuthProviderStatus().then(status => {
+                    if (!cancelled) {
+                        setAuthProviderStatus(status);
+                    }
+                });
+
+                return () => {
+                    cancelled = true;
+                };
+            }, [activeTab]);
+
             // ページが表示されたとき（PWA対応：visibilitychange）
             useEffect(() => {
                 const handleVisibilityChange = () => {
                     if (document.visibilityState === 'visible') {
                         checkAndResetDailyHabits();
+                        refreshAuthProviderStatus();
                     }
                 };
 
+                const handleFocus = () => {
+                    checkAndResetDailyHabits();
+                    refreshAuthProviderStatus();
+                };
+
                 document.addEventListener('visibilitychange', handleVisibilityChange);
-                window.addEventListener('focus', checkAndResetDailyHabits);
+                window.addEventListener('focus', handleFocus);
 
                 return () => {
                     document.removeEventListener('visibilitychange', handleVisibilityChange);
-                    window.removeEventListener('focus', checkAndResetDailyHabits);
+                    window.removeEventListener('focus', handleFocus);
                 };
             }, []);
 
@@ -605,6 +1164,457 @@ import { createRoot } from 'react-dom/client';
             const completedToday = habits.filter(h => h.completed).length;
 
             const totalHabits = habits.length;
+            const todayKey = getDateKey(new Date());
+            const todayProgressRate = totalHabits > 0 ? Math.round((completedToday / totalHabits) * 100) : 0;
+            const progressTone = totalHabits === 0
+                ? '準備中'
+                : completedToday === totalHabits
+                    ? '全達成'
+                    : completedToday === 0
+                        ? 'これから'
+                        : todayProgressRate >= 60
+                            ? 'いい感じ'
+                            : 'あと少し';
+            const completedHabitLabels = habits
+                .filter(habit => habit.completed)
+                .map(habit => `${habit.icon} ${habit.name}`);
+            const getRecentDateKeys = (days) => {
+                const keys = [];
+                for (let i = 0; i < days; i++) {
+                    const day = new Date();
+                    day.setDate(day.getDate() - i);
+                    keys.push(getDateKey(day));
+                }
+                return keys;
+            };
+            const weekProgressRate = (() => {
+                let completed = 0;
+                let total = 0;
+                getRecentDateKeys(7).forEach(dateKey => {
+                    const entry = dateKey === todayKey
+                        ? { completed: completedToday, total: totalHabits }
+                        : progressHistory[dateKey];
+                    if (entry && entry.total > 0) {
+                        completed += entry.completed;
+                        total += entry.total;
+                    }
+                });
+                return total > 0 ? Math.round((completed / total) * 100) : todayProgressRate;
+            })();
+            const myShareCard = {
+                name: cloudProfile.displayName,
+                avatar: getSkinAvatar(tigerSkin),
+                todayCompleted: completedToday,
+                totalHabits,
+                weekRate: weekProgressRate,
+                streak,
+                status: progressTone,
+                completedHabitLabels
+            };
+            const syncStatusLabel = {
+                local_only: 'ローカル本体',
+                pending: '送信待ち',
+                synced: '同期済み',
+                conflict: '要確認',
+                error: '同期失敗'
+            }[syncMeta.status] || 'ローカル本体';
+            const syncSourceLabel = syncMeta.sourceOfTruth === 'server'
+                ? 'サーバー正本'
+                : 'ローカル正本';
+            const cacheRoleLabel = syncMeta.sourceOfTruth === 'server'
+                ? 'ローカルはキャッシュ + 未送信キュー'
+                : 'ローカルが本体';
+            const currentSupabaseUser = supabaseSession?.user || null;
+            const authStatusLabel = currentSupabaseUser ? 'ログイン中' : '未ログイン';
+            const authIdentityLabel = currentSupabaseUser?.email || currentSupabaseUser?.id || '';
+            const hasLocalMigrationData = totalHabits > 0
+                || totalCompleted > 0
+                || level > 1
+                || exp > 0
+                || coins > 0
+                || streak > 0
+                || unlockedBadges.length > 0
+                || ownedItems.length > 0;
+            const showCloudMigrationCard = Boolean(currentSupabaseUser)
+                && syncMeta.sourceOfTruth === 'local'
+                && syncMeta.status !== 'pending'
+                && hasLocalMigrationData
+                && !pendingRestore
+                && !pendingCloudOverwrite;
+            const googleAuthReady = Boolean(authProviderStatus.google);
+            const appleAuthReady = Boolean(authProviderStatus.apple);
+            const anyOAuthProviderReady = googleAuthReady || appleAuthReady;
+            const getProviderButtonLabel = (provider, ready) => {
+                const providerLabel = provider === 'apple' ? 'Apple' : 'Google';
+                if (ready) {
+                    return `${providerLabel}で続ける`;
+                }
+                return authProviderStatus.checked ? `${providerLabel}準備中` : `${providerLabel}確認中`;
+            };
+            const getProviderButtonTitle = (provider, ready) => {
+                const providerLabel = provider === 'apple' ? 'Apple' : 'Google';
+                if (ready) {
+                    return `${providerLabel}で続ける`;
+                }
+                return authProviderStatus.checked
+                    ? `Supabaseの${providerLabel} Provider設定後に有効化`
+                    : 'SupabaseのProvider設定を確認中';
+            };
+            const authProviderNote = !authProviderStatus.checked
+                ? 'Supabaseのログイン設定を確認中。メールリンクはそのまま使えるよ。'
+                : anyOAuthProviderReady
+                    ? '設定済みのProviderはこのボタンからログインできるよ。メールリンクも使えるよ。'
+                    : 'Google/AppleはSupabaseのProvider設定後に有効化。今はメールリンクでログインしてね。';
+            const visibleAllies = remoteAllies.length > 0 ? remoteAllies : demoAllies;
+            const showingDemoAllies = remoteAllies.length === 0;
+
+            useEffect(() => {
+                if (!hasLoadedStorage) {
+                    return;
+                }
+
+                setProgressHistory(prev => {
+                    const next = sanitizeProgressHistory({
+                        ...prev,
+                        [todayKey]: {
+                            completed: completedToday,
+                            total: totalHabits,
+                            updatedAt: new Date().toISOString()
+                        }
+                    });
+                    storageSet(STORAGE_KEYS.progressHistory, JSON.stringify(next));
+                    return next;
+                });
+            }, [hasLoadedStorage, todayKey, completedToday, totalHabits]);
+
+            useEffect(() => {
+                if (!hasLoadedStorage) {
+                    return;
+                }
+                storageSet(STORAGE_KEYS.shareVisibility, shareVisibility);
+            }, [hasLoadedStorage, shareVisibility]);
+
+            const getCurrentAppData = () => ({
+                habits,
+                level,
+                exp,
+                coins,
+                streak,
+                totalCompleted,
+                unlockedBadges,
+                ownedItems,
+                tigerSkin
+            });
+
+            const buildProgressRows = (userId) => {
+                const safeHistory = sanitizeProgressHistory({
+                    ...progressHistory,
+                    [todayKey]: {
+                        completed: completedToday,
+                        total: totalHabits,
+                        updatedAt: new Date().toISOString()
+                    }
+                });
+
+                return Object.entries(safeHistory).map(([dateKey, entry]) => ({
+                    user_id: userId,
+                    date_key: dateKey,
+                    completed_count: entry.completed,
+                    total_count: entry.total,
+                    week_rate: dateKey === todayKey ? weekProgressRate : 0,
+                    streak: dateKey === todayKey ? streak : 0,
+                    completed_habits: dateKey === todayKey && shareVisibility === 'habits'
+                        ? completedHabitLabels.slice(0, 10)
+                        : []
+                }));
+            };
+
+            const firstRemoteRow = (rows) => Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
+
+            const markCloudError = (message) => {
+                const failedMeta = persistSyncMeta({
+                    ...syncMeta,
+                    status: 'error',
+                    errorMessage: message
+                });
+                setSyncMeta(failedMeta);
+                setAuthMessage(message);
+                return failedMeta;
+            };
+
+            const readRemoteCloudState = async (userId, { includeProgress = false } = {}) => {
+                const profileResult = await supabase
+                    .from('profiles')
+                    .select('display_name, avatar_skin, avatar_icon, share_visibility, updated_at')
+                    .eq('user_id', userId)
+                    .limit(1);
+                if (profileResult.error) {
+                    return { data: null, error: profileResult.error };
+                }
+
+                const habitResult = await supabase
+                    .from('habit_states')
+                    .select('data_json, app_version, revision, updated_at')
+                    .eq('user_id', userId)
+                    .limit(1);
+                if (habitResult.error) {
+                    return { data: null, error: habitResult.error };
+                }
+
+                const snapshot = {
+                    profile: firstRemoteRow(profileResult.data),
+                    habitState: firstRemoteRow(habitResult.data),
+                    progressDays: []
+                };
+
+                if (!includeProgress) {
+                    return { data: snapshot, error: null };
+                }
+
+                const progressResult = await supabase
+                    .from('progress_days')
+                    .select('date_key, completed_count, total_count, updated_at')
+                    .eq('user_id', userId)
+                    .order('updated_at', { ascending: false })
+                    .limit(14);
+                if (progressResult.error) {
+                    return { data: null, error: progressResult.error };
+                }
+
+                snapshot.progressDays = Array.isArray(progressResult.data) ? progressResult.data : [];
+                return { data: snapshot, error: null };
+            };
+
+            const loadCheerNetwork = async () => {
+                const user = currentSupabaseUser;
+                if (!user) {
+                    setRemoteAllies([]);
+                    setFriendRequests([]);
+                    setOutgoingRequests([]);
+                    setCheerMessage('');
+                    return;
+                }
+
+                const friendshipsResult = await supabase
+                    .from('friendships')
+                    .select('id, requester_id, receiver_id, status, created_at, updated_at')
+                    .or(`requester_id.eq.${user.id},receiver_id.eq.${user.id}`)
+                    .order('updated_at', { ascending: false });
+                if (friendshipsResult.error) {
+                    setCheerMessage(`なかま情報の読み込み失敗: ${friendshipsResult.error.message}`);
+                    return;
+                }
+
+                const friendshipRows = Array.isArray(friendshipsResult.data) ? friendshipsResult.data : [];
+                const acceptedRows = friendshipRows.filter(row => row.status === 'accepted');
+                const incomingRows = friendshipRows.filter(row => row.status === 'pending' && row.receiver_id === user.id);
+                const outgoingRows = friendshipRows.filter(row => row.status === 'pending' && row.requester_id === user.id);
+                const outgoingCount = outgoingRows.length;
+                const friendIds = [...new Set([
+                    ...acceptedRows.map(row => row.requester_id === user.id ? row.receiver_id : row.requester_id),
+                    ...incomingRows.map(row => row.requester_id),
+                    ...outgoingRows.map(row => row.receiver_id)
+                ])];
+
+                if (friendIds.length === 0) {
+                    setRemoteAllies([]);
+                    setFriendRequests([]);
+                    setOutgoingRequests([]);
+                    setCheerMessage(outgoingCount > 0 ? `承認待ち ${outgoingCount}件` : '');
+                    return;
+                }
+
+                const profilesResult = await supabase
+                    .from('profiles')
+                    .select('user_id, display_name, avatar_skin, avatar_icon, share_visibility, updated_at')
+                    .in('user_id', friendIds);
+                if (profilesResult.error) {
+                    setCheerMessage(`なかまプロフィール取得失敗: ${profilesResult.error.message}`);
+                    return;
+                }
+
+                const profileByUser = new Map((profilesResult.data || []).map(profile => [profile.user_id, profile]));
+                const acceptedIds = [...new Set(acceptedRows.map(row => row.requester_id === user.id ? row.receiver_id : row.requester_id))];
+                let progressRows = [];
+                let cheerRows = [];
+
+                if (acceptedIds.length > 0) {
+                    const progressResult = await supabase
+                        .from('progress_days')
+                        .select('user_id, date_key, completed_count, total_count, week_rate, streak, completed_habits, updated_at')
+                        .in('user_id', acceptedIds)
+                        .order('updated_at', { ascending: false })
+                        .limit(Math.max(acceptedIds.length * 7, 7));
+                    if (progressResult.error) {
+                        setCheerMessage(`なかま進捗取得失敗: ${progressResult.error.message}`);
+                        return;
+                    }
+                    progressRows = Array.isArray(progressResult.data) ? progressResult.data : [];
+
+                    const cheersResult = await supabase
+                        .from('cheers')
+                        .select('from_user_id, to_user_id, stamp_id, label, created_at')
+                        .or(`from_user_id.eq.${user.id},to_user_id.eq.${user.id}`)
+                        .order('created_at', { ascending: false })
+                        .limit(30);
+                    if (cheersResult.error) {
+                        setCheerMessage(`エール履歴取得失敗: ${cheersResult.error.message}`);
+                        return;
+                    }
+                    cheerRows = Array.isArray(cheersResult.data) ? cheersResult.data : [];
+                }
+
+                const progressByUser = new Map();
+                progressRows.forEach(row => {
+                    if (!progressByUser.has(row.user_id)) {
+                        progressByUser.set(row.user_id, row);
+                    }
+                });
+                const latestCheerByUser = new Map();
+                cheerRows.forEach(row => {
+                    const friendId = row.from_user_id === user.id ? row.to_user_id : row.from_user_id;
+                    if (!latestCheerByUser.has(friendId)) {
+                        latestCheerByUser.set(friendId, row);
+                    }
+                });
+
+                const nextRemoteAllies = acceptedIds.map(friendId => {
+                    const profile = profileByUser.get(friendId) || {};
+                    const progress = progressByUser.get(friendId) || {};
+                    const completed = clampNumber(progress.completed_count, 0, 0, 1000000);
+                    const total = clampNumber(progress.total_count, 0, 0, 1000000);
+                    const latestCheer = latestCheerByUser.get(friendId);
+                    return {
+                        id: friendId,
+                        userId: friendId,
+                        source: 'remote',
+                        name: profile.display_name || 'なかま',
+                        avatar: profile.avatar_icon || getSkinAvatar(profile.avatar_skin || 'normal'),
+                        todayCompleted: completed,
+                        totalHabits: total,
+                        weekRate: clampNumber(progress.week_rate, total > 0 ? Math.round((completed / total) * 100) : 0, 0, 100),
+                        streak: clampNumber(progress.streak, 0, 0, 1000000),
+                        status: getProgressStatus(completed, total),
+                        completedHabitLabels: Array.isArray(progress.completed_habits) ? progress.completed_habits : [],
+                        latestCheer: latestCheer ? latestCheer.label : 'まだなし'
+                    };
+                });
+
+                const nextRequests = incomingRows.map(row => {
+                    const profile = profileByUser.get(row.requester_id) || {};
+                    return {
+                        id: row.id,
+                        requesterId: row.requester_id,
+                        name: profile.display_name || 'なかま',
+                        avatar: profile.avatar_icon || getSkinAvatar(profile.avatar_skin || 'normal')
+                    };
+                });
+
+                const nextOutgoingRequests = outgoingRows.map(row => {
+                    const profile = profileByUser.get(row.receiver_id) || {};
+                    return {
+                        id: row.id,
+                        receiverId: row.receiver_id,
+                        name: profile.display_name || 'なかま',
+                        avatar: profile.avatar_icon || getSkinAvatar(profile.avatar_skin || 'normal')
+                    };
+                });
+
+                setRemoteAllies(nextRemoteAllies);
+                setFriendRequests(nextRequests);
+                setOutgoingRequests(nextOutgoingRequests);
+                setCheerMessage(outgoingCount > 0 ? `承認待ち ${outgoingCount}件` : '');
+            };
+
+            useEffect(() => {
+                loadCheerNetwork();
+            }, [currentSupabaseUser?.id]);
+
+            const prepareCloudSync = (nextProfile = cloudProfile) => {
+                const bundle = buildCloudSyncBundle({
+                    appData: getCurrentAppData(),
+                    progressHistory,
+                    shareVisibility,
+                    cheerLog,
+                    cloudProfile: nextProfile,
+                    syncMeta
+                });
+                queueCloudSyncBundle(bundle);
+                const pendingMeta = persistSyncMeta({
+                    ...syncMeta,
+                    status: 'pending',
+                    sourceOfTruth: syncMeta.sourceOfTruth,
+                    pendingSince: syncMeta.pendingSince || bundle.preparedAt,
+                    lastQueuedAt: bundle.preparedAt,
+                    errorMessage: null
+                });
+                setSyncMeta(pendingMeta);
+                const preparedProfile = sanitizeCloudProfile({
+                    ...nextProfile,
+                    accountState: 'cloud_ready',
+                    migrationState: 'ready',
+                    lastPreparedAt: bundle.preparedAt,
+                    lastQueuedAt: bundle.preparedAt
+                });
+                storageSet(STORAGE_KEYS.cloudProfile, JSON.stringify(preparedProfile));
+                setCloudProfile(preparedProfile);
+                setDisplayNameDraft(preparedProfile.displayName);
+                return preparedProfile;
+            };
+
+            useEffect(() => {
+                if (!hasLoadedStorage || cloudProfile.migrationState !== 'ready') {
+                    return;
+                }
+                if (cloudBusy) {
+                    return;
+                }
+                if (Date.now() < suppressCloudQueueUntilRef.current) {
+                    return;
+                }
+
+                const bundle = buildCloudSyncBundle({
+                    appData: getCurrentAppData(),
+                    progressHistory,
+                    shareVisibility,
+                    cheerLog,
+                    cloudProfile,
+                    syncMeta
+                });
+                queueCloudSyncBundle(bundle);
+                const queuedMeta = persistSyncMeta({
+                    ...syncMeta,
+                    status: 'pending',
+                    sourceOfTruth: syncMeta.sourceOfTruth,
+                    pendingSince: syncMeta.pendingSince || bundle.preparedAt,
+                    lastQueuedAt: bundle.preparedAt,
+                    errorMessage: null
+                });
+                setSyncMeta(queuedMeta);
+                const queuedProfile = sanitizeCloudProfile({
+                    ...cloudProfile,
+                    lastQueuedAt: bundle.preparedAt
+                });
+                storageSet(STORAGE_KEYS.cloudProfile, JSON.stringify(queuedProfile));
+                setCloudProfile(queuedProfile);
+            }, [
+                hasLoadedStorage,
+                habits,
+                level,
+                exp,
+                coins,
+                streak,
+                totalCompleted,
+                unlockedBadges,
+                ownedItems,
+                tigerSkin,
+                progressHistory,
+                shareVisibility,
+                cheerLog,
+                cloudProfile.migrationState,
+                cloudProfile.displayName,
+                cloudBusy
+            ]);
 
             // ミュージックのトグル（初回はユーザー操作で初期化）
             const toggleMusic = async () => {
@@ -616,6 +1626,610 @@ import { createRoot } from 'react-dom/client';
                     audioManager.startMusic();
                     setMusicEnabled(true);
                 }
+            };
+
+            const requestFriend = async () => {
+                const user = currentSupabaseUser;
+                if (!user) {
+                    setCheerMessage('なかま申請にはログインしてね');
+                    return;
+                }
+                const receiverId = normalizeFriendCode(friendCodeDraft);
+                if (!isValidUserId(receiverId)) {
+                    setCheerMessage('なかまIDを確認してね');
+                    return;
+                }
+                if (receiverId === user.id) {
+                    setCheerMessage('自分自身には申請できないよ');
+                    return;
+                }
+
+                setCheerBusy(true);
+                const existingResult = await supabase
+                    .from('friendships')
+                    .select('id, requester_id, receiver_id, status')
+                    .or(`requester_id.eq.${user.id},receiver_id.eq.${user.id}`);
+                if (existingResult.error) {
+                    setCheerBusy(false);
+                    setCheerMessage(`なかま確認失敗: ${existingResult.error.message}`);
+                    return;
+                }
+
+                const existingRelation = (existingResult.data || []).find(row => (
+                    (row.requester_id === user.id && row.receiver_id === receiverId)
+                    || (row.requester_id === receiverId && row.receiver_id === user.id)
+                ) && ['pending', 'accepted'].includes(row.status));
+
+                if (existingRelation?.status === 'accepted') {
+                    setCheerBusy(false);
+                    setCheerMessage('すでにつながっているなかまだよ');
+                    return;
+                }
+
+                if (existingRelation?.status === 'pending' && existingRelation.requester_id === user.id) {
+                    setCheerBusy(false);
+                    setCheerMessage('すでに申請中だよ');
+                    return;
+                }
+
+                if (existingRelation?.status === 'pending' && existingRelation.receiver_id === user.id) {
+                    setCheerBusy(false);
+                    setCheerMessage('相手から申請が届いているよ。承認してね');
+                    return;
+                }
+
+                const { error } = await supabase
+                    .from('friendships')
+                    .insert({
+                        requester_id: user.id,
+                        receiver_id: receiverId,
+                        status: 'pending'
+                    });
+                setCheerBusy(false);
+
+                if (error) {
+                    if (error.code === '23505' || error.message?.includes('duplicate key')) {
+                        await loadCheerNetwork();
+                        setCheerMessage('すでに申請済みか、相手から申請が届いているよ');
+                        return;
+                    }
+                    if (error.code === '23503' || error.message?.includes('foreign key')) {
+                        setCheerMessage('そのなかまIDは見つからないよ。相手のIDをもう一度確認してね');
+                        return;
+                    }
+                    setCheerMessage(`なかま申請失敗: ${error.message}`);
+                    return;
+                }
+
+                setFriendCodeDraft('');
+                setCheerMessage('なかま申請を送ったよ');
+                loadCheerNetwork();
+            };
+
+            const acceptFriendRequest = async (request) => {
+                const user = currentSupabaseUser;
+                if (!user) {
+                    setCheerMessage('ログインしてから承認してね');
+                    return;
+                }
+
+                setCheerBusy(true);
+                const { error } = await supabase
+                    .from('friendships')
+                    .update({ status: 'accepted' })
+                    .eq('id', request.id)
+                    .eq('receiver_id', user.id);
+                setCheerBusy(false);
+
+                if (error) {
+                    setCheerMessage(`承認失敗: ${error.message}`);
+                    return;
+                }
+
+                setCheerMessage(`${request.name}とつながったよ`);
+                loadCheerNetwork();
+            };
+
+            const copyFriendId = async () => {
+                const user = currentSupabaseUser;
+                if (!user) {
+                    setCheerMessage('ログインするとIDをコピーできるよ');
+                    return;
+                }
+
+                const copyWithTextArea = () => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = user.id;
+                    textArea.setAttribute('readonly', '');
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-9999px';
+                    textArea.style.top = '0';
+                    textArea.style.opacity = '0';
+                    document.body.appendChild(textArea);
+                    textArea.focus({ preventScroll: true });
+                    textArea.select();
+                    textArea.setSelectionRange(0, textArea.value.length);
+                    try {
+                        return document.execCommand('copy');
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                };
+
+                try {
+                    if (navigator.clipboard?.writeText) {
+                        await navigator.clipboard.writeText(user.id);
+                        setCheerMessage('なかまIDをコピーしたよ');
+                        return;
+                    }
+                } catch (error) {
+                    // Fall through to the textarea route for localhost or restricted browsers.
+                }
+
+                if (copyWithTextArea()) {
+                    setCheerMessage('なかまIDをコピーしたよ');
+                } else {
+                    const selection = window.getSelection();
+                    if (friendIdRef.current && selection) {
+                        const range = document.createRange();
+                        range.selectNodeContents(friendIdRef.current);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                        setCheerMessage('なかまIDを選択したよ。コピーして相手に送ってね');
+                        return;
+                    }
+                    setCheerMessage('コピーできなかったので、IDを長押ししてコピーしてね');
+                }
+            };
+
+            const sendCheer = async (ally, stamp) => {
+                if (ally.source === 'remote' && currentSupabaseUser) {
+                    setCheerBusy(true);
+                    const { error } = await supabase
+                        .from('cheers')
+                        .insert({
+                            from_user_id: currentSupabaseUser.id,
+                            to_user_id: ally.userId,
+                            stamp_id: stamp.id,
+                            label: stamp.label
+                        });
+                    setCheerBusy(false);
+
+                    if (error) {
+                        setCheerMessage(`エール送信失敗: ${error.message}`);
+                        return;
+                    }
+                    setCheerMessage(`${ally.name}に「${stamp.label}」を送ったよ`);
+                    loadCheerNetwork();
+                }
+
+                setCheerLog(prev => {
+                    const previousRecord = prev[ally.id];
+                    const next = {
+                        ...prev,
+                        [ally.id]: {
+                            stampId: stamp.id,
+                            icon: stamp.icon,
+                            label: stamp.label,
+                            count: previousRecord ? previousRecord.count + 1 : 1,
+                            lastSentAt: new Date().toISOString()
+                        }
+                    };
+                    storageSet(STORAGE_KEYS.cheerLog, JSON.stringify(next));
+                    return next;
+                });
+                setTigerMessage(`${ally.name}に「${stamp.label}」を送ったよ！`);
+                setTigerMood('happy');
+                setTigerFace('😸');
+                setTigerAnimation('animate-bounce');
+                setTimeout(() => setTigerAnimation(''), 600);
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
+                    setTigerFace(getBaseFaceByTime());
+                    setTigerMood(getBaseMoodByTime());
+                }, 2500);
+            };
+
+            const saveDisplayName = () => {
+                const nextProfile = sanitizeCloudProfile({
+                    ...cloudProfile,
+                    displayName: displayNameDraft
+                });
+                storageSet(STORAGE_KEYS.cloudProfile, JSON.stringify(nextProfile));
+                setCloudProfile(nextProfile);
+                setDisplayNameDraft(nextProfile.displayName);
+                setTigerMessage(`公開名を「${nextProfile.displayName}」にしたよ`);
+                setTimeout(() => setTigerMessage(getBaseMessageByTime()), 2200);
+            };
+
+            const handlePrepareCloudSync = () => {
+                const namedProfile = sanitizeCloudProfile({
+                    ...cloudProfile,
+                    displayName: displayNameDraft
+                });
+                const preparedProfile = prepareCloudSync(namedProfile);
+                setTigerMessage(`移行データを準備したよ: ${preparedProfile.displayName}`);
+                setTigerMood('star');
+                setTigerFace('🤩');
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
+                    setTigerFace(getBaseFaceByTime());
+                    setTigerMood(getBaseMoodByTime());
+                }, 2600);
+            };
+
+            const getAuthRedirectTo = () => {
+                const allowedProtocols = ['http:', 'https:'];
+                if (!allowedProtocols.includes(window.location.protocol)) {
+                    return null;
+                }
+                return `${window.location.origin}${window.location.pathname}`;
+            };
+
+            const handleOAuthSignIn = async (provider) => {
+                const providerLabel = provider === 'apple' ? 'Apple' : 'Google';
+                authFailureMessageRef.current = '';
+                if (!authProviderStatus[provider]) {
+                    const providerMessage = authProviderStatus.checked
+                        ? 'Supabase側のProvider設定がまだだよ。今はメールリンクで入ってね'
+                        : 'Supabase設定を確認中だよ。先にメールリンクで入ってね';
+                    setAuthMessage(`${providerLabel}ログインは準備中。${providerMessage}`);
+                    return;
+                }
+
+                const redirectTo = getAuthRedirectTo();
+                if (!redirectTo) {
+                    setAuthMessage('ログインは localhost か公開URLで開いてね');
+                    return;
+                }
+
+                setCloudBusy(true);
+                setAuthMessage(`${providerLabel}ログインへ移動するね`);
+                const credentials = { provider };
+                credentials.options = { redirectTo };
+                if (provider === 'google') {
+                    credentials.options.queryParams = { prompt: 'select_account' };
+                }
+
+                const { error } = await supabase.auth.signInWithOAuth(credentials);
+                setCloudBusy(false);
+
+                if (error) {
+                    setAuthMessage(`${providerLabel}ログイン失敗: ${getFriendlyAuthError(error)}`);
+                }
+            };
+
+            const handleMagicLink = async () => {
+                const email = authEmail.trim();
+                authFailureMessageRef.current = '';
+                if (!email) {
+                    setAuthMessage('メールを入力してね');
+                    return;
+                }
+
+                const redirectTo = getAuthRedirectTo();
+                if (!redirectTo) {
+                    setAuthMessage('ログインは localhost か公開URLで開いてね');
+                    return;
+                }
+
+                setCloudBusy(true);
+                setAuthMessage('マジックリンク送信中...');
+                const credentials = { email };
+                credentials.options = { emailRedirectTo: redirectTo };
+
+                const { error } = await supabase.auth.signInWithOtp(credentials);
+                setCloudBusy(false);
+
+                if (error) {
+                    setAuthMessage(`マジックリンク送信失敗: ${getFriendlyAuthError(error)}`);
+                    return;
+                }
+
+                setAuthMessage('マジックリンクを送ったよ。メールから戻ってきてね');
+            };
+
+            const handleSignOut = async () => {
+                authFailureMessageRef.current = '';
+                setCloudBusy(true);
+                const { error } = await supabase.auth.signOut();
+                setCloudBusy(false);
+
+                if (error) {
+                    setAuthMessage(`ログアウト失敗: ${error.message}`);
+                    return;
+                }
+
+                setSupabaseSession(null);
+                setAuthMessage('Supabase未ログイン');
+            };
+
+            const saveToSupabase = async ({ forceOverwrite = false } = {}) => {
+                const user = currentSupabaseUser;
+                if (!user) {
+                    setAuthMessage('先にSupabaseへログインしてね');
+                    return;
+                }
+
+                setCloudBusy(true);
+                const namedProfile = sanitizeCloudProfile({
+                    ...cloudProfile,
+                    displayName: displayNameDraft
+                });
+
+                const remoteResult = await readRemoteCloudState(user.id);
+                if (remoteResult.error) {
+                    setCloudBusy(false);
+                    markCloudError(`クラウド確認失敗: ${remoteResult.error.message}`);
+                    return;
+                }
+
+                const remoteHabitState = remoteResult.data?.habitState;
+                let baseRevision = syncMeta.revision;
+                if (remoteHabitState) {
+                    const remoteRevision = clampNumber(remoteHabitState.revision, 0, 0);
+                    baseRevision = Math.max(baseRevision, remoteRevision);
+                    const remoteUpdatedAt = remoteHabitState.updated_at
+                        ? new Date(remoteHabitState.updated_at).toLocaleString('ja-JP')
+                        : '日時不明';
+
+                    if (syncMeta.sourceOfTruth === 'local' && !forceOverwrite) {
+                        setPendingCloudOverwrite({
+                            remoteRevision,
+                            remoteUpdatedAt
+                        });
+                        setCloudBusy(false);
+                        setAuthMessage('クラウド保存の確認をしてね');
+                        return;
+                    } else if (!forceOverwrite && remoteRevision > syncMeta.revision) {
+                        const conflictedMeta = persistSyncMeta({
+                            ...syncMeta,
+                            status: 'conflict',
+                            errorMessage: 'クラウド側に新しいデータがあります'
+                        });
+                        setSyncMeta(conflictedMeta);
+                        setCloudBusy(false);
+                        setAuthMessage('クラウド側に新しいデータがあるよ。先にクラウド復元してね');
+                        return;
+                    }
+                }
+
+                prepareCloudSync(namedProfile);
+
+                const nextRevision = baseRevision + 1;
+                const profileRow = {
+                    user_id: user.id,
+                    display_name: namedProfile.displayName,
+                    avatar_skin: tigerSkin,
+                    avatar_icon: getSkinAvatar(tigerSkin),
+                    share_visibility: shareVisibility
+                };
+                const habitStateRow = {
+                    user_id: user.id,
+                    data_json: sanitizeAppData(getCurrentAppData()),
+                    app_version: STORAGE_VERSION,
+                    revision: nextRevision
+                };
+                const progressRows = buildProgressRows(user.id);
+
+                const profileResult = await supabase
+                    .from('profiles')
+                    .upsert(profileRow, { onConflict: 'user_id' });
+                if (profileResult.error) {
+                    setCloudBusy(false);
+                    markCloudError(`プロフィール保存失敗: ${profileResult.error.message}`);
+                    return;
+                }
+
+                const habitResult = await supabase
+                    .from('habit_states')
+                    .upsert(habitStateRow, { onConflict: 'user_id' });
+                if (habitResult.error) {
+                    setCloudBusy(false);
+                    markCloudError(`習慣データ保存失敗: ${habitResult.error.message}`);
+                    return;
+                }
+
+                if (progressRows.length > 0) {
+                    const progressResult = await supabase
+                        .from('progress_days')
+                        .upsert(progressRows, { onConflict: 'user_id,date_key' });
+                    if (progressResult.error) {
+                        setCloudBusy(false);
+                        markCloudError(`進捗保存失敗: ${progressResult.error.message}`);
+                        return;
+                    }
+                }
+
+                const now = new Date().toISOString();
+                suppressCloudQueueUntilRef.current = Date.now() + 5000;
+                const syncedMeta = persistSyncMeta({
+                    ...syncMeta,
+                    status: 'synced',
+                    sourceOfTruth: 'server',
+                    revision: nextRevision,
+                    pendingSince: null,
+                    lastQueuedAt: now,
+                    lastSyncedAt: now,
+                    errorMessage: null
+                });
+                const syncedProfile = sanitizeCloudProfile({
+                    ...namedProfile,
+                    accountState: 'cloud_ready',
+                    migrationState: 'ready',
+                    lastPreparedAt: now,
+                    lastQueuedAt: now
+                });
+                storageSet(STORAGE_KEYS.cloudProfile, JSON.stringify(syncedProfile));
+                setPendingCloudOverwrite(null);
+                setSyncMeta(syncedMeta);
+                setCloudProfile(syncedProfile);
+                setDisplayNameDraft(syncedProfile.displayName);
+                setCloudBusy(false);
+                setAuthMessage('Supabaseに保存したよ');
+                setTigerMessage('クラウド保存完了！ローカルはキャッシュとして残すよ');
+                setTigerMood('happy');
+                setTigerFace('😸');
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
+                    setTigerFace(getBaseFaceByTime());
+                    setTigerMood(getBaseMoodByTime());
+                }, 2600);
+            };
+
+            const confirmCloudOverwrite = () => {
+                setPendingCloudOverwrite(null);
+                saveToSupabase({ forceOverwrite: true });
+            };
+
+            const cancelCloudOverwrite = () => {
+                setPendingCloudOverwrite(null);
+                setAuthMessage('クラウド保存を中止したよ');
+            };
+
+            const restoreFromSupabase = async () => {
+                const user = currentSupabaseUser;
+                if (!user) {
+                    setAuthMessage('先にSupabaseへログインしてね');
+                    return;
+                }
+
+                setCloudBusy(true);
+                setPendingCloudOverwrite(null);
+                const remoteResult = await readRemoteCloudState(user.id, { includeProgress: true });
+                if (remoteResult.error) {
+                    setCloudBusy(false);
+                    markCloudError(`クラウド復元失敗: ${remoteResult.error.message}`);
+                    return;
+                }
+
+                const remoteState = remoteResult.data;
+                if (!remoteState?.habitState) {
+                    setCloudBusy(false);
+                    setAuthMessage('クラウドに保存データがまだないよ');
+                    return;
+                }
+
+                const serverRevision = clampNumber(remoteState.habitState.revision, 0, 0);
+                const serverUpdatedAt = remoteState.habitState.updated_at
+                    ? new Date(remoteState.habitState.updated_at).toLocaleString('ja-JP')
+                    : '日時不明';
+                setPendingRestore({
+                    remoteState,
+                    serverRevision,
+                    serverUpdatedAt
+                });
+                setCloudBusy(false);
+                setAuthMessage('復元内容を確認してね');
+            };
+
+            const cancelPendingRestore = () => {
+                setPendingRestore(null);
+                setAuthMessage('クラウド復元を中止したよ');
+            };
+
+            const applyPendingRestore = () => {
+                const remoteState = pendingRestore?.remoteState;
+                if (!remoteState?.habitState) {
+                    setPendingRestore(null);
+                    setAuthMessage('クラウドに保存データがまだないよ');
+                    return;
+                }
+                const serverRevision = clampNumber(pendingRestore.serverRevision, 0, 0);
+
+                backupRawAppData(storageGet(STORAGE_KEYS.app), 'before-cloud-restore');
+                suppressCloudQueueUntilRef.current = Date.now() + 5000;
+                const remoteData = remoteState.habitState.data_json && typeof remoteState.habitState.data_json === 'object'
+                    ? remoteState.habitState.data_json
+                    : {};
+                const restoredData = persistAppData(remoteData);
+                setHabits(restoredData.habits);
+                setLevel(restoredData.level);
+                setExp(restoredData.exp);
+                setCoins(restoredData.coins);
+                setStreak(restoredData.streak);
+                setTotalCompleted(restoredData.totalCompleted);
+                setUnlockedBadges(restoredData.unlockedBadges);
+                setOwnedItems(restoredData.ownedItems);
+                setTigerSkin(restoredData.tigerSkin);
+
+                const restoredHistory = sanitizeProgressHistory(Object.fromEntries(
+                    remoteState.progressDays.map(row => [
+                        row.date_key,
+                        {
+                            completed: row.completed_count,
+                            total: row.total_count,
+                            updatedAt: row.updated_at || new Date().toISOString()
+                        }
+                    ])
+                ));
+                storageSet(STORAGE_KEYS.progressHistory, JSON.stringify(restoredHistory));
+                setProgressHistory(restoredHistory);
+
+                const restoredVisibility = VALID_SHARE_VISIBILITIES.has(remoteState.profile?.share_visibility)
+                    ? remoteState.profile.share_visibility
+                    : shareVisibility;
+                storageSet(STORAGE_KEYS.shareVisibility, restoredVisibility);
+                setShareVisibility(restoredVisibility);
+
+                const restoredProfile = sanitizeCloudProfile({
+                    ...cloudProfile,
+                    displayName: remoteState.profile?.display_name || cloudProfile.displayName,
+                    accountState: 'cloud_ready',
+                    migrationState: 'ready',
+                    lastPreparedAt: remoteState.habitState.updated_at || new Date().toISOString(),
+                    lastQueuedAt: remoteState.habitState.updated_at || new Date().toISOString()
+                });
+                storageSet(STORAGE_KEYS.cloudProfile, JSON.stringify(restoredProfile));
+                setCloudProfile(restoredProfile);
+                setDisplayNameDraft(restoredProfile.displayName);
+
+                const restoredMeta = persistSyncMeta({
+                    ...syncMeta,
+                    status: 'synced',
+                    sourceOfTruth: 'server',
+                    revision: serverRevision,
+                    pendingSince: null,
+                    lastQueuedAt: remoteState.habitState.updated_at || new Date().toISOString(),
+                    lastSyncedAt: remoteState.habitState.updated_at || new Date().toISOString(),
+                    errorMessage: null
+                });
+                setSyncMeta(restoredMeta);
+                setCloudBusy(false);
+                setPendingRestore(null);
+                setAuthMessage('クラウドから復元したよ');
+                setTigerMessage('クラウド復元完了！この端末はサーバーのキャッシュになったよ');
+                setTigerMood('happy');
+                setTigerFace('😸');
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
+                    setTigerFace(getBaseFaceByTime());
+                    setTigerMood(getBaseMoodByTime());
+                }, 2600);
+            };
+
+            const confirmServerSaved = () => {
+                const now = new Date().toISOString();
+                suppressCloudQueueUntilRef.current = Date.now() + 5000;
+                const syncedMeta = persistSyncMeta({
+                    ...syncMeta,
+                    status: 'synced',
+                    sourceOfTruth: 'server',
+                    revision: syncMeta.revision + 1,
+                    pendingSince: null,
+                    lastSyncedAt: now,
+                    lastQueuedAt: syncMeta.lastQueuedAt || now,
+                    errorMessage: null
+                });
+                setSyncMeta(syncedMeta);
+                setTigerMessage('サーバー保存済み。ローカルはキャッシュとして残すよ');
+                setTigerMood('happy');
+                setTigerFace('😸');
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
+                    setTigerFace(getBaseFaceByTime());
+                    setTigerMood(getBaseMoodByTime());
+                }, 2600);
             };
 
             // 習慣追加
@@ -1034,22 +2648,42 @@ import { createRoot } from 'react-dom/client';
 
                         <h1>🐯 HabiTora</h1>
 
-                        <div style={{ position: 'absolute', right: '12px', top: '12px', display: 'flex', flexDirection: 'column', gap: '6px', zIndex: 10 }}>
-                            <button className="music-toggle" onClick={toggleMusic} style={{ position: 'static' }}>
-                                {musicEnabled ? '♪ 音楽ON' : '♪ 音楽OFF'}
+                        <div className="header-actions">
+                            <button
+                                className={`header-tool-button ${activeTab === 'settings' ? 'active' : ''}`}
+                                type="button"
+                                onClick={() => setActiveTab('settings')}
+                                aria-label="設定"
+                                title="設定"
+                            >
+                                ⚙
                             </button>
                             <button
-                                className="music-toggle"
-                                onClick={resetDailyHabits}
-                                style={{ position: 'static', fontSize: '11px', padding: '6px 10px', display: 'none' }}
+                                className={`header-tool-button ${musicEnabled ? 'active' : ''}`}
+                                type="button"
+                                onClick={toggleMusic}
+                                aria-label={musicEnabled ? '音楽をオフにする' : '音楽をオンにする'}
+                                aria-pressed={musicEnabled}
+                                title={musicEnabled ? '音楽ON' : '音楽OFF'}
                             >
-                                🔄 リセット
+                                ♪
+                            </button>
+                            <button
+                                className="header-tool-button header-reset-button"
+                                type="button"
+                                onClick={resetDailyHabits}
+                                aria-label="今日の習慣をリセット"
+                                title="今日の習慣をリセット"
+                            >
+                                ↻
                             </button>
                             {canUseAdminTools && (
                                 <button
-                                    className="music-toggle"
+                                    className="header-tool-button header-admin-button"
+                                    type="button"
                                     onClick={getRich}
-                                    style={{ position: 'static', fontSize: '11px', padding: '6px 10px', marginTop: '5px' }}
+                                    aria-label="管理用コイン追加"
+                                    title="管理用コイン追加"
                                 >
                                     💰 +1000
                                 </button>
@@ -1151,6 +2785,41 @@ import { createRoot } from 'react-dom/client';
                             {tigerSkin === 'cat' && ownedItems.includes(408) && <div className="cat-fish"></div>}
                             {tigerSkin === 'cat' && ownedItems.includes(409) && <div className="cat-yarn"></div>}
 
+                            {/* 装飾アイテム (Hedgehog) */}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(501) && <div className="hedgehog-acorn"></div>}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(502) && <div className="hedgehog-mushroom"></div>}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(503) && <div className="hedgehog-leaf"></div>}
+                            {tigerSkin === 'hedgehog' && ownedItems.includes(504) && <div className="hedgehog-star"></div>}
+
+                            {/* 装飾アイテム (Sheep) */}
+                            {tigerSkin === 'sheep' && ownedItems.includes(601) && <div className="sheep-clover"></div>}
+                            {tigerSkin === 'sheep' && ownedItems.includes(602) && <div className="sheep-knit-hat"></div>}
+                            {tigerSkin === 'sheep' && ownedItems.includes(604) && <div className="sheep-moon"></div>}
+
+                            {/* 装飾アイテム (Bear) */}
+                            {tigerSkin === 'bear' && ownedItems.includes(701) && <div className="bear-honey"></div>}
+                            {tigerSkin === 'bear' && ownedItems.includes(702) && <div className="bear-beret"></div>}
+                            {tigerSkin === 'bear' && ownedItems.includes(703) && <div className="bear-fish"></div>}
+                            {tigerSkin === 'bear' && ownedItems.includes(704) && <div className="bear-medal"></div>}
+
+                            {/* 装飾アイテム (Fox) */}
+                            {tigerSkin === 'fox' && ownedItems.includes(801) && <div className="fox-inari"></div>}
+                            {tigerSkin === 'fox' && ownedItems.includes(802) && <div className="fox-maple"></div>}
+                            {tigerSkin === 'fox' && ownedItems.includes(803) && <div className="fox-bell"></div>}
+                            {tigerSkin === 'fox' && ownedItems.includes(804) && <div className="fox-tail"></div>}
+
+                            {/* 装飾アイテム (Koala) */}
+                            {tigerSkin === 'koala' && ownedItems.includes(901) && <div className="koala-eucalyptus"></div>}
+                            {tigerSkin === 'koala' && ownedItems.includes(902) && <div className="koala-mug"></div>}
+                            {tigerSkin === 'koala' && ownedItems.includes(903) && <div className="koala-straw-hat"></div>}
+                            {tigerSkin === 'koala' && ownedItems.includes(904) && <div className="koala-star"></div>}
+
+                            {/* 装飾アイテム (Owl) */}
+                            {tigerSkin === 'owl' && ownedItems.includes(1001) && <div className="owl-glasses"></div>}
+                            {tigerSkin === 'owl' && ownedItems.includes(1002) && <div className="owl-book"></div>}
+                            {tigerSkin === 'owl' && ownedItems.includes(1003) && <div className="owl-dango"></div>}
+                            {tigerSkin === 'owl' && ownedItems.includes(1004) && <div className="owl-wand"></div>}
+
                             {/* 星のオーラ（mood-star用） */}
                             {tigerMood === 'star' && <div className="star-aura"></div>}
 
@@ -1210,7 +2879,275 @@ import { createRoot } from 'react-dom/client';
 
                         </button>
 
+                        <button className={`tab ${activeTab === 'cheer' ? 'active' : ''}`} onClick={() => setActiveTab('cheer')}>
+
+                            エール
+
+                        </button>
+
                     </div>
+
+                    {/* 設定 */}
+
+                    {activeTab === 'settings' && (
+
+                        <div className="settings-page">
+
+                            <section className="account-panel">
+                                <div className="section-title-row">
+                                    <h3>設定</h3>
+                                    <span className="status-pill">
+                                        {authStatusLabel}
+                                    </span>
+                                </div>
+
+                                {authIdentityLabel && (
+                                    <div className="signed-in-user">
+                                        <span>ログイン中</span>
+                                        <strong>{authIdentityLabel}</strong>
+                                    </div>
+                                )}
+
+                                <div className="auth-options">
+                                    <div className="magic-link-row">
+                                        <input
+                                            type="email"
+                                            value={authEmail}
+                                            onChange={event => setAuthEmail(event.target.value)}
+                                            placeholder="メール"
+                                            aria-label="マジックリンク用メール"
+                                            autoComplete="email"
+                                        />
+                                        <button type="button" onClick={handleMagicLink} disabled={cloudBusy || Boolean(currentSupabaseUser)}>
+                                            リンクを送る
+                                        </button>
+                                    </div>
+                                    <div className="auth-provider-row">
+                                        <button
+                                            type="button"
+                                            className="auth-provider-button"
+                                            onClick={() => handleOAuthSignIn('google')}
+                                            disabled={cloudBusy || Boolean(currentSupabaseUser) || !googleAuthReady}
+                                            title={getProviderButtonTitle('google', googleAuthReady)}
+                                            aria-label={getProviderButtonLabel('google', googleAuthReady)}
+                                        >
+                                            <span className="provider-mark">G</span>
+                                            {getProviderButtonLabel('google', googleAuthReady)}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="auth-provider-button"
+                                            onClick={() => handleOAuthSignIn('apple')}
+                                            disabled={cloudBusy || Boolean(currentSupabaseUser) || !appleAuthReady}
+                                            title={getProviderButtonTitle('apple', appleAuthReady)}
+                                            aria-label={getProviderButtonLabel('apple', appleAuthReady)}
+                                        >
+                                            <span className="provider-mark">A</span>
+                                            {getProviderButtonLabel('apple', appleAuthReady)}
+                                        </button>
+                                    </div>
+                                    <div className="auth-note">
+                                        {authProviderNote}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="logout-button"
+                                        onClick={handleSignOut}
+                                        disabled={cloudBusy || !currentSupabaseUser}
+                                    >
+                                        ログアウト
+                                    </button>
+                                </div>
+
+                                <div className="auth-message">{authMessage}</div>
+
+                                {showCloudMigrationCard && (
+                                    <div className="sync-state-card migration-card" role="status">
+                                        <div>
+                                            <strong>この端末のローカルデータをサーバーへ移行</strong>
+                                            <span>
+                                                この端末が正本なら「端末データを保存」。習慣 {totalHabits}個 / 連続 {streak}日 / レベル {level}
+                                            </span>
+                                        </div>
+                                        <div className="cloud-actions">
+                                            <button
+                                                type="button"
+                                                className="primary"
+                                                onClick={() => saveToSupabase()}
+                                                disabled={cloudBusy}
+                                            >
+                                                端末データを保存
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={restoreFromSupabase}
+                                                disabled={cloudBusy}
+                                            >
+                                                サーバーで端末を上書き
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {pendingCloudOverwrite && (
+                                    <div className="sync-state-card overwrite-confirm-card" role="status">
+                                        <div>
+                                            <strong>端末データでサーバーを上書きしますか？</strong>
+                                            <span>
+                                                スマホのローカルが正本なら上書き保存。既存サーバー rev.{pendingCloudOverwrite.remoteRevision} / {pendingCloudOverwrite.remoteUpdatedAt}
+                                            </span>
+                                        </div>
+                                        <div className="cloud-actions">
+                                            <button type="button" className="primary" onClick={confirmCloudOverwrite}>
+                                                端末データでサーバー上書き
+                                            </button>
+                                            <button type="button" onClick={restoreFromSupabase}>
+                                                サーバーで端末を上書き
+                                            </button>
+                                            <button type="button" onClick={cancelCloudOverwrite}>
+                                                キャンセル
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {pendingRestore && (
+                                    <div className="sync-state-card restore-confirm-card" role="status">
+                                        <div>
+                                            <strong>クラウド復元</strong>
+                                            <span>サーバーデータでこの端末を上書きします。rev.{pendingRestore.serverRevision} / {pendingRestore.serverUpdatedAt}</span>
+                                        </div>
+                                        <div className="cloud-actions">
+                                            <button type="button" className="primary" onClick={applyPendingRestore}>
+                                                サーバーで端末を上書き
+                                            </button>
+                                            <button type="button" onClick={cancelPendingRestore}>
+                                                キャンセル
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="account-row">
+                                    <label htmlFor="display-name">公開名</label>
+                                    <input
+                                        id="display-name"
+                                        type="text"
+                                        value={displayNameDraft}
+                                        maxLength={20}
+                                        onChange={event => setDisplayNameDraft(event.target.value)}
+                                        aria-label="公開ニックネーム"
+                                    />
+                                </div>
+
+                                <div className="cloud-actions">
+                                    <button type="button" onClick={saveDisplayName}>
+                                        公開名保存
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="primary"
+                                        onClick={() => saveToSupabase()}
+                                        disabled={cloudBusy || !currentSupabaseUser}
+                                    >
+                                        クラウド保存
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="primary"
+                                        onClick={restoreFromSupabase}
+                                        disabled={cloudBusy || !currentSupabaseUser}
+                                    >
+                                        クラウド復元
+                                    </button>
+                                    <button type="button" className="primary" onClick={handlePrepareCloudSync}>
+                                        同期キュー作成
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="primary"
+                                        onClick={confirmServerSaved}
+                                        disabled={syncMeta.status !== 'pending'}
+                                    >
+                                        保存済みにする
+                                    </button>
+                                </div>
+
+                                <div className="sync-state-card">
+                                    <div>
+                                        <strong>{syncStatusLabel}</strong>
+                                        <span>
+                                            {syncMeta.status === 'pending'
+                                                ? '未送信の変更あり'
+                                                : syncMeta.status === 'synced'
+                                                    ? 'サーバー保存済み'
+                                                    : 'クラウド保存前'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <strong>{syncSourceLabel}</strong>
+                                        <span>{cacheRoleLabel}</span>
+                                    </div>
+                                    <div>
+                                        <strong>rev.{syncMeta.revision}</strong>
+                                        <span>
+                                            最終同期: {syncMeta.lastSyncedAt
+                                                ? new Date(syncMeta.lastSyncedAt).toLocaleString('ja-JP')
+                                                : '未同期'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="sync-meta">
+                                    <span>{syncMeta.sourceOfTruth === 'server' ? 'ローカル保存継続' : 'サーバー未接続'}</span>
+                                    <span>
+                                        最終キュー: {syncMeta.lastQueuedAt
+                                            ? new Date(syncMeta.lastQueuedAt).toLocaleString('ja-JP')
+                                            : '未作成'}
+                                    </span>
+                                </div>
+                            </section>
+
+                            <section className="share-panel">
+                                <div className="section-title-row">
+                                    <h3>公開設定</h3>
+                                    <span className="status-pill">
+                                        {shareVisibility === 'private'
+                                            ? '非公開'
+                                            : shareVisibility === 'habits'
+                                                ? '習慣名も共有'
+                                                : '進捗だけ共有'}
+                                    </span>
+                                </div>
+
+                                <div className="visibility-buttons" aria-label="共有範囲">
+                                    <button
+                                        type="button"
+                                        className={shareVisibility === 'progress' ? 'active' : ''}
+                                        onClick={() => setShareVisibility('progress')}
+                                    >
+                                        進捗だけ
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={shareVisibility === 'habits' ? 'active' : ''}
+                                        onClick={() => setShareVisibility('habits')}
+                                    >
+                                        習慣名も
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={shareVisibility === 'private' ? 'active' : ''}
+                                        onClick={() => setShareVisibility('private')}
+                                    >
+                                        非公開
+                                    </button>
+                                </div>
+                            </section>
+
+                        </div>
+
+                    )}
 
                     {/* 習慣タブ */}
 
@@ -1436,6 +3373,183 @@ import { createRoot } from 'react-dom/client';
                                 </div>
 
                             ))}
+
+                        </div>
+
+                    )}
+
+                    {/* エール広場タブ */}
+
+                    {activeTab === 'cheer' && (
+
+                        <div className="cheer-page">
+
+                            <section className="share-panel">
+                                <div className="section-title-row">
+                                    <h3>エール広場</h3>
+                                    <span className="status-pill">
+                                        {shareVisibility === 'private'
+                                            ? '非公開'
+                                            : shareVisibility === 'habits'
+                                                ? '習慣名も共有'
+                                                : '進捗だけ共有'}
+                                    </span>
+                                </div>
+
+                                <div className={`my-share-card ${shareVisibility === 'private' ? 'muted' : ''}`}>
+                                    <div className="share-avatar">{myShareCard.avatar}</div>
+                                    <div className="share-body">
+                                        <div className="share-name">{myShareCard.name}</div>
+                                        {shareVisibility === 'private' ? (
+                                            <div className="share-status">今日は自分だけで集中</div>
+                                        ) : (
+                                            <>
+                                                <div className="share-status">{myShareCard.status}</div>
+                                                <div className="share-metrics">
+                                                    <span>今日 {myShareCard.todayCompleted}/{myShareCard.totalHabits}</span>
+                                                    <span>今週 {myShareCard.weekRate}%</span>
+                                                    <span>連続 {myShareCard.streak}日</span>
+                                                </div>
+                                                {shareVisibility === 'habits' && (
+                                                    <div className="shared-habits">
+                                                        {myShareCard.completedHabitLabels.length > 0
+                                                            ? myShareCard.completedHabitLabels.slice(0, 3).join(' / ')
+                                                            : 'まだ達成なし'}
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {!currentSupabaseUser && (
+                                    <div className="cheer-auth-cta">
+                                        <span>なかまとつながるにはログイン</span>
+                                        <button type="button" onClick={() => setActiveTab('settings')}>
+                                            設定へ
+                                        </button>
+                                    </div>
+                                )}
+
+                                {currentSupabaseUser && (
+                                    <div className="cheer-auth-cta friend-id-card">
+                                        <span>あなたのなかまID</span>
+                                        <code ref={friendIdRef}>{currentSupabaseUser.id}</code>
+                                        <button
+                                            type="button"
+                                            onClick={copyFriendId}
+                                            disabled={cheerBusy}
+                                            aria-label="なかまIDをコピー"
+                                        >
+                                            コピー
+                                        </button>
+                                    </div>
+                                )}
+                            </section>
+
+                            <section className="ally-section">
+                                <div className="section-title-row">
+                                    <h3>なかま</h3>
+                                    <span className="status-pill">
+                                        {showingDemoAllies ? 'デモ' : `${remoteAllies.length}人`}
+                                    </span>
+                                </div>
+
+                                {currentSupabaseUser && (
+                                    <div className="cheer-auth-cta">
+                                        <input
+                                            type="text"
+                                            value={friendCodeDraft}
+                                            onChange={event => setFriendCodeDraft(event.target.value)}
+                                            placeholder="なかまID"
+                                            aria-label="なかまID"
+                                        />
+                                        <button type="button" onClick={requestFriend} disabled={cheerBusy}>
+                                            申請
+                                        </button>
+                                    </div>
+                                )}
+
+                                {friendRequests.length > 0 && (
+                                    <div className="friend-request-list">
+                                        {friendRequests.map(request => (
+                                            <div key={request.id} className="cheer-auth-cta">
+                                                <span>{request.avatar} {request.name}から申請</span>
+                                                <button type="button" onClick={() => acceptFriendRequest(request)} disabled={cheerBusy}>
+                                                    承認
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {outgoingRequests.length > 0 && (
+                                    <div className="friend-request-list outgoing-request-list">
+                                        {outgoingRequests.map(request => (
+                                            <div key={request.id} className="cheer-auth-cta pending-friend-card">
+                                                <span>{request.avatar} {request.name}に申請中</span>
+                                                <small>承認待ち</small>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {cheerMessage && (
+                                    <div className="cheer-note">{cheerMessage}</div>
+                                )}
+
+                                {visibleAllies.map(ally => {
+                                    const sentCheer = cheerLog[ally.id];
+                                    const allyRate = ally.totalHabits > 0
+                                        ? Math.round((ally.todayCompleted / ally.totalHabits) * 100)
+                                        : 0;
+
+                                    return (
+                                        <div key={ally.id} className="ally-card">
+                                            <div className="ally-main">
+                                                <div className="ally-avatar">{ally.avatar}</div>
+                                                <div className="ally-info">
+                                                    <div className="ally-name-row">
+                                                        <span className="ally-name">{ally.name}</span>
+                                                        <span className="ally-status">{ally.status}</span>
+                                                    </div>
+                                                    <div className="ally-progress">
+                                                        <div className="ally-progress-fill" style={{ width: `${allyRate}%` }}></div>
+                                                    </div>
+                                                    <div className="ally-metrics">
+                                                        <span>今日 {ally.todayCompleted}/{ally.totalHabits}</span>
+                                                        <span>今週 {ally.weekRate}%</span>
+                                                        <span>連続 {ally.streak}日</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="cheer-actions">
+                                                {CHEER_STAMPS.map(stamp => (
+                                                    <button
+                                                        key={stamp.id}
+                                                        type="button"
+                                                        className="stamp-button"
+                                                        onClick={() => sendCheer(ally, stamp)}
+                                                        disabled={cheerBusy}
+                                                        title={stamp.label}
+                                                        aria-label={`${ally.name}に${stamp.label}を送る`}
+                                                    >
+                                                        <span>{stamp.icon}</span>
+                                                        <small>{stamp.label}</small>
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            <div className="cheer-note">
+                                                {sentCheer
+                                                    ? `送信済み: ${sentCheer.icon} ${sentCheer.label} ×${sentCheer.count}`
+                                                    : `最近のエール: ${ally.latestCheer}`}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </section>
 
                         </div>
 

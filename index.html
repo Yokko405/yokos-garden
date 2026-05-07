@@ -10,7 +10,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://jrigfkeimvtudnthsgsj.supabase.co; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
 
     <meta name="theme-color" content="#ff9a56" />
     <meta name="description" content="Tiger-themed habit tracker that runs 100% in the browser" />
@@ -98,9 +98,13 @@
 
             font-size: 24px;
 
-            margin-bottom: 10px;
+            max-width: calc(100% - 108px);
+
+            margin: 0 auto 10px;
 
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+
+            white-space: nowrap;
 
         }
 
@@ -114,7 +118,7 @@
 
             gap: 10px;
 
-            padding-right: 120px;
+            padding: 0;
 
         }
 
@@ -150,23 +154,50 @@
 
         }
 
-        /* ミュージックトグル */
-        .music-toggle {
+        .header-actions {
             position: absolute;
-            right: 12px;
-            top: 12px;
-            background: rgba(255, 255, 255, 0.25);
-            border: 0;
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            right: 14px;
+            top: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
         }
 
-        .music-toggle:active {
+        .header-tool-button {
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.24);
+            color: white;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 900;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-tool-button:active {
             transform: translateY(1px);
+        }
+
+        .header-tool-button.active {
+            background: rgba(255, 255, 255, 0.92);
+            color: #ff6b6b;
+        }
+
+        .header-reset-button {
+            display: none;
+        }
+
+        .header-admin-button {
+            width: auto;
+            min-width: 58px;
+            padding: 0 10px;
+            font-size: 12px;
         }
 
         /* 虎キャラクター */
@@ -1258,6 +1289,285 @@
             content: "🧶";
         }
 
+        /* 🦔 Hedgehog Accessories */
+        .tiger-box .hedgehog-acorn {
+            position: absolute;
+            bottom: -8px;
+            right: 8px;
+            font-size: 22px;
+            z-index: 10;
+            transform: rotate(15deg);
+        }
+        .tiger-box .hedgehog-acorn::before { content: "🌰"; }
+
+        .tiger-box .hedgehog-mushroom {
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            z-index: 10;
+        }
+        .tiger-box .hedgehog-mushroom::before { content: "🍄"; }
+
+        .tiger-box .hedgehog-leaf {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 60%;
+            z-index: 0;
+        }
+        .tiger-box .hedgehog-leaf::before {
+            content: "🍃";
+            position: absolute;
+            left: -2px;
+            bottom: 0;
+            font-size: 34px;
+            transform: rotate(110deg);
+        }
+        .tiger-box .hedgehog-leaf::after {
+            content: "🍃";
+            position: absolute;
+            right: -2px;
+            bottom: 0;
+            font-size: 34px;
+            transform: rotate(-110deg) scaleX(-1);
+        }
+
+        .tiger-box .hedgehog-star {
+            position: absolute;
+            top: -35px;
+            right: 15px;
+            font-size: 22px;
+            z-index: 10;
+        }
+        .tiger-box .hedgehog-star::before {
+            content: "🌟";
+            filter: drop-shadow(0 2px 4px rgba(255, 200, 0, 0.5));
+        }
+
+        /* 🐑 Sheep Accessories */
+        .tiger-box .sheep-clover {
+            position: absolute;
+            bottom: -8px;
+            right: 8px;
+            font-size: 22px;
+            z-index: 10;
+            transform: rotate(10deg);
+        }
+        .tiger-box .sheep-clover::before { content: "☘️"; }
+
+        .tiger-box .sheep-knit-hat {
+            position: absolute;
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            z-index: 10;
+        }
+        .tiger-box .sheep-knit-hat::before { content: "🧢"; }
+
+        .tiger-box .sheep-flower-crown {
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            z-index: 10;
+        }
+        .tiger-box .sheep-flower-crown::before { content: "🌼"; }
+
+        .tiger-box .sheep-moon {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            z-index: 10;
+        }
+        .tiger-box .sheep-moon::before {
+            content: "🌙";
+            filter: drop-shadow(0 2px 4px rgba(180, 160, 255, 0.5));
+        }
+
+        /* 🐻 Bear Accessories */
+        .tiger-box .bear-honey {
+            position: absolute;
+            bottom: -10px;
+            right: 5px;
+            font-size: 24px;
+            z-index: 10;
+            transform: rotate(10deg);
+        }
+        .tiger-box .bear-honey::before { content: "🍯"; }
+
+        .tiger-box .bear-beret {
+            position: absolute;
+            top: -40px;
+            left: 18px;
+            transform: rotate(-20deg);
+            font-size: 30px;
+            z-index: 10;
+        }
+        .tiger-box .bear-beret::before { content: "🎨"; }
+
+        .tiger-box .bear-fish {
+            position: absolute;
+            bottom: -10px;
+            left: 5px;
+            font-size: 22px;
+            z-index: 10;
+            transform: rotate(-15deg);
+        }
+        .tiger-box .bear-fish::before { content: "🐟"; }
+
+        .tiger-box .bear-medal {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            z-index: 10;
+        }
+        .tiger-box .bear-medal::before {
+            content: "⭐";
+            filter: drop-shadow(0 2px 6px rgba(255, 220, 0, 0.6));
+        }
+
+        /* 🦊 Fox Accessories */
+        .tiger-box .fox-inari {
+            position: absolute;
+            bottom: -8px;
+            right: 0px;
+            font-size: 34px;
+            z-index: 10;
+            transform: rotate(20deg);
+        }
+        .tiger-box .fox-inari::before { content: "🪭"; }
+
+        .tiger-box .fox-maple {
+            position: absolute;
+            top: -36px;
+            right: 12px;
+            font-size: 26px;
+            z-index: 10;
+            transform: rotate(15deg);
+        }
+        .tiger-box .fox-maple::before { content: "🍁"; }
+
+        .tiger-box .fox-bell {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            z-index: 10;
+        }
+        .tiger-box .fox-bell::before {
+            content: "🎐";
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+        }
+
+        .tiger-box .fox-tail {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            z-index: 10;
+        }
+        .tiger-box .fox-tail::before {
+            content: "✨";
+            filter: drop-shadow(0 2px 6px rgba(255, 210, 50, 0.7));
+        }
+
+        /* 🐨 Koala Accessories */
+        .tiger-box .koala-eucalyptus {
+            position: absolute;
+            bottom: -10px;
+            left: 5px;
+            font-size: 24px;
+            z-index: 10;
+            transform: rotate(-15deg);
+        }
+        .tiger-box .koala-eucalyptus::before { content: "🌿"; }
+
+        .tiger-box .koala-mug {
+            position: absolute;
+            bottom: -12px;
+            right: 5px;
+            font-size: 24px;
+            z-index: 10;
+        }
+        .tiger-box .koala-mug::before { content: "☕"; }
+
+        .tiger-box .koala-straw-hat {
+            position: absolute;
+            top: -44px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            z-index: 10;
+        }
+        .tiger-box .koala-straw-hat::before { content: "👒"; }
+
+        .tiger-box .koala-star {
+            position: absolute;
+            top: -38px;
+            right: 12px;
+            font-size: 26px;
+            z-index: 10;
+        }
+        .tiger-box .koala-star::before {
+            content: "⭐";
+            filter: drop-shadow(0 2px 6px rgba(255, 220, 0, 0.6));
+        }
+
+        /* 🦉 Owl Accessories */
+        .tiger-box .owl-glasses {
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 22px;
+            z-index: 10;
+        }
+        .tiger-box .owl-glasses::before { content: "👓"; }
+
+        .tiger-box .owl-book {
+            position: absolute;
+            bottom: -10px;
+            right: 5px;
+            font-size: 22px;
+            z-index: 10;
+            transform: rotate(10deg);
+        }
+        .tiger-box .owl-book::before { content: "📚"; }
+
+        .tiger-box .owl-dango {
+            position: absolute;
+            bottom: -12px;
+            left: 5px;
+            font-size: 22px;
+            z-index: 10;
+        }
+        .tiger-box .owl-dango::before { content: "🍡"; }
+
+        .tiger-box .owl-wand {
+            position: absolute;
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-20deg);
+            font-size: 28px;
+            z-index: 10;
+        }
+        .tiger-box .owl-wand::before {
+            content: "🪄";
+            filter: drop-shadow(0 2px 8px rgba(180, 100, 255, 0.6));
+        }
+
         /* 🐰 Rabbit (うさぎ) */
         .tiger-box.skin-rabbit {
             background: #ffffff;
@@ -1507,6 +1817,466 @@
         .tiger-box.skin-cat .whiskers .whisker {
             background: rgba(255, 255, 255, 0.3);
         }
+
+        /* 🦔 Hedgehog (ハリネズミ) */
+        .tiger-box.skin-hedgehog {
+            background: linear-gradient(170deg, #5c3a1e 0%, #5c3a1e 42%, #c8a97e 42%, #d4b896 100%);
+            border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
+            box-shadow:
+                0 12px 30px rgba(92, 58, 30, 0.35),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* トゲのテクスチャ */
+        .tiger-box.skin-hedgehog .body-stripes {
+            display: block;
+            background:
+                radial-gradient(ellipse at 18% 12%, #3d2410 6%, transparent 7%),
+                radial-gradient(ellipse at 35% 5%, #3d2410 7%, transparent 8%),
+                radial-gradient(ellipse at 52% 8%, #3d2410 5%, transparent 6%),
+                radial-gradient(ellipse at 68% 5%, #3d2410 7%, transparent 8%),
+                radial-gradient(ellipse at 83% 12%, #3d2410 6%, transparent 7%),
+                radial-gradient(ellipse at 25% 28%, #3d2410 5%, transparent 6%),
+                radial-gradient(ellipse at 50% 22%, #3d2410 6%, transparent 7%),
+                radial-gradient(ellipse at 76% 28%, #3d2410 5%, transparent 6%);
+        }
+
+        /* 小さな耳 */
+        .tiger-box.skin-hedgehog::before,
+        .tiger-box.skin-hedgehog::after {
+            content: "";
+            position: absolute;
+            top: 22px;
+            width: 16px;
+            height: 16px;
+            background: #a08060;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .tiger-box.skin-hedgehog::before { left: 10px; }
+        .tiger-box.skin-hedgehog::after { right: 10px; }
+
+        /* 小さな黒目 */
+        .tiger-box.skin-hedgehog .eye {
+            background: #1a0a00;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+        }
+
+        /* 小さな鼻 */
+        .tiger-box.skin-hedgehog .nose {
+            background: #5c3a1e;
+            width: 10px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-hedgehog .whiskers,
+        .tiger-box.skin-hedgehog .forehead-stripes,
+        .tiger-box.skin-hedgehog .center-stripe,
+        .tiger-box.skin-hedgehog .mouth { display: none; }
+
+        /* 🐑 Sheep (ひつじ) */
+        .tiger-box.skin-sheep {
+            background: #f4f4f4;
+            border-radius: 50%;
+            box-shadow:
+                0 12px 30px rgba(150, 150, 150, 0.3),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.04),
+                -20px -4px 0 10px #f0f0f0,
+                20px -4px 0 10px #f0f0f0,
+                -12px -22px 0 7px #f2f2f2,
+                12px -22px 0 7px #f2f2f2,
+                0 -28px 0 5px #f5f5f5,
+                -26px 10px 0 8px #ececec,
+                26px 10px 0 8px #ececec;
+        }
+
+        /* 垂れた耳（黒） */
+        .tiger-box.skin-sheep::before,
+        .tiger-box.skin-sheep::after {
+            content: "";
+            position: absolute;
+            top: 32px;
+            width: 22px;
+            height: 30px;
+            background: #2e2e2e;
+            border-radius: 4px 4px 14px 14px;
+            z-index: -1;
+        }
+
+        .tiger-box.skin-sheep::before { left: -10px; transform: rotate(-18deg); }
+        .tiger-box.skin-sheep::after { right: -10px; transform: rotate(18deg); }
+
+        /* フワフワ感 */
+        .tiger-box.skin-sheep .body-stripes {
+            display: block;
+            background:
+                radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.85) 10%, transparent 18%),
+                radial-gradient(circle at 78% 28%, rgba(255, 255, 255, 0.85) 9%, transparent 16%),
+                radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.85) 12%, transparent 20%),
+                radial-gradient(circle at 15% 65%, rgba(255, 255, 255, 0.7) 8%, transparent 14%),
+                radial-gradient(circle at 85% 65%, rgba(255, 255, 255, 0.7) 8%, transparent 14%);
+        }
+
+        .tiger-box.skin-sheep .eye {
+            background: #333;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-sheep .nose {
+            background: #ffb7c5;
+            width: 12px;
+            height: 9px;
+            border-radius: 6px;
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-sheep .whiskers,
+        .tiger-box.skin-sheep .forehead-stripes,
+        .tiger-box.skin-sheep .center-stripe,
+        .tiger-box.skin-sheep .mouth { display: none; }
+
+        /* 🐻 Bear (くま) */
+        .tiger-box.skin-bear {
+            background: linear-gradient(135deg, #7a4419 0%, #9b5a2e 100%);
+            border-radius: 50%;
+            box-shadow:
+                0 12px 30px rgba(100, 60, 20, 0.4),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 丸い耳 */
+        .tiger-box.skin-bear::before,
+        .tiger-box.skin-bear::after {
+            content: "";
+            position: absolute;
+            top: -8px;
+            width: 34px;
+            height: 30px;
+            background: #7a4419;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .tiger-box.skin-bear::before { left: 5px; }
+        .tiger-box.skin-bear::after { right: 5px; }
+
+        /* 耳の内側 */
+        .tiger-box.skin-bear .forehead-stripes {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: none;
+        }
+
+        .tiger-box.skin-bear .forehead-stripes::before,
+        .tiger-box.skin-bear .forehead-stripes::after {
+            content: "";
+            position: absolute;
+            top: -3px;
+            width: 22px;
+            height: 18px;
+            background: #5c3010;
+            border-radius: 50%;
+            opacity: 1;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-bear .forehead-stripes::before { left: 10px; }
+        .tiger-box.skin-bear .forehead-stripes::after { right: 10px; }
+
+        /* 明るい鼻先 */
+        .tiger-box.skin-bear .body-stripes {
+            display: block;
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 52%;
+            height: 38%;
+            background: #c8864a;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .tiger-box.skin-bear .eye {
+            background: #1a0a00;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .tiger-box.skin-bear .nose {
+            background: #1a0a00;
+            width: 16px;
+            height: 11px;
+            border-radius: 8px;
+            box-shadow: none;
+            margin-top: 2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tiger-box.skin-bear .whiskers,
+        .tiger-box.skin-bear .center-stripe,
+        .tiger-box.skin-bear .mouth { display: none; }
+
+        /* 🦊 Fox (きつね) */
+        .tiger-box.skin-fox {
+            background: linear-gradient(135deg, #d95f02 0%, #f07020 100%);
+            border-radius: 45% 45% 50% 50%;
+            box-shadow:
+                0 12px 30px rgba(210, 80, 10, 0.4),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* とんがり耳 */
+        .tiger-box.skin-fox::before,
+        .tiger-box.skin-fox::after {
+            content: "";
+            position: absolute;
+            top: -20px;
+            width: 0;
+            height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-bottom: 32px solid #d95f02;
+            z-index: -1;
+        }
+
+        .tiger-box.skin-fox::before { left: 10px; transform: rotate(-15deg); }
+        .tiger-box.skin-fox::after { right: 10px; transform: rotate(15deg); }
+
+        /* 白い顔の中央 */
+        .tiger-box.skin-fox .body-stripes {
+            display: block;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 45%;
+            background: #fff5ee;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .tiger-box.skin-fox .eye {
+            background: #2c1a00;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+        }
+
+        .tiger-box.skin-fox .nose {
+            background: #cc3300;
+            width: 10px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tiger-box.skin-fox .whiskers .whisker {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .tiger-box.skin-fox .forehead-stripes,
+        .tiger-box.skin-fox .center-stripe,
+        .tiger-box.skin-fox .mouth { display: none; }
+
+        /* 🐨 Koala (コアラ) */
+        .tiger-box.skin-koala {
+            background: linear-gradient(135deg, #848484 0%, #a0a0a0 100%);
+            border-radius: 50%;
+            box-shadow:
+                0 12px 30px rgba(100, 100, 100, 0.4),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 大きな丸い耳 */
+        .tiger-box.skin-koala::before,
+        .tiger-box.skin-koala::after {
+            content: "";
+            position: absolute;
+            top: -12px;
+            width: 50px;
+            height: 46px;
+            background: #848484;
+            border-radius: 50%;
+            z-index: -1;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tiger-box.skin-koala::before { left: -8px; }
+        .tiger-box.skin-koala::after { right: -8px; }
+
+        /* 耳の内側（明るい） */
+        .tiger-box.skin-koala .forehead-stripes {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: none;
+        }
+
+        .tiger-box.skin-koala .forehead-stripes::before,
+        .tiger-box.skin-koala .forehead-stripes::after {
+            content: "";
+            position: absolute;
+            top: -7px;
+            width: 34px;
+            height: 30px;
+            background: #c0c0c0;
+            border-radius: 50%;
+            opacity: 1;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tiger-box.skin-koala .forehead-stripes::before { left: -1px; }
+        .tiger-box.skin-koala .forehead-stripes::after { right: -1px; }
+
+        .tiger-box.skin-koala .eye {
+            background: #2a2a2a;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        /* 大きな鼻（コアラの特徴） */
+        .tiger-box.skin-koala .nose {
+            background: #3a3a3a;
+            width: 28px;
+            height: 20px;
+            border-radius: 12px;
+            box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+            margin-top: 4px;
+        }
+
+        .tiger-box.skin-koala .whiskers,
+        .tiger-box.skin-koala .center-stripe,
+        .tiger-box.skin-koala .body-stripes,
+        .tiger-box.skin-koala .mouth { display: none; }
+
+        /* 🦉 Owl (ふくろう) */
+        .tiger-box.skin-owl {
+            background: linear-gradient(135deg, #5e3b1e 0%, #7c5230 100%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow:
+                0 12px 30px rgba(70, 45, 20, 0.45),
+                inset 0 -8px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        /* 耳羽（角型の突起） */
+        .tiger-box.skin-owl::before,
+        .tiger-box.skin-owl::after {
+            content: "";
+            position: absolute;
+            top: -14px;
+            width: 18px;
+            height: 24px;
+            background: #5e3b1e;
+            border-radius: 50% 50% 0 0;
+            z-index: -1;
+        }
+
+        .tiger-box.skin-owl::before { left: 22px; transform: rotate(-12deg); }
+        .tiger-box.skin-owl::after { right: 22px; transform: rotate(12deg); }
+
+        /* 明るい胸 */
+        .tiger-box.skin-owl .body-stripes {
+            display: block;
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 58%;
+            height: 48%;
+            background: #d4a87a;
+            border-radius: 50% 50% 45% 45%;
+            z-index: 0;
+        }
+
+        /* 羽模様 */
+        .tiger-box.skin-owl .forehead-stripes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse at 18% 35%, rgba(40, 22, 8, 0.25) 14%, transparent 22%),
+                radial-gradient(ellipse at 82% 35%, rgba(40, 22, 8, 0.25) 14%, transparent 22%),
+                radial-gradient(ellipse at 50% 18%, rgba(40, 22, 8, 0.18) 10%, transparent 18%);
+            border-radius: inherit;
+            transform: none;
+        }
+
+        /* 大きな黄色い目 */
+        .tiger-box.skin-owl .eye {
+            background: #f0c040;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px #2c1a00;
+            overflow: visible;
+            position: relative;
+        }
+
+        /* 瞳孔 */
+        .tiger-box.skin-owl .eye::before {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #080808;
+            border-radius: 50%;
+            box-shadow: none;
+            animation: none;
+        }
+
+        /* くちばし（三角） */
+        .tiger-box.skin-owl .nose {
+            width: 0;
+            height: 0;
+            background: transparent;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 14px solid #c8780a;
+            border-radius: 2px;
+            box-shadow: none;
+            margin-top: 6px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tiger-box.skin-owl .whiskers,
+        .tiger-box.skin-owl .center-stripe,
+        .tiger-box.skin-owl .mouth { display: none; }
 
         /* レスポンシブ対応 */
         @media (max-width: 480px) {
@@ -2046,6 +2816,527 @@
 
         }
 
+        /* エール広場 */
+
+        .cheer-page,
+        .settings-page {
+            padding: 20px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .share-panel,
+        .account-panel,
+        .ally-card {
+            background: white;
+            border: 2px solid #ffe4e1;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .account-panel,
+        .share-panel {
+            padding: 18px;
+        }
+
+        .section-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .section-title-row h3,
+        .ally-section h3 {
+            color: #ff6b6b;
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        .status-pill,
+        .ally-status {
+            background: #fff5f5;
+            color: #ff6b6b;
+            border: 1px solid #ffe4e1;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 9px;
+            white-space: nowrap;
+        }
+
+        .my-share-card,
+        .ally-main {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .my-share-card {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .my-share-card.muted {
+            background: #f7f7f7;
+            color: #777;
+        }
+
+        .account-row {
+            display: grid;
+            grid-template-columns: 72px minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .auth-options {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 8px;
+        }
+
+        .auth-provider-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 8px;
+        }
+
+        .magic-link-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 8px;
+        }
+
+        .magic-link-row input {
+            width: 100%;
+            height: 40px;
+            border: 2px solid #ffe4e1;
+            border-radius: 14px;
+            color: #333;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 0 12px;
+            outline: none;
+        }
+
+        .magic-link-row input:focus {
+            border-color: #ff9a56;
+        }
+
+        .auth-provider-button,
+        .magic-link-row button,
+        .logout-button {
+            min-height: 38px;
+            border: 2px solid #ffe4e1;
+            background: #fff;
+            color: #555;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .auth-provider-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-width: 0;
+        }
+
+        .provider-mark {
+            width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            background: #fff5f0;
+            color: #ff6b6b;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .magic-link-row button {
+            padding: 0 12px;
+            background: #fff8f6;
+            color: #ff6b6b;
+        }
+
+        .logout-button {
+            width: 100%;
+        }
+
+        .auth-provider-button:disabled,
+        .magic-link-row button:disabled,
+        .logout-button:disabled {
+            cursor: default;
+            opacity: 0.45;
+        }
+
+        .auth-message {
+            color: #999;
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            min-height: 16px;
+        }
+
+        .auth-note {
+            color: #999;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.45;
+            background: #fff8f6;
+            border: 1px solid #ffe4e1;
+            border-radius: 12px;
+            padding: 8px 10px;
+        }
+
+        .signed-in-user {
+            display: grid;
+            gap: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #ffe4e1;
+            border-radius: 14px;
+            background: #fff8f6;
+            color: #888;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 9px 11px;
+        }
+
+        .signed-in-user strong {
+            min-width: 0;
+            color: #555;
+            font-size: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .account-row label {
+            color: #777;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .account-row input {
+            width: 100%;
+            height: 40px;
+            border: 2px solid #ffe4e1;
+            border-radius: 14px;
+            color: #333;
+            font-size: 15px;
+            font-weight: 800;
+            padding: 0 12px;
+            outline: none;
+        }
+
+        .account-row input:focus {
+            border-color: #ff9a56;
+        }
+
+        .cloud-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cloud-actions button {
+            min-height: 40px;
+            border: 2px solid #ffe4e1;
+            background: #fff;
+            color: #777;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .cloud-actions button.primary {
+            color: #fff;
+            border-color: #ff9a56;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+        }
+
+        .cloud-actions button:disabled {
+            cursor: default;
+            opacity: 0.45;
+            transform: none;
+        }
+
+        .sync-state-card {
+            display: grid;
+            gap: 8px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .sync-state-card div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .sync-state-card strong {
+            color: #ff6b6b;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .sync-state-card span {
+            color: #777;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .sync-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            color: #999;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .sync-meta span {
+            background: #fff5f5;
+            border: 1px solid #ffe4e1;
+            border-radius: 999px;
+            padding: 5px 8px;
+        }
+
+        .cheer-auth-cta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: #fff;
+            border: 1px solid #ffe4e1;
+            border-radius: 14px;
+            padding: 10px 12px;
+            color: #777;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .cheer-auth-cta button {
+            border: 0;
+            border-radius: 999px;
+            background: #ff9a56;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 8px 12px;
+            white-space: nowrap;
+        }
+
+        .cheer-auth-cta input {
+            min-width: 0;
+            flex: 1;
+            border: 1px solid #ffe4e1;
+            border-radius: 999px;
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        .cheer-auth-cta code {
+            min-width: 0;
+            color: #555;
+            font-size: 11px;
+            overflow-wrap: anywhere;
+            text-align: right;
+        }
+
+        .friend-id-card {
+            align-items: flex-start;
+        }
+
+        .friend-id-card code {
+            flex: 1;
+            line-height: 1.35;
+            text-align: left;
+        }
+
+        .friend-request-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .pending-friend-card small {
+            border-radius: 999px;
+            background: #fff5f5;
+            color: #b87047;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 6px 9px;
+            white-space: nowrap;
+        }
+
+        .share-avatar,
+        .ally-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: white;
+            display: grid;
+            place-items: center;
+            font-size: 30px;
+            flex: 0 0 auto;
+            box-shadow: inset 0 0 0 2px rgba(255, 228, 225, 0.9);
+        }
+
+        .share-body,
+        .ally-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .share-name,
+        .ally-name {
+            color: #333;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .share-status {
+            color: #ff6b6b;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 3px 0 7px;
+        }
+
+        .share-metrics,
+        .ally-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            color: #777;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .share-metrics span,
+        .ally-metrics span {
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 999px;
+            padding: 4px 7px;
+        }
+
+        .shared-habits {
+            color: #666;
+            font-size: 12px;
+            margin-top: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .visibility-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .visibility-buttons button,
+        .stamp-button {
+            border: 2px solid #ffe4e1;
+            background: #fff;
+            color: #777;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .visibility-buttons button {
+            min-height: 38px;
+            font-size: 12px;
+        }
+
+        .visibility-buttons button.active {
+            color: white;
+            border-color: #ff9a56;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);
+        }
+
+        .ally-section {
+            display: grid;
+            gap: 12px;
+        }
+
+        .ally-card {
+            padding: 16px;
+        }
+
+        .ally-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .ally-progress {
+            height: 9px;
+            background: #ffe4e1;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .ally-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9a56 0%, #ff6b6b 100%);
+            border-radius: inherit;
+            transition: width 0.4s ease;
+        }
+
+        .cheer-actions {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .stamp-button {
+            min-height: 54px;
+            padding: 7px 4px;
+            display: grid;
+            place-items: center;
+            gap: 2px;
+        }
+
+        .stamp-button span {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .stamp-button small {
+            font-size: 10px;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .stamp-button:active,
+        .visibility-buttons button:active {
+            transform: scale(0.97);
+        }
+
+        .cheer-note {
+            color: #999;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
         /* エフェクト */
 
         .sparkle {
@@ -2176,6 +3467,29 @@
 
             .add-grid .field-add {
                 justify-self: end;
+            }
+
+            .cheer-page,
+            .settings-page {
+                padding: 16px;
+            }
+
+            .cheer-actions {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .cloud-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .sync-state-card div {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .sync-state-card span {
+                text-align: left;
             }
         }
     </style>

@@ -12,7 +12,7 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npx serve . -p 3000',
+    command: 'node scripts/serve-static.mjs . 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },
