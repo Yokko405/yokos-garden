@@ -878,6 +878,7 @@ import { createClient } from '@supabase/supabase-js';
             const [authProviderStatus, setAuthProviderStatus] = useState(createDefaultAuthProviderStatus);
             const [authEmail, setAuthEmail] = useState('');
             const [authMessage, setAuthMessage] = useState('Supabase未ログイン');
+            const [deviceBackupText, setDeviceBackupText] = useState('');
             const [cloudBusy, setCloudBusy] = useState(false);
             const [pendingRestore, setPendingRestore] = useState(null);
             const [pendingCloudOverwrite, setPendingCloudOverwrite] = useState(null);
@@ -1265,6 +1266,11 @@ import { createClient } from '@supabase/supabase-js';
                 : anyOAuthProviderReady
                     ? '設定済みのProviderはこのボタンからログインできるよ。メールリンクも使えるよ。'
                     : 'Google/AppleはSupabaseのProvider設定後に有効化。今はメールリンクでログインしてね。';
+            const currentAppUrl = `${window.location.origin}${window.location.pathname}`;
+            const isProductionUrl = currentAppUrl === 'https://yokko405.github.io/yokos-garden/';
+            const isLikelyPhoneDevUrl = window.location.hostname === 'localhost'
+                || window.location.hostname === '127.0.0.1'
+                || window.location.protocol === 'file:';
             const visibleAllies = remoteAllies.length > 0 ? remoteAllies : demoAllies;
             const showingDemoAllies = remoteAllies.length === 0;
 
@@ -1849,6 +1855,123 @@ import { createClient } from '@supabase/supabase-js';
                 });
                 const preparedProfile = prepareCloudSync(namedProfile);
                 setTigerMessage(`移行データを準備したよ: ${preparedProfile.displayName}`);
+                setTigerMood('star');
+                setTigerFace('🤩');
+                setTimeout(() => {
+                    setTigerMessage(getBaseMessageByTime());
+                    setTigerFace(getBaseFaceByTime());
+                    setTigerMood(getBaseMoodByTime());
+                }, 2600);
+            };
+
+            const copyTextToClipboard = async (text) => {
+                try {
+                    if (navigator.clipboard?.writeText) {
+                        await navigator.clipboard.writeText(text);
+                        return true;
+                    }
+                } catch (error) {
+                    // Fall through to the textarea fallback for iOS/PWA contexts.
+                }
+
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '0';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus({ preventScroll: true });
+                textarea.select();
+                textarea.setSelectionRange(0, textarea.value.length);
+                try {
+                    return document.execCommand('copy');
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            };
+
+            const createDeviceBackupPayload = () => JSON.stringify({
+                type: 'habitora-device-backup',
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                origin: window.location.origin,
+                pathname: window.location.pathname,
+                appData: sanitizeAppData(getCurrentAppData()),
+                progressHistory: sanitizeProgressHistory(progressHistory),
+                shareVisibility,
+                cheerLog,
+                cloudProfile: sanitizeCloudProfile({
+                    ...cloudProfile,
+                    displayName: displayNameDraft
+                }),
+                syncMeta: sanitizeSyncMeta(syncMeta)
+            });
+
+            const exportDeviceBackup = async () => {
+                const payload = createDeviceBackupPayload();
+                setDeviceBackupText(payload);
+                const copied = await copyTextToClipboard(payload);
+                setAuthMessage(copied
+                    ? '端末データをコピーしたよ。安全のためメモにも貼っておいてね'
+                    : '端末データを作成したよ。下の欄を長押ししてコピーしてね');
+            };
+
+            const importDeviceBackup = () => {
+                const payload = safeParseJSON(deviceBackupText);
+                if (!payload || payload.type !== 'habitora-device-backup') {
+                    setAuthMessage('バックアップ文字列を確認してね');
+                    return;
+                }
+                if (!confirm('この端末のデータをバックアップ内容で上書きしますか？')) {
+                    return;
+                }
+
+                const importedData = persistAppData(payload.appData);
+                setHabits(importedData.habits);
+                setLevel(importedData.level);
+                setExp(importedData.exp);
+                setCoins(importedData.coins);
+                setStreak(importedData.streak);
+                setTotalCompleted(importedData.totalCompleted);
+                setUnlockedBadges(importedData.unlockedBadges);
+                setOwnedItems(importedData.ownedItems);
+                setTigerSkin(importedData.tigerSkin);
+
+                const importedHistory = sanitizeProgressHistory(payload.progressHistory);
+                storageSet(STORAGE_KEYS.progressHistory, JSON.stringify(importedHistory));
+                setProgressHistory(importedHistory);
+
+                const importedVisibility = VALID_SHARE_VISIBILITIES.has(payload.shareVisibility)
+                    ? payload.shareVisibility
+                    : 'progress';
+                storageSet(STORAGE_KEYS.shareVisibility, importedVisibility);
+                setShareVisibility(importedVisibility);
+
+                const importedCheerLog = payload.cheerLog && typeof payload.cheerLog === 'object'
+                    ? payload.cheerLog
+                    : {};
+                storageSet(STORAGE_KEYS.cheerLog, JSON.stringify(importedCheerLog));
+                setCheerLog(importedCheerLog);
+
+                const importedProfile = sanitizeCloudProfile(payload.cloudProfile);
+                storageSet(STORAGE_KEYS.cloudProfile, JSON.stringify(importedProfile));
+                setCloudProfile(importedProfile);
+                setDisplayNameDraft(importedProfile.displayName);
+
+                const importedMeta = persistSyncMeta({
+                    ...sanitizeSyncMeta(payload.syncMeta),
+                    status: 'local_only',
+                    sourceOfTruth: 'local',
+                    pendingSince: null,
+                    errorMessage: null
+                });
+                setSyncMeta(importedMeta);
+                setPendingCloudOverwrite(null);
+                setPendingRestore(null);
+                setAuthMessage('バックアップを読み込んだよ。この端末データをサーバーへ保存してね');
+                setTigerMessage('端末データを復元したよ。次はログインしてサーバー保存だよ');
                 setTigerMood('star');
                 setTigerFace('🤩');
                 setTimeout(() => {
@@ -2960,6 +3083,43 @@ import { createClient } from '@supabase/supabase-js';
                                 </div>
 
                                 <div className="auth-message">{authMessage}</div>
+
+                                {(isLikelyPhoneDevUrl || !isProductionUrl) && (
+                                    <div className="sync-state-card url-warning-card" role="status">
+                                        <div>
+                                            <strong>ログイン戻り先を確認</strong>
+                                            <span>{currentAppUrl}</span>
+                                        </div>
+                                        <p>
+                                            iPhoneでGoogleログイン後にページを開けない時は、戻り先が開発URLの可能性があるよ。
+                                            端末データを書き出してから公開URLへ移すと安全。
+                                        </p>
+                                    </div>
+                                )}
+
+                                <div className="sync-state-card device-backup-card">
+                                    <div>
+                                        <strong>端末データ保護</strong>
+                                        <span>スマホのローカルが正本</span>
+                                    </div>
+                                    <p>
+                                        ログインが別ブラウザでしか通らない時の保険。先にこの端末データをコピーしておく。
+                                    </p>
+                                    <textarea
+                                        value={deviceBackupText}
+                                        onChange={event => setDeviceBackupText(event.target.value)}
+                                        placeholder="バックアップ文字列"
+                                        aria-label="端末データバックアップ"
+                                    />
+                                    <div className="cloud-actions">
+                                        <button type="button" className="primary" onClick={exportDeviceBackup}>
+                                            端末データをコピー
+                                        </button>
+                                        <button type="button" onClick={importDeviceBackup}>
+                                            バックアップを読み込む
+                                        </button>
+                                    </div>
+                                </div>
 
                                 {showCloudMigrationCard && (
                                     <div className="sync-state-card migration-card" role="status">
