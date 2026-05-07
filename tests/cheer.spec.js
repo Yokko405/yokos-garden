@@ -153,8 +153,8 @@ test('oauth provider buttons start Supabase OAuth redirects', async ({ page }) =
   expect(googleUrl.searchParams.get('provider')).toBe('google');
   expect(googleUrl.searchParams.get('redirect_to')).toBe('http://localhost:3000/');
   expect(googleUrl.searchParams.get('prompt')).toBe('select_account');
-  expect(googleUrl.searchParams.get('code_challenge')).toBeTruthy();
-  expect(googleUrl.searchParams.get('code_challenge_method')).toBe('s256');
+  expect(googleUrl.searchParams.get('code_challenge')).toBeNull();
+  expect(googleUrl.searchParams.get('code_challenge_method')).toBeNull();
 
   await page.goto('/');
   await page.click('button[aria-label="設定"]');
@@ -164,8 +164,8 @@ test('oauth provider buttons start Supabase OAuth redirects', async ({ page }) =
   const appleUrl = new URL(capturedAuthorizeUrls.at(-1));
   expect(appleUrl.searchParams.get('provider')).toBe('apple');
   expect(appleUrl.searchParams.get('redirect_to')).toBe('http://localhost:3000/');
-  expect(appleUrl.searchParams.get('code_challenge')).toBeTruthy();
-  expect(appleUrl.searchParams.get('code_challenge_method')).toBe('s256');
+  expect(appleUrl.searchParams.get('code_challenge')).toBeNull();
+  expect(appleUrl.searchParams.get('code_challenge_method')).toBeNull();
 });
 
 test('oauth redirect errors are shown as friendly auth messages', async ({ page }) => {

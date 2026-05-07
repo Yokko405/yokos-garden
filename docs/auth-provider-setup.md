@@ -8,6 +8,8 @@ This app uses Supabase Auth from the browser with these entry points:
 
 The app sends the current HTTP/HTTPS page as the auth redirect target. Do not test auth from `file://`; use local dev or the published URL.
 
+The browser client intentionally uses Supabase's `implicit` flow instead of PKCE. On iOS home-screen PWAs, Google/Apple authentication can leave the standalone app and return through a separate browser context. PKCE depends on a code verifier saved in the original browser storage, so it can fail in that handoff. The implicit flow keeps this static PWA's return path self-contained.
+
 At startup and when the settings screen regains focus, the app reads Supabase Auth settings from `/auth/v1/settings`. Google and Apple buttons stay disabled while their Supabase providers are off, and become available automatically after the provider is enabled in Supabase.
 
 ## App URLs

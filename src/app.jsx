@@ -247,7 +247,7 @@ import { createClient } from '@supabase/supabase-js';
             auth: {
                 persistSession: true,
                 detectSessionInUrl: true,
-                flowType: 'pkce'
+                flowType: 'implicit'
             }
         });
         const AUTH_PROVIDER_DEFAULTS = {
