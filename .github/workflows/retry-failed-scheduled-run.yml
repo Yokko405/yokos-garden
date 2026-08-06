@@ -1,0 +1,37 @@
+name: Retry Failed Scheduled Run
+
+# 定時実行がランナー割り当て待ちで cancelled された場合などに、ラン全体を1回だけ再実行する。
+# ジョブ自体が起動しない失敗（steps 0件）はステップ単位のリトライでは救えないため、
+# workflow_run で完了を検知してラン単位で再実行する。
+
+on:
+  workflow_run:
+    workflows:
+      - "Daily Update"
+    types:
+      - completed
+
+permissions:
+  actions: write
+
+jobs:
+  rerun:
+    # schedule 起因のランのみが対象。手動実行を手で止めたときに巻き戻さない。
+    # run_attempt == 1 で再実行を1回きりに固定する（リトライループ防止）。
+    if: >-
+      github.event.workflow_run.event == 'schedule'
+      && github.event.workflow_run.run_attempt == 1
+      && (github.event.workflow_run.conclusion == 'cancelled'
+          || github.event.workflow_run.conclusion == 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Rerun the failed run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_NAME: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+        run: |
+          echo "Rerunning \"${RUN_NAME}\" run ${RUN_ID} (conclusion: ${CONCLUSION})"
+          gh run rerun "${RUN_ID}" --repo "${GITHUB_REPOSITORY}"
