@@ -1,0 +1,70 @@
+name: Supabase Keepalive
+
+# Supabase の無料プランは無活動が続いたプロジェクトを一時停止する。
+# 一時停止するとクラウド同期（ログイン / 保存 / 復元 / 応援）が全部止まり、
+# 放置すると約90日で完全凍結されて復元できなくなる。
+#
+# Daily Update の空コミットは GitHub 側を活性に保つだけで Supabase には届かない。
+# ここでは実際に PostgREST 経由でクエリを投げ、DB に活動を発生させる。
+#
+# 応答しなくなった場合はこのワークフローが失敗するので、
+# 一時停止に気づくためのアラートも兼ねる。
+
+on:
+  schedule:
+    # 毎日 12:00 JST (UTC 03:00)
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping Supabase
+        env:
+          SUPABASE_URL: https://jrigfkeimvtudnthsgsj.supabase.co
+          # publishable key。クライアントバンドルに載っている値と同じなので、
+          # ここに置いても新たな露出にはならない。secret や service-role key は絶対に置かない。
+          SUPABASE_PUBLISHABLE_KEY: sb_publishable_MfqOD7ki8UqTiQK3cbg8Bw_G36EXIBQ
+          DASHBOARD_URL: https://supabase.com/dashboard/project/jrigfkeimvtudnthsgsj
+        run: |
+          set -uo pipefail
+
+          status=000
+          for attempt in 1 2 3; do
+            status=$(curl -sS -o /tmp/keepalive-body.txt -w '%{http_code}' \
+              --max-time 30 \
+              -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" \
+              "${SUPABASE_URL}/rest/v1/profiles?select=user_id&limit=1") || status=000
+
+            echo "attempt ${attempt}: HTTP ${status}"
+
+            # 2xx ならクエリが通っている。これが本来の状態。
+            case "${status}" in
+              2??)
+                echo "Supabase project is awake and the query ran."
+                exit 0
+                ;;
+            esac
+
+            # 4xx はプロジェクト自体は起きているが、キーか RLS かテーブル名が想定と違う。
+            # 起動はしているので失敗にはしないが、DB に活動が発生していない可能性があるので警告する。
+            case "${status}" in
+              4??)
+                cat /tmp/keepalive-body.txt || true
+                echo "::warning::Supabase responded with ${status}. The project is awake, but the keepalive query did not run. Check the publishable key, the profiles table, and its RLS policy."
+                exit 0
+                ;;
+            esac
+
+            cat /tmp/keepalive-body.txt || true
+            if [ "${attempt}" -lt 3 ]; then
+              sleep $((attempt * 15))
+            fi
+          done
+
+          echo "::error::Supabase did not respond (last status: ${status}). The project may be paused. Restore it from ${DASHBOARD_URL} before the freeze deadline."
+          exit 1
