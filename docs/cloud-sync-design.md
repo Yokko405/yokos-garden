@@ -10,6 +10,33 @@ The app now supports both cloud save and cloud restore. Restore keeps a local ba
 
 Auth provider setup is tracked in `docs/auth-provider-setup.md`. Auth must be tested from `http://localhost:3000/` or the published HTTPS URL, not from `file://`, because OAuth and magic link redirects need an allowed HTTP/HTTPS return URL.
 
+## Supabase project operations
+
+The backend project is owned by a dedicated Supabase account, not by the account that owns the other projects in this workspace. All Supabase notices for this project go to that account's address, so they are easy to miss.
+
+- Project ref: `jrigfkeimvtudnthsgsj`
+- Dashboard: https://supabase.com/dashboard/project/jrigfkeimvtudnthsgsj
+- Owner account: the Supabase account registered as `hiyume.2+habitora@gmail.com`
+
+### Free plan pausing
+
+On the free plan Supabase pauses a project after a stretch of inactivity. A paused project stops answering, so every cloud feature in the app fails while it is down: login, cloud save, cloud restore, friend codes, and cheers. Local-only usage keeps working because localStorage stays the cache and offline outbox.
+
+A paused project can be restored from the dashboard, but only for about 90 days. After that it is permanently frozen: the data can still be downloaded, but the project cannot be brought back and a new project ref would be needed, which also means redoing the OAuth provider setup in `docs/auth-provider-setup.md`.
+
+### When a pause notice arrives
+
+1. Sign in to the dashboard with the owner account above.
+2. Open the project and choose Restore.
+3. Wait for the status to become active, then confirm from the app that login and cloud save still work.
+4. Check the sync status in 設定 and re-run an upload if anything is stuck in `pending` or `error`.
+
+Restoring from the dashboard is a manual step. It cannot be done with the Supabase API token configured for the other projects, because that token does not cover this account.
+
+### Known incident
+
+The project was paused and, per the Supabase notice dated 2026-08-10, was due to be permanently frozen around 2026-08-15 after 90 days paused. Cloud sync was unavailable for the whole paused stretch. To avoid a repeat, either keep the project active with regular use or move the organization to a paid plan, which does not auto-pause.
+
 After login, if this device still has local-only data, the settings screen shows a migration card. The card lets the user save the current device data to Supabase or restore from Supabase. If Supabase already has a saved `habit_states` row, the app shows an in-app overwrite confirmation instead of a browser-native confirm dialog.
 
 ## Local storage keys
