@@ -33,8 +33,9 @@ jobs:
           set -uo pipefail
 
           status=000
+          body_file="${RUNNER_TEMP}/supabase-keepalive-body.txt"
           for attempt in 1 2 3; do
-            status=$(curl -sS -o /tmp/keepalive-body.txt -w '%{http_code}' \
+            status=$(curl -sS -o "${body_file}" -w '%{http_code}' \
               --max-time 30 \
               -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
               -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" \
@@ -50,17 +51,20 @@ jobs:
                 ;;
             esac
 
-            # 4xx はプロジェクト自体は起きているが、キーか RLS かテーブル名が想定と違う。
-            # 起動はしているので失敗にはしないが、DB に活動が発生していない可能性があるので警告する。
+            # 4xx は認証・権限・テーブル設定の不整合などで、クエリが通っていない。
+            # 429 は一時的な可能性があるので再試行し、それ以外は設定不備として即時に失敗させる。
             case "${status}" in
+              429)
+                cat "${body_file}" || true
+                ;;
               4??)
-                cat /tmp/keepalive-body.txt || true
-                echo "::warning::Supabase responded with ${status}. The project is awake, but the keepalive query did not run. Check the publishable key, the profiles table, and its RLS policy."
-                exit 0
+                cat "${body_file}" || true
+                echo "::error::Supabase rejected the keepalive query with ${status}. Check the publishable key, the profiles table, and its RLS policy."
+                exit 1
                 ;;
             esac
 
-            cat /tmp/keepalive-body.txt || true
+            cat "${body_file}" || true
             if [ "${attempt}" -lt 3 ]; then
               sleep $((attempt * 15))
             fi
