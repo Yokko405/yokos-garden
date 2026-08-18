@@ -7,19 +7,32 @@ name: Supabase Keepalive
 # Daily Update の空コミットは GitHub 側を活性に保つだけで Supabase には届かない。
 # ここでは実際に PostgREST 経由でクエリを投げ、DB に活動を発生させる。
 #
+# 頻度について: 公式ドキュメントは「a few user requests to the database each day」
+# （1日あたり数リクエスト）を目安としている。1日1リクエストでは不足と判定され、
+# 2026-08-17 に一時停止の警告メールが届いた。そのため
+# 1日4回 × 1回あたり3テーブル = 1日12リクエストに増やしている。
+# https://supabase.com/docs/guides/platform/free-project-pausing
+#
 # 応答しなくなった場合はこのワークフローが失敗するので、
 # 一時停止に気づくためのアラートも兼ねる。
 
 on:
   schedule:
-    # 毎日 12:00 JST (UTC 03:00)
-    - cron: '0 3 * * *'
+    # 1日4回 (UTC 00/06/12/18 = JST 09/15/21/03)
+    - cron: '7 0,6,12,18 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - name: Ping Supabase
@@ -32,43 +45,59 @@ jobs:
         run: |
           set -uo pipefail
 
-          status=000
           body_file="${RUNNER_TEMP}/supabase-keepalive-body.txt"
-          for attempt in 1 2 3; do
-            status=$(curl -sS -o "${body_file}" -w '%{http_code}' \
-              --max-time 30 \
-              -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
-              -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" \
-              "${SUPABASE_URL}/rest/v1/profiles?select=user_id&limit=1") || status=000
 
-            echo "attempt ${attempt}: HTTP ${status}"
+          # 1テーブル分のクエリを投げる。成功なら 0、設定不備なら 1、無応答なら 2 を返す。
+          ping_table() {
+            table="$1"
+            column="$2"
+            status=000
 
-            # 2xx ならクエリが通っている。これが本来の状態。
-            case "${status}" in
-              2??)
-                echo "Supabase project is awake and the query ran."
-                exit 0
-                ;;
-            esac
+            for attempt in 1 2 3; do
+              status=$(curl -sS -o "${body_file}" -w '%{http_code}' \
+                --max-time 30 \
+                -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
+                -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" \
+                "${SUPABASE_URL}/rest/v1/${table}?select=${column}&limit=1") || status=000
 
-            # 4xx は認証・権限・テーブル設定の不整合などで、クエリが通っていない。
-            # 429 は一時的な可能性があるので再試行し、それ以外は設定不備として即時に失敗させる。
-            case "${status}" in
-              429)
-                cat "${body_file}" || true
-                ;;
-              4??)
-                cat "${body_file}" || true
-                echo "::error::Supabase rejected the keepalive query with ${status}. Check the publishable key, the profiles table, and its RLS policy."
-                exit 1
-                ;;
-            esac
+              echo "${table} attempt ${attempt}: HTTP ${status}"
 
-            cat "${body_file}" || true
-            if [ "${attempt}" -lt 3 ]; then
-              sleep $((attempt * 15))
-            fi
-          done
+              # 2xx ならクエリが通っている。これが本来の状態。
+              case "${status}" in
+                2??)
+                  return 0
+                  ;;
+              esac
 
-          echo "::error::Supabase did not respond (last status: ${status}). The project may be paused. Restore it from ${DASHBOARD_URL} before the freeze deadline."
-          exit 1
+              # 4xx は認証・権限・テーブル設定の不整合などで、クエリが通っていない。
+              # 429 は一時的な可能性があるので再試行し、それ以外は設定不備として即時に失敗させる。
+              case "${status}" in
+                429)
+                  cat "${body_file}" || true
+                  ;;
+                4??)
+                  cat "${body_file}" || true
+                  echo "::error::Supabase rejected the keepalive query on ${table} with ${status}. Check the publishable key, the table, and its RLS policy."
+                  return 1
+                  ;;
+              esac
+
+              cat "${body_file}" || true
+              if [ "${attempt}" -lt 3 ]; then
+                sleep $((attempt * 15))
+              fi
+            done
+
+            echo "::error::Supabase did not respond for ${table} (last status: ${status}). The project may be paused. Restore it from ${DASHBOARD_URL} before the freeze deadline."
+            return 2
+          }
+
+          # 1回の実行で複数テーブルを叩き、「1日あたり数リクエスト」の目安を確実に満たす。
+          # RLS で行が返らなくてもクエリ自体は Postgres で実行されるため、活動として記録される。
+          ping_table profiles user_id || exit $?
+          sleep 2
+          ping_table habit_states user_id || exit $?
+          sleep 2
+          ping_table progress_days user_id || exit $?
+
+          echo "Supabase project is awake and all keepalive queries ran."
